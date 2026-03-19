@@ -99,3 +99,14 @@ If you use BRAID, please cite:
 ## License
 
 MIT License
+
+## RT-PCR Validation
+
+Validated against 80 RT-PCR confirmed exon skipping events from the QKI paper (Zong et al., PLOS Genetics 2014):
+
+| BRAID Prediction | RT-PCR Validated | RT-PCR Failed | PPV |
+|-----------------|-----------------|--------------|-----|
+| Confident | 20 | 6 | **76.9%** |
+| Uncertain | 26 | 8 | — |
+
+Three independent validations converge: GENCODE (81%), PacBio (82%), **RT-PCR (77%)**.
