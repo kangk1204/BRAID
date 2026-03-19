@@ -110,3 +110,14 @@ Validated against 80 RT-PCR confirmed exon skipping events from the QKI paper (Z
 | Uncertain | 26 | 8 | — |
 
 Three independent validations converge: GENCODE (81%), PacBio (82%), **RT-PCR (77%)**.
+
+## ENCODE RBP Knockdown Validation
+
+TARDBP knockdown in K562 (ENCODE, 87,665 AS events):
+
+| ENCODE Classification | BRAID CV median | BRAID Confident |
+|----------------------|----------------|-----------------|
+| Significant (FDR<0.05) | **0.172** | **50%** |
+| Non-significant | 0.288 | 36% |
+
+BRAID assigns lower CV (higher confidence) to experimentally validated differential splicing events.
