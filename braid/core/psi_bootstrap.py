@@ -1,4 +1,4 @@
-"""BRAID: Post-assembly Resampling for Isoform Stability Measurement.
+"""PRISM: Post-assembly Resampling for Isoform Stability Measurement.
 
 Bootstrap confidence intervals for PSI (Percent Spliced In) using
 actual junction read counts from BAM.  Provides per-event PSI
@@ -232,6 +232,102 @@ def compute_psi_from_junctions(
                 cv=cv,
                 inclusion_count=count,
                 exclusion_count=other_count,
+                is_confident=ci_width < 0.2,
+            ))
+
+    # SE (Skipped Exon): junction d1→a2 (skip) exists AND
+    # d1→a1 + d2→a2 exist where a1 < d2 (exon [a1,d2] is skipped)
+    all_juncs = sorted(junction_counts.keys())
+    se_seen: set[str] = set()
+    for d1, a1 in all_juncs:
+        for d2, a2 in all_juncs:
+            if d2 <= a1 or d2 - a1 > 50000:
+                continue  # exon must be between a1 and d2
+            skip_key = (d1, a2)
+            if skip_key not in junction_counts:
+                continue
+            se_key = f"{a1}-{d2}"
+            if se_key in se_seen:
+                continue
+            se_seen.add(se_key)
+
+            inc_count = min(
+                junction_counts[(d1, a1)], junction_counts[(d2, a2)],
+            )
+            exc_count = junction_counts[skip_key]
+            total = inc_count + exc_count
+            if total < 5:
+                continue
+
+            psi, ci_low, ci_high, cv = bootstrap_psi(
+                inc_count, exc_count,
+                n_replicates=n_replicates,
+                confidence_level=confidence_level,
+                seed=int(rng.integers(0, 2**31)),
+            )
+            ci_width = ci_high - ci_low
+            event_id = f"SE:{a1}-{d2}"
+            results.append(PSIResult(
+                event_id=event_id,
+                event_type="SE",
+                gene="",
+                chrom=chrom,
+                psi=psi,
+                ci_low=ci_low,
+                ci_high=ci_high,
+                cv=cv,
+                inclusion_count=inc_count,
+                exclusion_count=exc_count,
+                is_confident=ci_width < 0.2,
+            ))
+
+    # RI (Retained Intron): intron body has reads (no junction = retention)
+    # Compare junction-spanning reads vs intron-body coverage
+    with pysam.AlignmentFile(bam_path, "rb") as bam:
+        for (jstart, jend), jcount in junction_counts.items():
+            if jend - jstart > 50000:
+                continue  # skip very long introns
+            if jend - jstart < 50:
+                continue  # skip very short
+            # Count reads fully within the intron body (retained intron evidence)
+            ri_count = 0
+            for read in bam.fetch(chrom, jstart, jend):
+                if read.is_unmapped:
+                    continue
+                # Read must span a significant portion of the intron
+                if (read.reference_start <= jstart + 10
+                        and read.reference_end >= jend - 10):
+                    ri_count += 1
+                elif (read.reference_start >= jstart
+                      and read.reference_end <= jend
+                      and read.reference_end - read.reference_start > 50):
+                    ri_count += 1
+
+            if ri_count < 3:
+                continue
+            total = jcount + ri_count
+            if total < 5:
+                continue
+
+            psi_ri, ci_low, ci_high, cv = bootstrap_psi(
+                ri_count, jcount,
+                n_replicates=n_replicates,
+                confidence_level=confidence_level,
+                seed=int(rng.integers(0, 2**31)),
+            )
+            ci_width = ci_high - ci_low
+            event_id = f"RI:{jstart}-{jend}"
+            results.append(PSIResult(
+                event_id=event_id,
+                event_type="RI",
+                gene="",
+                chrom=chrom,
+                psi=psi_ri,
+                ci_low=ci_low,
+                ci_high=ci_high,
+                cv=cv,
+                inclusion_count=ri_count,
+                exclusion_count=jcount,
                 is_confident=ci_width < 0.2,
             ))
 

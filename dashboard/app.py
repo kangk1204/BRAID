@@ -1,4 +1,4 @@
-"""BRAID Interactive Dashboard — Browse all genes genome-wide.
+"""PRISM Interactive Dashboard — Browse all genes genome-wide.
 
 Loads pre-computed bootstrap results and lets users browse any gene
 with interactive sashimi plots, confidence tables, and PSI charts.
@@ -29,12 +29,12 @@ sys.path.insert(
 
 # ─── Page Config ───
 st.set_page_config(
-    page_title="BRAID Dashboard",
+    page_title="PRISM Dashboard",
     page_icon="🔬",
     layout="wide",
 )
 
-st.title("🔬 BRAID: Isoform Confidence Dashboard")
+st.title("🔬 PRISM: Isoform Confidence Dashboard")
 st.markdown("*Browse bootstrap confidence for all assembled isoforms*")
 
 
@@ -400,4 +400,4 @@ with tab3:
 
 # ─── Footer ───
 st.sidebar.markdown("---")
-st.sidebar.markdown("**BRAID** v1.0")
+st.sidebar.markdown("**PRISM** v1.0")

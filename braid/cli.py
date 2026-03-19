@@ -174,7 +174,7 @@ def main() -> None:
             _run_psi(args)
         elif args.command == "target":
             # Reuse existing target assembler
-            print("Target mode: use rapidsplice target for now.")
+            print("Target mode: see braid target documentation.")
         elif args.command == "dashboard":
             _run_dashboard(args)
     except KeyboardInterrupt:

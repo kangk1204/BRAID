@@ -414,7 +414,7 @@ def format_fastq_target_report(result: FastqTargetResult) -> str:
     """Format a text report for FASTQ pipeline results."""
     lines: list[str] = []
     lines.append(f"{'='*70}")
-    lines.append("  BRAID FASTQ Pipeline Report")
+    lines.append("  TargetSplice FASTQ Pipeline Report")
     lines.append(f"{'='*70}")
     lines.append(f"  Gene:           {result.gene}")
     lines.append(

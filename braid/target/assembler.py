@@ -136,7 +136,7 @@ class TargetAssemblyResult:
 def assemble_target(config: TargetConfig) -> TargetAssemblyResult:
     """Run targeted transcript assembly on a single gene/region.
 
-    This is the main entry point for the BRAID pipeline.
+    This is the main entry point for the TargetSplice pipeline.
     It performs read extraction, splice graph construction, NNLS
     decomposition with exhaustive path enumeration, and bootstrap
     confidence interval estimation.
@@ -405,7 +405,7 @@ def format_target_report(result: TargetAssemblyResult) -> str:
     lines: list[str] = []
     region = result.region
     lines.append(f"{'='*70}")
-    lines.append("  BRAID Assembly Report")
+    lines.append("  TargetSplice Assembly Report")
     lines.append(f"{'='*70}")
     lines.append(f"  Gene:     {region.gene_name or 'N/A'}")
     lines.append(f"  Region:   {region.chrom}:{region.start+1}-{region.end}")
