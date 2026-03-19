@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.ruff_cache/
+.pytest_cache/
+*.bam
+*.bam.bai
+*.gtf
+!tests/*.gtf

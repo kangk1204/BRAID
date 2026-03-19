@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "braid-rna"
+version = "1.0.0"
+description = "Bootstrap Resampling for Assembly Isoform Dependability"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Keunsoo Kang", email = "kangk1204@gmail.com"},
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pysam>=0.21",
+]
+
+[project.optional-dependencies]
+dashboard = ["streamlit>=1.30", "plotly>=5.0"]
+dev = ["pytest>=7.0", "ruff>=0.1"]
+
+[project.scripts]
+braid = "braid.cli:main"
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
