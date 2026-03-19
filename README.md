@@ -121,3 +121,21 @@ TARDBP knockdown in K562 (ENCODE, 87,665 AS events):
 | Non-significant | 0.288 | 36% |
 
 BRAID assigns lower CV (higher confidence) to experimentally validated differential splicing events.
+
+## rMATS Integration
+
+BRAID adds bootstrap CI to rMATS-detected events:
+
+```bash
+braid rmats --rmats-dir rMATS_output/ --replicates 200
+```
+
+| Event Type | Events | Confident (CI<20%) | CV median |
+|-----------|--------|-------------------|-----------|
+| SE | 52,122 | 86% | 0.018 |
+| A3SS | 13,048 | 88% | 0.040 |
+| A5SS | 9,192 | 84% | 0.054 |
+| MXE | 9,500 | 82% | 0.082 |
+| RI | 5,208 | 80% | 0.075 |
+
+89,070 events processed in 14.7 seconds with 200 bootstrap replicates.
