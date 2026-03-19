@@ -139,3 +139,24 @@ braid rmats --rmats-dir rMATS_output/ --replicates 200
 | RI | 5,208 | 80% | 0.075 |
 
 89,070 events processed in 14.7 seconds with 200 bootstrap replicates.
+
+## Multi-Replicate Mode
+
+When biological replicates are available (standard in RNA-seq):
+
+```bash
+braid score --stringtie output.gtf --bam rep1.bam rep2.bam rep3.bam
+braid psi --bam rep1.bam rep2.bam rep3.bam --gene EZH2 --gtf gencode.gtf
+```
+
+Combines biological variance (between-replicate) with sampling variance (within-replicate):
+
+```
+Total CI = mean(PSI) ± 1.96 × √(σ²_biological + σ²_sampling)
+```
+
+| Mode | CI includes | Use case |
+|------|------------|----------|
+| Single-sample | Sampling noise only | Exploratory, no replicates |
+| **Multi-replicate** | **Biological + Sampling** | **Standard RNA-seq (recommended)** |
+| BAM-free | Coverage approximation | No BAM access |
