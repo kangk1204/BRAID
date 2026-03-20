@@ -205,6 +205,29 @@ braid doctor --strict
 braid doctor --gpu
 ```
 
+### Run the demo (no BAM needed)
+
+```bash
+python demo/run_demo.py
+```
+
+This generates 200 synthetic AS events, runs BRAID bootstrap, and produces an
+**interactive HTML report** at `demo/results/demo_report.html`. Open it in any
+browser to explore:
+
+- PSI scatter plot (BRAID vs ground truth, colored by event type)
+- CI width vs read support
+- CI coverage by support bin
+- Forest plot with confidence intervals
+
+### Run the full test suite
+
+```bash
+python -m pytest tests/ -v
+```
+
+443 tests, all in-memory (no external data needed).
+
 ---
 
 ## CLI Reference
