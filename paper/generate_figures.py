@@ -155,7 +155,8 @@ def fig1_workflow():
     ax.text(8.5, 0.8, "σ²_bio + σ²_samp", fontsize=5,
             ha="center", va="center", style="italic", color=C_GRAY)
 
-    fig.savefig(os.path.join(OUTDIR, "fig1_workflow.pdf"))
+    for _ext in [".pdf", ".png", ".jpg"]:
+        fig.savefig(os.path.join(OUTDIR, "fig1_workflow" + _ext), dpi=300)
     plt.close(fig)
     print("Fig 1: workflow → fig1_workflow.pdf")
 
@@ -279,7 +280,8 @@ def fig2_pacbio_validation():
     ax_c.spines["top"].set_visible(False)
     ax_c.spines["right"].set_visible(False)
 
-    fig.savefig(os.path.join(OUTDIR, "fig2_pacbio_validation.pdf"))
+    for _ext in [".pdf", ".png", ".jpg"]:
+        fig.savefig(os.path.join(OUTDIR, "fig2_pacbio_validation" + _ext), dpi=300)
     plt.close(fig)
     print("Fig 2: PacBio validation → fig2_pacbio_validation.pdf")
 
@@ -370,7 +372,8 @@ def fig3_qki_benchmark():
     ax_b.axis("off")
     ax_b.set_title("Confidence filtering funnel")
 
-    fig.savefig(os.path.join(OUTDIR, "fig3_qki_benchmark.pdf"))
+    for _ext in [".pdf", ".png", ".jpg"]:
+        fig.savefig(os.path.join(OUTDIR, "fig3_qki_benchmark" + _ext), dpi=300)
     plt.close(fig)
     print("Fig 3: QKI benchmark → fig3_qki_benchmark.pdf")
 
@@ -461,7 +464,8 @@ def fig4_calibration_multirep():
               transform=ax_b.transAxes, ha="center", fontsize=5.5,
               style="italic", color=C_GRAY)
 
-    fig.savefig(os.path.join(OUTDIR, "fig4_calibration_multirep.pdf"))
+    for _ext in [".pdf", ".png", ".jpg"]:
+        fig.savefig(os.path.join(OUTDIR, "fig4_calibration_multirep" + _ext), dpi=300)
     plt.close(fig)
     print("Fig 4: Calibration + multi-rep → fig4_calibration_multirep.pdf")
 
@@ -533,7 +537,8 @@ def fig5_positioning():
         ax.text(9.0, 2.2 - i*0.6, txt, fontsize=7, ha="center",
                 fontweight="bold", color=color)
 
-    fig.savefig(os.path.join(OUTDIR, "fig5_positioning.pdf"))
+    for _ext in [".pdf", ".png", ".jpg"]:
+        fig.savefig(os.path.join(OUTDIR, "fig5_positioning" + _ext), dpi=300)
     plt.close(fig)
     print("Fig 5: Positioning → fig5_positioning.pdf")
 
