@@ -111,11 +111,6 @@ Output:
 3. **Conservative tiering** — zero false positives on null controls
 4. **Works with or without replicates** — better with them
 
-## Citation
-
-If you use BRAID, please cite:
-> Kang, K. (2026). BRAID: Bootstrap Reliability Assessment for Isoform Detection. *Bioinformatics* (submitted).
-
 ## License
 
 MIT
