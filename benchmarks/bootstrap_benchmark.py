@@ -85,11 +85,11 @@ def _run_bootstrap_evaluation(
     dataset_name: str,
 ) -> dict:
     """Core evaluation: bootstrap + precision-recall at multiple CV thresholds."""
-    from braid.target.stringtie_bootstrap import (
+    from rapidsplice.target.stringtie_bootstrap import (
         _parse_stringtie_gtf,
     )
-    from braid.target.gencode_index import load_annotation_index, query_region
-    from braid.target.comparator import classify_isoform
+    from rapidsplice.target.gencode_index import load_annotation_index, query_region
+    from rapidsplice.target.comparator import classify_isoform
 
     # Parse StringTie
     genes = _parse_stringtie_gtf(st_gtf)

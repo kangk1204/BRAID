@@ -1,32 +1,74 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "braid-rna"
-version = "1.0.0"
-description = "Bootstrap Resampling for Assembly Isoform Dependability"
+name = "braid"
+version = "0.1.0"
+description = "BRAID: calibrated confidence intervals for RNA-seq splicing analysis"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "Keunsoo Kang", email = "kangk1204@gmail.com"},
+    {name = "BRAID Team"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "pysam>=0.22.0",
     "numpy>=1.24",
-    "scipy>=1.10",
-    "pysam>=0.21",
+    "scipy>=1.11",
+    "scikit-learn>=1.3",
+    "intervaltree>=3.1",
+    "numba>=0.59",
+    "networkx>=3.1",
 ]
 
 [project.optional-dependencies]
-dashboard = ["streamlit>=1.30", "plotly>=5.0"]
-dev = ["pytest>=7.0", "ruff>=0.1"]
+benchmark = [
+    "pyliftover>=0.4",
+]
+gpu = [
+    "cupy-cuda12x>=13.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1",
+    "matplotlib>=3.7",
+    "reportlab>=4.0",
+]
+dashboard = [
+    "streamlit>=1.30",
+    "pandas>=2.0",
+    "plotly>=5.4",
+]
+ml = [
+    "torch>=2.0",
+    "torch_geometric>=2.5",
+    "optuna>=3.0",
+]
 
 [project.scripts]
 braid = "braid.cli:main"
+rapidsplice = "rapidsplice.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["rapidsplice*", "braid*"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-v --tb=short"

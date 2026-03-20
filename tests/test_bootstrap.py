@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from braid.core.bootstrap_engine import (
+from rapidsplice.flow.bootstrap import (
     BootstrapConfig,
     BootstrapResult,
     TranscriptConfidence,
@@ -13,7 +13,7 @@ from braid.core.bootstrap_engine import (
     bootstrap_confidence,
     format_confidence_gtf_attributes,
 )
-from braid.core.splice_graph import CSRGraph
+from rapidsplice.graph.splice_graph import CSRGraph
 
 
 def _make_simple_graph() -> tuple[CSRGraph, list[list[int]]]:
@@ -31,7 +31,7 @@ def _make_simple_graph() -> tuple[CSRGraph, list[list[int]]]:
     edge_weights = np.array([100.0, 70.0, 30.0, 70.0, 30.0], dtype=np.float64)
     edge_coverages = np.array([100.0, 70.0, 30.0, 70.0, 30.0], dtype=np.float64)
 
-    from braid.core.splice_graph import NodeType
+    from rapidsplice.graph.splice_graph import NodeType
     node_types = np.array([
         NodeType.SOURCE, NodeType.EXON, NodeType.EXON,
         NodeType.EXON, NodeType.SINK,

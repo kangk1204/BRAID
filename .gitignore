@@ -5,7 +5,17 @@ dist/
 build/
 .ruff_cache/
 .pytest_cache/
+.claude/
 *.bam
 *.bam.bai
 *.gtf
 !tests/*.gtf
+benchmark_results/
+benchmark_results_large/
+benchmark_results_postpatch/
+real_benchmark/
+benchmarks/results/
+benchmarks/denovo_results/
+paper/
+braid_paper.pdf
+benchmark_report.pdf

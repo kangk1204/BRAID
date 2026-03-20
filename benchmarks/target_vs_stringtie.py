@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare BRAID vs StringTie on the same gene regions."""
+"""Compare TargetSplice vs StringTie on the same gene regions."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ import pysam
 
 sys.path.insert(0, ".")
 
-from braid.target.assembler import TargetConfig, assemble_target
-from braid.target.comparator import classify_all_isoforms
-from braid.target.extractor import lookup_gene
+from rapidsplice.target.assembler import TargetConfig, assemble_target
+from rapidsplice.target.comparator import classify_all_isoforms
+from rapidsplice.target.extractor import lookup_gene
 
 CANCER_GENES = [
     "TP53", "BRCA1", "BRCA2", "EGFR", "KRAS", "BRAF", "PIK3CA", "PTEN",
@@ -101,7 +101,7 @@ def main() -> None:
         if region is None:
             continue
 
-        # BRAID
+        # TargetSplice
         config = TargetConfig(
             bam_path=BAM, reference_path=REF, region=region,
             flank=1000, max_paths=5000, bootstrap_replicates=200,
@@ -153,7 +153,7 @@ def main() -> None:
     print(f"\n{'='*50}")
     print(f"  COMPARISON SUMMARY ({len(ts_results)} genes)")
     print(f"{'='*50}")
-    print(f"  BRAID: {ts_exact_all}/{ts_total_all} exact "
+    print(f"  TargetSplice: {ts_exact_all}/{ts_total_all} exact "
           f"({ts_exact_all/max(ts_total_all,1):.1%})")
     print(f"  StringTie:    {st_exact_all}/{st_total_all} exact "
           f"({st_exact_all/max(st_total_all,1):.1%})")

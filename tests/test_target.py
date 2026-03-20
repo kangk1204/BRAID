@@ -1,15 +1,15 @@
-"""Tests for the BRAID targeted assembly module."""
+"""Tests for the TargetSplice targeted assembly module."""
 
 from __future__ import annotations
 
 import pytest
 
-from braid.target.comparator import (
+from rapidsplice.target.comparator import (
     _chains_match,
     _exons_to_intron_chain,
     classify_isoform,
 )
-from braid.target.extractor import (
+from rapidsplice.target.extractor import (
     TargetRegion,
     parse_region_string,
 )

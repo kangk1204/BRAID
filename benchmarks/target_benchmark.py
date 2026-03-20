@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Benchmark BRAID on cancer-relevant genes.
+"""Benchmark TargetSplice on cancer-relevant genes.
 
-Runs BRAID on 50+ genes in K562, classifies assembled isoforms
+Runs TargetSplice on 50+ genes in K562, classifies assembled isoforms
 against GENCODE, and generates a summary report.
 """
 
@@ -13,8 +13,8 @@ import time
 
 sys.path.insert(0, ".")
 
-from braid.target.assembler import TargetConfig, assemble_target
-from braid.target.extractor import lookup_gene
+from rapidsplice.target.assembler import TargetConfig, assemble_target
+from rapidsplice.target.extractor import lookup_gene
 
 # 50 cancer-relevant genes with diverse splicing complexity
 CANCER_GENES = [

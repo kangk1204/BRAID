@@ -1,14 +1,10 @@
-"""BRAID: Bootstrap Resampling for Assembly Isoform Dependability.
+"""Public BRAID wrapper package.
 
-A post-assembly tool that adds per-isoform bootstrap confidence
-intervals to RNA-seq transcript assembly output. Works with
-StringTie, Scallop, or any assembler that produces GTF output.
-
-Key features:
-- Post-assembly bootstrap CV scoring (precision +35-53pp)
-- Single-sample PSI confidence intervals (no replicates needed)
-- BAM-free mode (113s genome-wide)
-- Interactive Streamlit dashboard
+The implementation still lives under the legacy ``rapidsplice`` module path for
+backward compatibility. New code should prefer the public ``braid`` package and
+CLI entry point.
 """
 
-__version__ = "1.0.0"
+from rapidsplice import __version__
+
+__all__ = ["__version__"]

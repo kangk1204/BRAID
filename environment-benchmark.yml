@@ -1,0 +1,16 @@
+name: braid-benchmark
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - pip>=24
+  - setuptools>=68
+  - wheel
+  - samtools
+  - hisat2
+  - gffcompare
+  - stringtie
+  - rmats
+  - pip:
+      - -e .[benchmark]

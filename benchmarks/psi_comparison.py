@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Compare BRAID PSI bootstrap CI with rMATS and SUPPA2.
+"""Compare PRISM PSI bootstrap CI with rMATS and SUPPA2.
 
 For a set of target genes, computes PSI using:
-1. BRAID (our junction bootstrap method)
+1. PRISM (our junction bootstrap method)
 2. rMATS (from pre-computed output)
 3. SUPPA2 (from pre-computed output)
 
@@ -81,13 +81,13 @@ def load_rmats_psi(rmats_dir: str, event_type: str = "SE") -> dict:
     return results
 
 
-def load_braid_psi(
+def load_prism_psi(
     bam_path: str,
     genes: list[dict],
     n_replicates: int = 500,
 ) -> dict:
-    """Compute BRAID PSI for target gene regions."""
-    from braid.target.psi_bootstrap import (
+    """Compute PRISM PSI for target gene regions."""
+    from rapidsplice.target.psi_bootstrap import (
         compute_psi_from_junctions,
     )
 
@@ -98,6 +98,7 @@ def load_braid_psi(
             gene["chrom"],
             gene["start"],
             gene["end"],
+            gene=gene.get("name"),
             n_replicates=n_replicates,
             seed=42,
         )
@@ -117,13 +118,13 @@ def load_braid_psi(
 
 
 def compare_methods(
-    braid: dict,
+    prism: dict,
     rmats: dict,
 ) -> None:
-    """Compare PSI values between BRAID and rMATS."""
+    """Compare PSI values between PRISM and rMATS."""
     # Match events by junction coordinates
     # Since event naming differs, match by inclusion/exclusion count similarity
-    print(f"BRAID events: {len(braid)}")
+    print(f"PRISM events: {len(prism)}")
     print(f"rMATS events: {len(rmats)}")
 
     # For rMATS, extract junction-based PSI to compare
@@ -139,18 +140,18 @@ def compare_methods(
         print(f"  PSI distribution: median={np.median(rmats_psi_values):.3f}, "
               f"mean={np.mean(rmats_psi_values):.3f}")
 
-    # BRAID confident events
-    braid_confident = [d for d in braid.values() if d.get("is_confident")]
-    print(f"\nBRAID confident events (CI<20%): {len(braid_confident)}")
-    if braid_confident:
-        ci_widths = [d["ci_high"] - d["ci_low"] for d in braid_confident]
+    # PRISM confident events
+    prism_confident = [d for d in prism.values() if d.get("is_confident")]
+    print(f"\nPRISM confident events (CI<20%): {len(prism_confident)}")
+    if prism_confident:
+        ci_widths = [d["ci_high"] - d["ci_low"] for d in prism_confident]
         print(f"  CI width: median={np.median(ci_widths):.3f}, "
               f"mean={np.mean(ci_widths):.3f}")
 
 
 def main() -> None:
     """Run comparison."""
-    from braid.target.extractor import lookup_gene
+    from rapidsplice.target.extractor import lookup_gene
 
     GTF = "real_benchmark/annotation/gencode.v38.nochr.gtf"
     BAM = "real_benchmark/bam/SRR387661.bam"
@@ -170,7 +171,7 @@ def main() -> None:
             })
 
     print("=" * 60)
-    print("  BRAID vs rMATS PSI Comparison")
+    print("  PRISM vs rMATS PSI Comparison")
     print("=" * 60)
 
     # Load rMATS results
@@ -182,17 +183,17 @@ def main() -> None:
         if r:
             print(f"  rMATS {et}: {len(r)} events")
 
-    # Compute BRAID PSI
-    print("\n  Computing BRAID PSI...")
-    braid_results = load_braid_psi(BAM, genes, n_replicates=500)
+    # Compute PRISM PSI
+    print("\n  Computing PRISM PSI...")
+    prism_results = load_prism_psi(BAM, genes, n_replicates=500)
 
-    compare_methods(braid_results, rmats_results)
+    compare_methods(prism_results, rmats_results)
 
     # Summary table
     print(f"\n{'=' * 60}")
     print(f"  {'Method':<15} {'Events':>8} {'With CI':>8} {'Needs Replicates':>18}")
     print(f"  {'-' * 55}")
-    print(f"  {'BRAID':<15} {len(braid_results):>8} {len([d for d in braid_results.values() if d.get('is_confident')]):>8} {'No':>18}")
+    print(f"  {'PRISM':<15} {len(prism_results):>8} {len([d for d in prism_results.values() if d.get('is_confident')]):>8} {'No':>18}")
     print(f"  {'rMATS':<15} {len(rmats_results):>8} {'N/A':>8} {'Yes':>18}")
     print(f"  {'SUPPA2':<15} {'TBD':>8} {'N/A':>8} {'Yes':>18}")
 
