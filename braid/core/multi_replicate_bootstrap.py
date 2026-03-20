@@ -16,7 +16,15 @@ from dataclasses import dataclass, field
 import numpy as np
 import pysam
 
+from braid.core.psi_bootstrap import (
+    CONFIDENT_CI_WIDTH_THRESHOLD,
+    CONFIDENT_CV_THRESHOLD,
+    OVERDISPERSED_COUNT_SCALE,
+)
+
 logger = logging.getLogger(__name__)
+
+DEFAULT_MIN_MAPQ = 1
 
 
 @dataclass
@@ -63,12 +71,19 @@ def extract_junction_counts_from_bam(
     chrom: str,
     start: int,
     end: int,
+    min_mapq: int = DEFAULT_MIN_MAPQ,
 ) -> dict[tuple[int, int], int]:
     """Extract junction read counts from a BAM region."""
     counts: dict[tuple[int, int], int] = {}
     with pysam.AlignmentFile(bam_path, "rb") as bam:
         for read in bam.fetch(chrom, start, end):
             if read.is_unmapped or read.cigartuples is None:
+                continue
+            if read.is_secondary or read.is_supplementary:
+                continue
+            if read.is_duplicate or read.is_qcfail:
+                continue
+            if read.mapping_quality < min_mapq:
                 continue
             pos = read.reference_start
             for op, length in read.cigartuples:
@@ -90,6 +105,7 @@ def multi_replicate_psi(
     n_bootstrap: int = 200,
     confidence_level: float = 0.95,
     min_total_count: int = 5,
+    min_mapq: int = DEFAULT_MIN_MAPQ,
     seed: int | None = None,
 ) -> list[MultiRepPSIResult]:
     """Compute PSI with multi-replicate + bootstrap CI.
@@ -109,6 +125,7 @@ def multi_replicate_psi(
         n_bootstrap: Bootstrap replicates per sample.
         confidence_level: CI confidence level.
         min_total_count: Minimum junction reads across replicates.
+        min_mapq: Minimum alignment MAPQ to count.
         seed: Random seed.
 
     Returns:
@@ -121,7 +138,13 @@ def multi_replicate_psi(
     # Step 1: Extract junction counts from each replicate
     rep_junctions: list[dict[tuple[int, int], int]] = []
     for bam_path in bam_paths:
-        jc = extract_junction_counts_from_bam(bam_path, chrom, start, end)
+        jc = extract_junction_counts_from_bam(
+            bam_path,
+            chrom,
+            start,
+            end,
+            min_mapq=min_mapq,
+        )
         rep_junctions.append(jc)
 
     # Step 2: Find all junctions across replicates
@@ -168,13 +191,12 @@ def multi_replicate_psi(
 
                 psi = inc / total
 
-                # Bootstrap within this replicate
-                boot_psis = np.zeros(n_bootstrap)
-                for b in range(n_bootstrap):
-                    b_inc = rng.poisson(max(inc, 0.5))
-                    b_exc = rng.poisson(max(exc, 0.5))
-                    b_total = b_inc + b_exc
-                    boot_psis[b] = b_inc / b_total if b_total > 0 else 0
+                # Posterior predictive uncertainty for this replicate.
+                boot_psis = rng.beta(
+                    inc * OVERDISPERSED_COUNT_SCALE + 0.5,
+                    exc * OVERDISPERSED_COUNT_SCALE + 0.5,
+                    size=n_bootstrap,
+                )
 
                 rep_psis.append(psi)
                 ci_lo = float(np.percentile(boot_psis, 100 * alpha / 2))
@@ -213,6 +235,12 @@ def multi_replicate_psi(
 
             cv = total_std / mean_psi if mean_psi > 0 else float("nan")
 
+            is_confident = (
+                ci_width < CONFIDENT_CI_WIDTH_THRESHOLD
+                and np.isfinite(cv)
+                and cv <= CONFIDENT_CV_THRESHOLD
+            )
+
             results.append(MultiRepPSIResult(
                 event_id=f"A3SS:{donor}-{acc}",
                 event_type="A3SS",
@@ -227,7 +255,7 @@ def multi_replicate_psi(
                 n_replicates=len(rep_psis),
                 per_rep_psi=rep_psis,
                 per_rep_ci=list(zip(rep_ci_lows, rep_ci_highs)),
-                is_confident=ci_width < 0.2,
+                is_confident=is_confident,
                 inclusion_counts=inc_counts,
                 exclusion_counts=exc_counts,
             ))
@@ -263,12 +291,11 @@ def multi_replicate_psi(
                     continue
 
                 psi = inc / total
-                boot_psis = np.zeros(n_bootstrap)
-                for b in range(n_bootstrap):
-                    b_inc = rng.poisson(max(inc, 0.5))
-                    b_exc = rng.poisson(max(exc, 0.5))
-                    b_total = b_inc + b_exc
-                    boot_psis[b] = b_inc / b_total if b_total > 0 else 0
+                boot_psis = rng.beta(
+                    inc * OVERDISPERSED_COUNT_SCALE + 0.5,
+                    exc * OVERDISPERSED_COUNT_SCALE + 0.5,
+                    size=n_bootstrap,
+                )
 
                 rep_psis.append(psi)
                 ci_lo = float(np.percentile(boot_psis, 100 * alpha / 2))
@@ -294,8 +321,15 @@ def multi_replicate_psi(
             z = 1.96
             combined_lo = max(0.0, mean_psi - z * total_std)
             combined_hi = min(1.0, mean_psi + z * total_std)
+            ci_width = combined_hi - combined_lo
 
             cv = total_std / mean_psi if mean_psi > 0 else float("nan")
+
+            is_confident = (
+                ci_width < CONFIDENT_CI_WIDTH_THRESHOLD
+                and np.isfinite(cv)
+                and cv <= CONFIDENT_CV_THRESHOLD
+            )
 
             results.append(MultiRepPSIResult(
                 event_id=f"A5SS:{don}-{acc}",
@@ -311,7 +345,7 @@ def multi_replicate_psi(
                 n_replicates=len(rep_psis),
                 per_rep_psi=rep_psis,
                 per_rep_ci=list(zip(rep_ci_lows, rep_ci_highs)),
-                is_confident=(combined_hi - combined_lo) < 0.2,
+                is_confident=is_confident,
                 inclusion_counts=inc_counts,
                 exclusion_counts=exc_counts,
             ))
@@ -333,22 +367,8 @@ def multi_replicate_isoform_bootstrap(
     n_bootstrap: int = 200,
     seed: int | None = None,
 ) -> list[dict]:
-    """Isoform-level bootstrap with multi-replicate support.
-
-    Runs StringTie bootstrap on each replicate independently,
-    then combines biological and sampling variance.
-
-    Args:
-        stringtie_gtf: StringTie GTF output.
-        bam_paths: BAM file per replicate.
-        reference_path: Reference FASTA.
-        n_bootstrap: Bootstrap replicates per sample.
-        seed: Random seed.
-
-    Returns:
-        Per-gene results with combined CI.
-    """
-    from braid.target.stringtie_bootstrap import (
+    """Isoform-level bootstrap with multi-replicate support."""
+    from braid.core.stringtie_bootstrap import (
         STBootstrapConfig,
         run_stringtie_bootstrap,
     )
@@ -365,7 +385,13 @@ def multi_replicate_isoform_bootstrap(
         rep_result = run_stringtie_bootstrap(config)
         all_rep_results.append(rep_result)
 
-    # Combine across replicates
+    return combine_isoform_bootstrap_results(all_rep_results)
+
+
+def combine_isoform_bootstrap_results(
+    all_rep_results: list[list[object]],
+) -> list[dict]:
+    """Combine precomputed StringTie bootstrap results across replicates."""
     # Match genes by gene_id
     gene_ids = set()
     for rep in all_rep_results:
@@ -391,7 +417,7 @@ def multi_replicate_isoform_bootstrap(
 
         for tid in all_tids:
             rep_weights = []
-            rep_cvs = []
+            rep_sampling_stds = []
 
             for gr in rep_gene_results:
                 iso = next(
@@ -400,15 +426,25 @@ def multi_replicate_isoform_bootstrap(
                 )
                 if iso:
                     rep_weights.append(iso.nnls_weight)
-                    rep_cvs.append(iso.cv)
+                    if np.isfinite(iso.cv):
+                        rep_sampling_stds.append(iso.cv * iso.nnls_weight)
+                    else:
+                        # Fall back to the bootstrap CI width when CV is
+                        # undefined (usually mean weight == 0).
+                        approx_std = (iso.ci_high - iso.ci_low) / (2 * 1.96)
+                        if np.isfinite(approx_std):
+                            rep_sampling_stds.append(float(max(0.0, approx_std)))
 
             if len(rep_weights) < 2:
                 continue
 
             bio_std = float(np.std(rep_weights, ddof=1))
             mean_weight = float(np.mean(rep_weights))
-            mean_sampling_cv = float(np.mean(rep_cvs))
-            sampling_std = mean_sampling_cv * mean_weight
+            sampling_std = (
+                float(np.mean(rep_sampling_stds))
+                if rep_sampling_stds
+                else 0.0
+            )
 
             total_std = float(np.sqrt(bio_std**2 + sampling_std**2))
             total_cv = total_std / mean_weight if mean_weight > 0 else float("nan")
@@ -429,7 +465,7 @@ def multi_replicate_isoform_bootstrap(
 
     logger.info(
         "Multi-replicate isoform bootstrap: %d isoforms from %d replicates",
-        len(combined), len(bam_paths),
+        len(combined), len(all_rep_results),
     )
 
     return combined
