@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from rapidsplice.target.multi_replicate_bootstrap import (
+from braid.target.multi_replicate_bootstrap import (
     combine_isoform_bootstrap_results,
 )
 

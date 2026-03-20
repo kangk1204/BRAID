@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from rapidsplice.flow.nmf_decompose import (
+from braid.flow.nmf_decompose import (
     NMFDecomposeConfig,
     _build_fragments,
     _build_read_fragment_matrix,
@@ -19,7 +19,7 @@ from rapidsplice.flow.nmf_decompose import (
     _select_k,
     decompose_nmf,
 )
-from rapidsplice.graph.splice_graph import CSRGraph, NodeType, SpliceGraph
+from braid.graph.splice_graph import CSRGraph, NodeType, SpliceGraph
 
 # ===================================================================
 # Helpers

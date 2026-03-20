@@ -83,9 +83,9 @@ ctrl1 = f"{QKI}/ctrl_rep1.bam"
 ctrl2 = f"{QKI}/ctrl_rep2.bam"
 
 if os.path.exists(ctrl1) and os.path.exists(ctrl2):
-    from rapidsplice.target.multi_replicate_bootstrap import multi_replicate_psi
-    from rapidsplice.target.psi_bootstrap import compute_psi_from_junctions
-    from rapidsplice.target.extractor import lookup_gene
+    from braid.target.multi_replicate_bootstrap import multi_replicate_psi
+    from braid.target.psi_bootstrap import compute_psi_from_junctions
+    from braid.target.extractor import lookup_gene
 
     GTF = "real_benchmark/annotation/gencode.v38.nochr.gtf"
 
@@ -169,8 +169,8 @@ if not run_gm12878:
     print("  Skipped: out of BRAID-only scope")
     results["gm12878_multi_replicate"] = {"status": "skipped_braid_only_scope"}
 elif os.path.exists(gm_rep1) and os.path.exists(gm_rep2):
-    from rapidsplice.target.multi_replicate_bootstrap import multi_replicate_isoform_bootstrap
-    from rapidsplice.target.stringtie_bootstrap import STBootstrapConfig, run_stringtie_bootstrap
+    from braid.target.multi_replicate_bootstrap import multi_replicate_isoform_bootstrap
+    from braid.target.stringtie_bootstrap import STBootstrapConfig, run_stringtie_bootstrap
 
     ST_GTF = "real_benchmark/results/stringtie_GM12878_rf.gtf"
     REF = "real_benchmark/reference/grch38/genome.fa"

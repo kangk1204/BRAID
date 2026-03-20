@@ -14,28 +14,28 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from rapidsplice.denovo.assemble import (
+from braid.denovo.assemble import (
     AssemblyConfig,
     DeNovoTranscript,
     _compute_path_coverage,
     extract_transcripts,
     write_fasta,
 )
-from rapidsplice.denovo.fastq import (
+from braid.denovo.fastq import (
     FastqRead,
     _avg_quality,
     _trim_3prime,
     read_fastq,
     stream_fastq_sequences,
 )
-from rapidsplice.denovo.graph import (
+from braid.denovo.graph import (
     DBGEdge,
     DBGNode,
     DeBruijnGraph,
     build_debruijn_graph,
     compact_graph,
 )
-from rapidsplice.denovo.kmer import (
+from braid.denovo.kmer import (
     KmerCountTable,
     canonicalize_kmers,
     count_kmers,
@@ -46,12 +46,12 @@ from rapidsplice.denovo.kmer import (
     reverse_complement_kmer,
     reverse_complement_kmers,
 )
-from rapidsplice.denovo.pipeline import (
+from braid.denovo.pipeline import (
     DeNovoConfig,
     _compute_n50,
     run_denovo_assembly,
 )
-from rapidsplice.denovo.simplify import (
+from braid.denovo.simplify import (
     SimplifyConfig,
     _remove_isolated_nodes,
     _remove_low_coverage_edges,
@@ -769,7 +769,7 @@ class TestCLI:
 
     def test_denovo_parser(self) -> None:
         """Denovo subcommand should parse correctly."""
-        from rapidsplice.cli import create_parser
+        from braid.cli import create_parser
 
         parser = create_parser()
         args = parser.parse_args([
@@ -782,7 +782,7 @@ class TestCLI:
 
     def test_denovo_multiple_fastq(self) -> None:
         """Multiple FASTQ files should be parsed."""
-        from rapidsplice.cli import create_parser
+        from braid.cli import create_parser
 
         parser = create_parser()
         args = parser.parse_args([
@@ -792,7 +792,7 @@ class TestCLI:
 
     def test_denovo_defaults(self) -> None:
         """Default values should be set correctly."""
-        from rapidsplice.cli import create_parser
+        from braid.cli import create_parser
 
         parser = create_parser()
         args = parser.parse_args(["denovo", "reads.fq"])

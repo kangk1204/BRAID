@@ -105,16 +105,16 @@ def main() -> None:
 
     # Parse all stats
     comparisons = {
-        "RapidSplice v10c": val_dir / "rapidsplice_v10c_vs_lr.stats",
-        "RapidSplice v8c": val_dir / "rapidsplice_v8c_vs_lr.stats",
+        "RapidSplice v10c": val_dir / "braid_v10c_vs_lr.stats",
+        "RapidSplice v8c": val_dir / "braid_v8c_vs_lr.stats",
         "StringTie": val_dir / "stringtie_vs_lr.stats",
     }
     lr_quality = parse_gffcompare_stats(str(val_dir / "longread_vs_gencode.stats"))
 
     # Also parse vs GENCODE stats for comparison
     gencode_comparisons = {
-        "RapidSplice v10c": Path("real_benchmark/results/gffcompare/rapidsplice_v10c.stats"),
-        "RapidSplice v8c": Path("real_benchmark/results/gffcompare/rapidsplice_v8c.stats"),
+        "RapidSplice v10c": Path("real_benchmark/results/gffcompare/braid_v10c.stats"),
+        "RapidSplice v8c": Path("real_benchmark/results/gffcompare/braid_v8c.stats"),
         "StringTie": Path("real_benchmark/results/gffcompare/stringtie.stats"),
     }
 

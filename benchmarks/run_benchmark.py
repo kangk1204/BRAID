@@ -424,11 +424,11 @@ class SyntheticDataGenerator:
         header = pysam.AlignmentHeader.from_dict({
             "HD": {"VN": "1.6", "SO": "unsorted"},
             "SQ": [{"SN": self._chrom_name, "LN": self._chrom_length}],
-            "PG": [{"ID": "rapidsplice_bench", "PN": "SyntheticDataGenerator"}],
+            "PG": [{"ID": "braid_bench", "PN": "SyntheticDataGenerator"}],
         })
 
         # Write unsorted SAM to a temporary file, then sort + index
-        tmp_dir = tempfile.mkdtemp(prefix="rapidsplice_bench_")
+        tmp_dir = tempfile.mkdtemp(prefix="braid_bench_")
         unsorted_bam = os.path.join(tmp_dir, "unsorted.bam")
 
         try:
@@ -690,7 +690,7 @@ class BenchmarkRunner:
         self._out_dir: Path = Path(config.output_dir)
         self._out_dir.mkdir(parents=True, exist_ok=True)
 
-    def run_rapidsplice(
+    def run_braid(
         self, bam_path: str, reference_path: str
     ) -> tuple[str, float, float]:
         """Run RapidSplice on the input BAM and measure performance.
@@ -703,10 +703,10 @@ class BenchmarkRunner:
             A tuple ``(gtf_path, elapsed_seconds, peak_memory_mb)`` with the
             output GTF path, wall-clock time, and peak resident memory.
         """
-        gtf_path = str(self._out_dir / "rapidsplice_output.gtf")
+        gtf_path = str(self._out_dir / "braid_output.gtf")
 
         cmd = [
-            sys.executable, "-m", "rapidsplice.cli",
+            sys.executable, "-m", "braid.cli",
             bam_path,
             "-o", gtf_path,
             "-r", reference_path,
@@ -916,7 +916,7 @@ class BenchmarkRunner:
         }
 
         # Run RapidSplice
-        rs_gtf, rs_time, rs_mem = self.run_rapidsplice(bam_path, ref_path)
+        rs_gtf, rs_time, rs_mem = self.run_braid(bam_path, ref_path)
         rs_metrics = self.evaluate_gtf(rs_gtf, truth_gtf)
         results["tools"]["RapidSplice"] = {
             "gtf_path": rs_gtf,

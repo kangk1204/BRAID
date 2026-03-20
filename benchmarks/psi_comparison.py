@@ -87,7 +87,7 @@ def load_prism_psi(
     n_replicates: int = 500,
 ) -> dict:
     """Compute PRISM PSI for target gene regions."""
-    from rapidsplice.target.psi_bootstrap import (
+    from braid.target.psi_bootstrap import (
         compute_psi_from_junctions,
     )
 
@@ -151,7 +151,7 @@ def compare_methods(
 
 def main() -> None:
     """Run comparison."""
-    from rapidsplice.target.extractor import lookup_gene
+    from braid.target.extractor import lookup_gene
 
     GTF = "real_benchmark/annotation/gencode.v38.nochr.gtf"
     BAM = "real_benchmark/bam/SRR387661.bam"

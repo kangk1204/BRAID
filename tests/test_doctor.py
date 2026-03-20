@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from rapidsplice import doctor
+from braid import doctor
 
 
 def test_build_install_report_core_ready(monkeypatch) -> None:

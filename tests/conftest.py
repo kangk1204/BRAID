@@ -11,13 +11,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from rapidsplice.graph.splice_graph import (
+from braid.graph.splice_graph import (
     CSRGraph,
     EdgeType,
     NodeType,
     SpliceGraph,
 )
-from rapidsplice.io.bam_reader import JunctionEvidence, ReadData
+from braid.io.bam_reader import JunctionEvidence, ReadData
 
 # ---------------------------------------------------------------------------
 # Fixture 1: simple_read_data
@@ -234,7 +234,7 @@ def as_transcripts() -> list:
       tx4: [1000,1500)                          (retained intron → RI)
       tx5: [1000,1200) -- [1300,1500)            (spliced form)
     """
-    from rapidsplice.io.gtf_writer import TranscriptRecord
+    from braid.io.gtf_writer import TranscriptRecord
 
     return [
         TranscriptRecord(

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from benchmarks import qki_rmats_benchmark
-from rapidsplice.target.rmats_bootstrap import RmatsEvent
+from braid.target.rmats_bootstrap import RmatsEvent
 
 
 def _write_rmats_se(

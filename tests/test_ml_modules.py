@@ -20,7 +20,7 @@ class TestJunctionScorer:
     """Tests for the CNN-based junction quality scorer."""
 
     def test_extract_junction_features_basic(self) -> None:
-        from rapidsplice.scoring.junction_scorer import (
+        from braid.scoring.junction_scorer import (
             N_JUNCTION_FEATURES,
             extract_junction_features,
         )
@@ -40,7 +40,7 @@ class TestJunctionScorer:
         assert features[2, 0] == 20
 
     def test_extract_junction_features_empty(self) -> None:
-        from rapidsplice.scoring.junction_scorer import (
+        from braid.scoring.junction_scorer import (
             N_JUNCTION_FEATURES,
             extract_junction_features,
         )
@@ -55,7 +55,7 @@ class TestJunctionScorer:
         assert features.shape == (0, N_JUNCTION_FEATURES)
 
     def test_heuristic_junction_score(self) -> None:
-        from rapidsplice.scoring.junction_scorer import (
+        from braid.scoring.junction_scorer import (
             extract_junction_features,
             heuristic_junction_score,
         )
@@ -77,7 +77,7 @@ class TestJunctionScorer:
         assert scores[0] > scores[1]
 
     def test_junction_scorer_wrapper(self) -> None:
-        from rapidsplice.scoring.junction_scorer import (
+        from braid.scoring.junction_scorer import (
             JunctionScorer,
             extract_junction_features,
         )
@@ -97,7 +97,7 @@ class TestJunctionScorer:
         assert scores.shape == (1,)
 
     def test_junction_scorer_train(self) -> None:
-        from rapidsplice.scoring.junction_scorer import JunctionScorer
+        from braid.scoring.junction_scorer import JunctionScorer
 
         scorer = JunctionScorer()
         features = np.random.randn(20, 10).astype(np.float32)
@@ -117,7 +117,7 @@ class TestGNNModel:
     """Tests for the GATv2-based transcript scorer."""
 
     def test_graph_data_creation(self) -> None:
-        from rapidsplice.scoring.gnn_model import GraphData
+        from braid.scoring.gnn_model import GraphData
 
         gd = GraphData(
             node_features=np.zeros((5, 8), dtype=np.float32),
@@ -129,7 +129,7 @@ class TestGNNModel:
         assert gd.edge_index.shape == (2, 3)
 
     def test_gnn_scorer_fallback(self) -> None:
-        from rapidsplice.scoring.gnn_model import GNNScorer, GraphData
+        from braid.scoring.gnn_model import GNNScorer, GraphData
 
         scorer = GNNScorer()
         assert not scorer.is_trained
@@ -145,7 +145,7 @@ class TestGNNModel:
         assert 0.0 <= score <= 1.0
 
     def test_gnn_scorer_empty_mask(self) -> None:
-        from rapidsplice.scoring.gnn_model import GNNScorer, GraphData
+        from braid.scoring.gnn_model import GNNScorer, GraphData
 
         scorer = GNNScorer()
         gd = GraphData(
@@ -168,7 +168,7 @@ class TestNeuralDecompose:
     """Tests for neural-guided flow decomposition."""
 
     def test_extract_path_features(self) -> None:
-        from rapidsplice.flow.neural_decompose import (
+        from braid.flow.neural_decompose import (
             PATH_FEATURE_DIM,
             extract_path_features,
         )
@@ -188,7 +188,7 @@ class TestNeuralDecompose:
         assert feats[0] == 2  # 2 exon nodes (type 1)
 
     def test_heuristic_path_plausibility(self) -> None:
-        from rapidsplice.flow.neural_decompose import (
+        from braid.flow.neural_decompose import (
             PATH_FEATURE_DIM,
             heuristic_path_plausibility,
         )
@@ -199,7 +199,7 @@ class TestNeuralDecompose:
         assert all(0.0 <= s <= 1.0 for s in scores)
 
     def test_fit_path_weights_neural(self) -> None:
-        from rapidsplice.flow.neural_decompose import fit_path_weights_neural
+        from braid.flow.neural_decompose import fit_path_weights_neural
 
         # 3 edges, 2 paths
         A = np.array([[1, 0], [1, 1], [0, 1]], dtype=np.float64)
@@ -211,7 +211,7 @@ class TestNeuralDecompose:
         assert all(w >= 0 for w in weights)
 
     def test_neural_decomposer_wrapper(self) -> None:
-        from rapidsplice.flow.neural_decompose import NeuralDecomposer
+        from braid.flow.neural_decompose import NeuralDecomposer
 
         decomposer = NeuralDecomposer()
         assert not decomposer.is_trained
@@ -224,7 +224,7 @@ class TestNeuralDecompose:
         assert weights.shape == (2,)
 
     def test_neural_decomposer_train(self) -> None:
-        from rapidsplice.flow.neural_decompose import NeuralDecomposer
+        from braid.flow.neural_decompose import NeuralDecomposer
 
         decomposer = NeuralDecomposer()
         features = np.random.rand(30, 12).astype(np.float32)
@@ -246,8 +246,8 @@ class TestAutoFilter:
     @pytest.fixture()
     def mock_transcripts(self) -> tuple:
         """Create minimal mock transcripts for filter testing."""
-        from rapidsplice.flow.decompose import Transcript
-        from rapidsplice.scoring.features import TranscriptFeatures
+        from braid.flow.decompose import Transcript
+        from braid.scoring.features import TranscriptFeatures
 
         transcripts = [
             Transcript(
@@ -287,8 +287,8 @@ class TestAutoFilter:
         return transcripts, scores, features_list
 
     def test_evaluate_filter_config_unsupervised(self, mock_transcripts: tuple) -> None:
-        from rapidsplice.scoring.auto_filter import evaluate_filter_config
-        from rapidsplice.scoring.filter import FilterConfig
+        from braid.scoring.auto_filter import evaluate_filter_config
+        from braid.scoring.filter import FilterConfig
 
         transcripts, scores, features_list = mock_transcripts
         cfg = FilterConfig(min_score=0.2, min_coverage=1.0)
@@ -299,8 +299,8 @@ class TestAutoFilter:
         assert 0.0 <= score <= 1.0
 
     def test_evaluate_filter_config_supervised(self, mock_transcripts: tuple) -> None:
-        from rapidsplice.scoring.auto_filter import evaluate_filter_config
-        from rapidsplice.scoring.filter import FilterConfig
+        from braid.scoring.auto_filter import evaluate_filter_config
+        from braid.scoring.filter import FilterConfig
 
         transcripts, scores, features_list = mock_transcripts
 
@@ -317,7 +317,7 @@ class TestAutoFilter:
         assert 0.0 <= score <= 1.0
 
     def test_grid_search(self, mock_transcripts: tuple) -> None:
-        from rapidsplice.scoring.auto_filter import optimize_filter_grid
+        from braid.scoring.auto_filter import optimize_filter_grid
 
         transcripts, scores, features_list = mock_transcripts
 
@@ -329,7 +329,7 @@ class TestAutoFilter:
         assert result.best_config is not None
 
     def test_optuna_optimization(self, mock_transcripts: tuple) -> None:
-        from rapidsplice.scoring.auto_filter import (
+        from braid.scoring.auto_filter import (
             optimize_filter_optuna,
         )
 
@@ -344,7 +344,7 @@ class TestAutoFilter:
         assert len(result.history) > 0
 
     def test_auto_filter_optimizer_wrapper(self, mock_transcripts: tuple) -> None:
-        from rapidsplice.scoring.auto_filter import AutoFilterOptimizer
+        from braid.scoring.auto_filter import AutoFilterOptimizer
 
         transcripts, scores, features_list = mock_transcripts
 
@@ -366,7 +366,7 @@ class TestTransformerClassifier:
     """Tests for the Transformer-based AS event classifier."""
 
     def test_transformer_event_classifier_heuristic_fallback(self) -> None:
-        from rapidsplice.splicing.classifier import (
+        from braid.splicing.classifier import (
             EventFeatures,
             TransformerEventClassifier,
         )
@@ -386,7 +386,7 @@ class TestTransformerClassifier:
         assert 0.0 <= score <= 1.0
 
     def test_transformer_train_and_score(self) -> None:
-        from rapidsplice.splicing.classifier import TransformerEventClassifier
+        from braid.splicing.classifier import TransformerEventClassifier
 
         clf = TransformerEventClassifier(gbm_fallback=False)
 
@@ -398,11 +398,11 @@ class TestTransformerClassifier:
         assert not math.isnan(loss)
 
     def test_transformer_score_batch(self) -> None:
-        from rapidsplice.splicing.classifier import (
+        from braid.splicing.classifier import (
             TransformerEventClassifier,
         )
-        from rapidsplice.splicing.events import ASEvent, EventType
-        from rapidsplice.splicing.psi import PSIResult
+        from braid.splicing.events import ASEvent, EventType
+        from braid.splicing.psi import PSIResult
 
         clf = TransformerEventClassifier(gbm_fallback=False)
 
@@ -451,7 +451,7 @@ class TestNeuralPSI:
     """Tests for neural PSI estimation."""
 
     def test_extract_psi_features(self) -> None:
-        from rapidsplice.splicing.neural_psi import (
+        from braid.splicing.neural_psi import (
             PSI_FEATURE_DIM,
             extract_psi_features,
         )
@@ -467,7 +467,7 @@ class TestNeuralPSI:
         assert feats[0] == pytest.approx(math.log1p(50), abs=1e-5)
 
     def test_beta_binomial_fallback(self) -> None:
-        from rapidsplice.splicing.neural_psi import beta_binomial_fallback
+        from braid.splicing.neural_psi import beta_binomial_fallback
 
         result = beta_binomial_fallback(50, 10)
         assert 0.0 <= result.psi_mean <= 1.0
@@ -476,13 +476,13 @@ class TestNeuralPSI:
         assert result.ci_high <= 1.0
 
     def test_beta_binomial_fallback_equal_counts(self) -> None:
-        from rapidsplice.splicing.neural_psi import beta_binomial_fallback
+        from braid.splicing.neural_psi import beta_binomial_fallback
 
         result = beta_binomial_fallback(20, 20)
         assert abs(result.psi_mean - 0.5) < 0.05
 
     def test_neural_psi_estimator_fallback(self) -> None:
-        from rapidsplice.splicing.neural_psi import NeuralPSIEstimator
+        from braid.splicing.neural_psi import NeuralPSIEstimator
 
         estimator = NeuralPSIEstimator()
         assert not estimator.is_trained
@@ -492,7 +492,7 @@ class TestNeuralPSI:
         assert result.ci_low < result.ci_high
 
     def test_neural_psi_train(self) -> None:
-        from rapidsplice.splicing.neural_psi import NeuralPSIEstimator
+        from braid.splicing.neural_psi import NeuralPSIEstimator
 
         estimator = NeuralPSIEstimator()
         features = np.random.rand(30, 8).astype(np.float32)
@@ -503,7 +503,7 @@ class TestNeuralPSI:
         assert not math.isnan(loss)
 
     def test_neural_psi_trained_estimate(self) -> None:
-        from rapidsplice.splicing.neural_psi import NeuralPSIEstimator
+        from braid.splicing.neural_psi import NeuralPSIEstimator
 
         estimator = NeuralPSIEstimator()
         features = np.random.rand(30, 8).astype(np.float32)
@@ -525,7 +525,7 @@ class TestBoundaryDetector:
     """Tests for the 1D-CNN exon boundary detector."""
 
     def test_extract_boundary_features(self) -> None:
-        from rapidsplice.graph.boundary_detector import (
+        from braid.graph.boundary_detector import (
             N_CHANNELS,
             WINDOW_SIZE,
             extract_boundary_features,
@@ -540,7 +540,7 @@ class TestBoundaryDetector:
         assert features.shape == (N_CHANNELS, WINDOW_SIZE)
 
     def test_extract_boundary_features_edge(self) -> None:
-        from rapidsplice.graph.boundary_detector import (
+        from braid.graph.boundary_detector import (
             N_CHANNELS,
             extract_boundary_features,
         )
@@ -550,7 +550,7 @@ class TestBoundaryDetector:
         assert features.shape == (N_CHANNELS, 200)
 
     def test_heuristic_boundary_score(self) -> None:
-        from rapidsplice.graph.boundary_detector import heuristic_boundary_score
+        from braid.graph.boundary_detector import heuristic_boundary_score
 
         # Create coverage with a sharp drop
         coverage = np.concatenate([
@@ -566,7 +566,7 @@ class TestBoundaryDetector:
         assert score_at_boundary > score_away
 
     def test_boundary_detector_fallback(self) -> None:
-        from rapidsplice.graph.boundary_detector import BoundaryDetector
+        from braid.graph.boundary_detector import BoundaryDetector
 
         detector = BoundaryDetector()
         assert not detector.is_trained
@@ -582,14 +582,14 @@ class TestBoundaryDetector:
         assert all(p.boundary_type in ("start", "end") for p in preds)
 
     def test_boundary_detector_empty(self) -> None:
-        from rapidsplice.graph.boundary_detector import BoundaryDetector
+        from braid.graph.boundary_detector import BoundaryDetector
 
         detector = BoundaryDetector()
         preds = detector.predict(np.zeros(100), [])
         assert len(preds) == 0
 
     def test_refine_boundaries(self) -> None:
-        from rapidsplice.graph.boundary_detector import BoundaryDetector
+        from braid.graph.boundary_detector import BoundaryDetector
 
         detector = BoundaryDetector()
 
@@ -606,7 +606,7 @@ class TestBoundaryDetector:
         assert refined_end > refined_start
 
     def test_boundary_detector_train(self) -> None:
-        from rapidsplice.graph.boundary_detector import BoundaryDetector
+        from braid.graph.boundary_detector import BoundaryDetector
 
         detector = BoundaryDetector()
         windows = np.random.rand(20, 3, 200).astype(np.float32)
@@ -617,7 +617,7 @@ class TestBoundaryDetector:
         assert not math.isnan(loss)
 
     def test_boundary_detector_trained_predict(self) -> None:
-        from rapidsplice.graph.boundary_detector import BoundaryDetector
+        from braid.graph.boundary_detector import BoundaryDetector
 
         detector = BoundaryDetector()
         windows = np.random.rand(20, 3, 200).astype(np.float32)

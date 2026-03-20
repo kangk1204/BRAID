@@ -8,16 +8,16 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from rapidsplice.splicing.classifier import (
+from braid.splicing.classifier import (
     EventClassifier,
     EventFeatures,
     extract_event_features,
     features_to_array,
     heuristic_score,
 )
-from rapidsplice.splicing.events import ASEvent, EventType
-from rapidsplice.splicing.io import read_events_tsv, write_events_tsv, write_ioe
-from rapidsplice.splicing.psi import PSIResult
+from braid.splicing.events import ASEvent, EventType
+from braid.splicing.io import read_events_tsv, write_events_tsv, write_ioe
+from braid.splicing.psi import PSIResult
 
 # ---------------------------------------------------------------------------
 # Classifier tests

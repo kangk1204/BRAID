@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import json
 
-from rapidsplice.diagnostics import (
+from braid.diagnostics import (
     ChromosomeDiagnostics,
     DiagnosticsCollector,
     LocusDiagnostics,
 )
-from rapidsplice.utils.stats import AssemblyStats
+from braid.utils.stats import AssemblyStats
 
 
 def test_diagnostics_collector_writes_summary_and_jsonl(tmp_path) -> None:

@@ -159,15 +159,15 @@ def align_with_hisat2(ds: DatasetConfig, threads: int = 8) -> bool:
     return True
 
 
-def run_rapidsplice(ds: DatasetConfig, threads: int = 8) -> str | None:
+def run_braid(ds: DatasetConfig, threads: int = 8) -> str | None:
     """Run RapidSplice on a dataset."""
-    output_gtf = RESULTS_DIR / f"rapidsplice_{ds.name}.gtf"
+    output_gtf = RESULTS_DIR / f"braid_{ds.name}.gtf"
     if output_gtf.exists():
         print(f"  RapidSplice output exists: {output_gtf}")
         return str(output_gtf)
 
     cmd = [
-        sys.executable, "-m", "rapidsplice", "assemble",
+        sys.executable, "-m", "braid", "assemble",
         "--bam", ds.bam_path,
         "--reference", str(GENOME_FA),
         "-o", str(output_gtf),
@@ -397,7 +397,7 @@ def process_dataset(ds: DatasetConfig, threads: int = 8) -> list[dict] | None:
 
     # Step 2: Run assemblers
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    rs_gtf = run_rapidsplice(ds, threads)
+    rs_gtf = run_braid(ds, threads)
     st_gtf = run_stringtie(ds, threads)
 
     # Step 3: Evaluate with GFFcompare

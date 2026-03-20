@@ -57,10 +57,9 @@ ml = [
 
 [project.scripts]
 braid = "braid.cli:main"
-rapidsplice = "rapidsplice.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["rapidsplice*", "braid*"]
+include = ["braid*"]
 
 [tool.ruff]
 line-length = 100

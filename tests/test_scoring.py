@@ -9,20 +9,20 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from rapidsplice.flow.decompose import Transcript
-from rapidsplice.graph.splice_graph import EdgeType, NodeType, SpliceGraph
-from rapidsplice.io.bam_reader import JunctionEvidence
-from rapidsplice.scoring.features import (
+from braid.flow.decompose import Transcript
+from braid.graph.splice_graph import EdgeType, NodeType, SpliceGraph
+from braid.io.bam_reader import JunctionEvidence
+from braid.scoring.features import (
     TranscriptFeatures,
     extract_features,
     feature_names,
     features_to_array,
 )
-from rapidsplice.scoring.filter import (
+from braid.scoring.filter import (
     FilterConfig,
     TranscriptFilter,
 )
-from rapidsplice.scoring.model import TranscriptScorer
+from braid.scoring.model import TranscriptScorer
 
 # ===================================================================
 # Helper: build a mini locus for feature extraction

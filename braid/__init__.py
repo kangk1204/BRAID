@@ -1,10 +1,8 @@
-"""Public BRAID wrapper package.
+"""BRAID: Bootstrap Reliability Assessment for Isoform Detection.
 
-The implementation still lives under the legacy ``rapidsplice`` module path for
-backward compatibility. New code should prefer the public ``braid`` package and
-CLI entry point.
+Calibrated confidence intervals for RNA-seq alternative splicing analysis.
 """
 
-from rapidsplice import __version__
+__version__ = "0.1.0"
 
 __all__ = ["__version__"]

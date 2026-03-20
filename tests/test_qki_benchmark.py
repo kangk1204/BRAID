@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from benchmarks import qki_benchmark
-from rapidsplice.target.psi_bootstrap import PSIResult
+from braid.target.psi_bootstrap import PSIResult
 
 
 def _make_se_result(

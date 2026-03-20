@@ -13,9 +13,9 @@ import pysam
 
 sys.path.insert(0, ".")
 
-from rapidsplice.target.assembler import TargetConfig, assemble_target
-from rapidsplice.target.comparator import classify_all_isoforms
-from rapidsplice.target.extractor import lookup_gene
+from braid.target.assembler import TargetConfig, assemble_target
+from braid.target.comparator import classify_all_isoforms
+from braid.target.extractor import lookup_gene
 
 CANCER_GENES = [
     "TP53", "BRCA1", "BRCA2", "EGFR", "KRAS", "BRAF", "PIK3CA", "PTEN",

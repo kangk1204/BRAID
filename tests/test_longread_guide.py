@@ -7,12 +7,12 @@ from pathlib import Path
 
 import numpy as np
 
-from rapidsplice.flow.longread_guide import (
+from braid.flow.longread_guide import (
     get_guide_paths_for_locus,
     map_longread_to_path,
 )
-from rapidsplice.graph.splice_graph import CSRGraph, NodeType
-from rapidsplice.io.gtf_reader import _parse_attribute, read_guide_gtf
+from braid.graph.splice_graph import CSRGraph, NodeType
+from braid.io.gtf_reader import _parse_attribute, read_guide_gtf
 
 
 def _make_linear_graph() -> CSRGraph:

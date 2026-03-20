@@ -75,7 +75,7 @@ def _build_benchmark_command(
         "benchmarks/run_real_benchmark.py",
         "--sample",
         sample,
-        "--rapidsplice-only",
+        "--braid-only",
         "--threads",
         str(threads),
         "--decomposer",
@@ -193,8 +193,8 @@ def _summarize_variant_result(
 ) -> dict[str, Any]:
     """Build one summary row from a completed variant run."""
     results = _load_results_json(run_dir, sample)
-    rapidsplice = results.get("tools", {}).get("RapidSplice", {})
-    metrics = rapidsplice.get("metrics", {})
+    braid = results.get("tools", {}).get("RapidSplice", {})
+    metrics = braid.get("metrics", {})
     peak_tree_rss_mb = max((row["rss_mb"] for row in cpu_rows), default=0.0)
     row = {
         "variant": variant.name,

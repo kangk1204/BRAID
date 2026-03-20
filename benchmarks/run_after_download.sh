@@ -57,10 +57,10 @@ echo "StringTie GM12878 done"
 
 # RapidSplice GM12878 (with bootstrap)
 echo "=== RapidSplice GM12878 ==="
-python -m rapidsplice assemble \
+python -m braid assemble \
     --bam "$GM_BAM" \
     --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
-    -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/rapidsplice_GM12878.gtf \
+    -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/braid_GM12878.gtf \
     -t 8 --bootstrap
 echo "RapidSplice GM12878 done"
 
@@ -69,7 +69,7 @@ GENCODE_CHR="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/annotati
 RESULTS="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results"
 
 echo "=== GFFcompare GM12878 ==="
-gffcompare -r "$GENCODE_CHR" -o "$RESULTS/rs_GM12878" "$RESULTS/rapidsplice_GM12878.gtf"
+gffcompare -r "$GENCODE_CHR" -o "$RESULTS/rs_GM12878" "$RESULTS/braid_GM12878.gtf"
 gffcompare -r "$GENCODE_CHR" -o "$RESULTS/st_GM12878" "$RESULTS/stringtie_GM12878.gtf"
 
 echo ""
@@ -82,16 +82,16 @@ echo "StringTie IMR90 done"
 
 # RapidSplice IMR90 (with bootstrap)
 echo "=== RapidSplice IMR90 ==="
-python -m rapidsplice assemble \
+python -m braid assemble \
     --bam "$IMR_BAM" \
     --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
-    -o "$RESULTS/rapidsplice_IMR90.gtf" \
+    -o "$RESULTS/braid_IMR90.gtf" \
     -t 8 --bootstrap
 echo "RapidSplice IMR90 done"
 
 # GFFcompare IMR90
 echo "=== GFFcompare IMR90 ==="
-gffcompare -r "$GENCODE_CHR" -o "$RESULTS/rs_IMR90" "$RESULTS/rapidsplice_IMR90.gtf"
+gffcompare -r "$GENCODE_CHR" -o "$RESULTS/rs_IMR90" "$RESULTS/braid_IMR90.gtf"
 gffcompare -r "$GENCODE_CHR" -o "$RESULTS/st_IMR90" "$RESULTS/stringtie_IMR90.gtf"
 
 echo ""

@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import pytest
 
-from rapidsplice.flow.decompose import DecomposeConfig
-from rapidsplice.flow.decomposer import (
+from braid.flow.decompose import DecomposeConfig
+from braid.flow.decomposer import (
     IterativeV2Decomposer,
     LegacyPathNNLSDecomposer,
     resolve_decomposer,
     run_decomposer_pair,
 )
-from rapidsplice.graph.splice_graph import CSRGraph, SpliceGraph
+from braid.graph.splice_graph import CSRGraph, SpliceGraph
 
 
 def test_resolve_decomposer_modes() -> None:

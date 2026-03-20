@@ -839,9 +839,9 @@ def benchmark_pacbio_junction_validation(
     and PacBio junction counts, compare PSI values and check if
     BRAID CI contains the PacBio-estimated PSI.
     """
-    from rapidsplice.target import psi_bootstrap as braid_bootstrap
-    from rapidsplice.target.psi_bootstrap import compute_psi_from_junctions
-    from rapidsplice.target.extractor import lookup_gene
+    from braid.target import psi_bootstrap as braid_bootstrap
+    from braid.target.psi_bootstrap import compute_psi_from_junctions
+    from braid.target.extractor import lookup_gene
     import pysam
 
     original_scale = braid_bootstrap.OVERDISPERSED_COUNT_SCALE

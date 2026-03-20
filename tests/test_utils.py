@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from rapidsplice.utils.cigar import (
+from braid.utils.cigar import (
     CIGAR_D,
     CIGAR_I,
     CIGAR_M,
@@ -21,13 +21,13 @@ from rapidsplice.utils.cigar import (
     extract_exon_blocks,
     extract_junctions,
 )
-from rapidsplice.utils.interval import (
+from braid.utils.interval import (
     compute_coverage,
     find_overlapping,
     intersect_sorted_intervals,
     merge_intervals,
 )
-from rapidsplice.utils.stats import AssemblyStats, Timer
+from braid.utils.stats import AssemblyStats, Timer
 
 # ===================================================================
 # CIGAR utility tests

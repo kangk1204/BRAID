@@ -21,7 +21,7 @@ import numpy as np
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from rapidsplice.denovo.pipeline import DeNovoConfig, run_denovo_assembly
+from braid.denovo.pipeline import DeNovoConfig, run_denovo_assembly
 
 logging.basicConfig(
     level=logging.INFO,
@@ -418,7 +418,7 @@ def compute_assembly_stats(fasta_path: str) -> tuple[int, int, float, int]:
 # ===========================================================================
 
 
-def run_rapidsplice_denovo(
+def run_braid_denovo(
     fastq_path: str,
     output_dir: str,
     k: int = 25,
@@ -433,7 +433,7 @@ def run_rapidsplice_denovo(
     Returns:
         AssemblyResult with metrics.
     """
-    out_fa = os.path.join(output_dir, "rapidsplice_denovo.fa")
+    out_fa = os.path.join(output_dir, "braid_denovo.fa")
 
     t0 = time.perf_counter()
     config = DeNovoConfig(
@@ -781,7 +781,7 @@ def run_benchmark(
     # RapidSplice de novo with different k sizes
     for k in k_sizes:
         logger.info("Running RapidSplice de novo (k=%d)...", k)
-        result, out_fa = run_rapidsplice_denovo(fastq_path, output_dir, k=k)
+        result, out_fa = run_braid_denovo(fastq_path, output_dir, k=k)
         if len(k_sizes) > 1:
             result.name = f"RapidSplice-k{k}"
 

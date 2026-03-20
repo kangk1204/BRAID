@@ -6,11 +6,8 @@
 
 **Calibrated confidence intervals for RNA-seq splicing analysis.**
 
-This repository contains two layers:
 
-- `BRAID`: the public tool name, paper, benchmarks, and confidence workflow.
-- `rapidsplice`: the legacy internal Python module path kept for backward
-  compatibility.
+
 
 BRAID runs on macOS and Ubuntu. BRAID benchmarking works best in a conda
 environment because it depends on external bioinformatics tools such as
@@ -30,7 +27,6 @@ environment because it depends on external bioinformatics tools such as
 
 ## Project Layout
 
-- `rapidsplice/`: legacy internal module path used by the `braid` CLI
 - `benchmarks/`: benchmark scripts and result summaries
 - `paper/`: manuscript source
 - `tests/`: regression tests
@@ -154,8 +150,6 @@ If `rmats.py` still does not appear on `PATH`, open a new shell and activate the
 conda environment again. BRAID itself does not need `stringtie` or `rmats` for
 basic assembly; they are only required for benchmark and paper reproduction.
 
-The public CLI is `braid`. The legacy alias `rapidsplice` still works if you
-already have old scripts.
 
 ### Optional: Development Install
 

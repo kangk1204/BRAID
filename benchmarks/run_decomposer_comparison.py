@@ -36,7 +36,7 @@ import numpy as np
 import psutil
 
 from benchmarks.run_benchmark import BenchmarkConfig, BenchmarkRunner, _parse_gtf_transcripts
-from rapidsplice.io.reference import ReferenceGenome
+from braid.io.reference import ReferenceGenome
 
 logger = logging.getLogger(__name__)
 
@@ -237,7 +237,7 @@ def _build_assemble_command(
     cmd = [
         sys.executable,
         "-m",
-        "rapidsplice.cli",
+        "braid.cli",
         "assemble",
         str(bam_path),
         "-o",

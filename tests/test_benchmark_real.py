@@ -10,50 +10,50 @@ from benchmarks.run_real_benchmark import (
     REFERENCE_FASTA,
     RealBenchmarkConfig,
     _annotation_for_contig_style,
-    _build_rapidsplice_command,
+    _build_braid_command,
     _detect_contig_style_from_idxstats_output,
     _filter_annotation_gtf,
 )
 
 
-def test_build_rapidsplice_command_passes_reference_when_motif_validation_enabled() -> None:
+def test_build_braid_command_passes_reference_when_motif_validation_enabled() -> None:
     """Motif-on real benchmark runs must pass the real reference FASTA."""
-    cmd = _build_rapidsplice_command(
+    cmd = _build_braid_command(
         "sample.bam",
         "out.gtf",
         RealBenchmarkConfig(
             threads=2,
-            rapidsplice_decomposer="iterative_v2",
-            rapidsplice_builder_profile="conservative_correctness",
-            rapidsplice_max_paths=1024,
-            rapidsplice_enable_motif_validation=True,
+            braid_decomposer="iterative_v2",
+            braid_builder_profile="conservative_correctness",
+            braid_max_paths=1024,
+            braid_enable_motif_validation=True,
         ),
     )
 
-    assert cmd[:4] == [sys.executable, "-m", "rapidsplice.cli", "assemble"]
+    assert cmd[:4] == [sys.executable, "-m", "braid.cli", "assemble"]
     assert "-r" in cmd
     assert cmd[cmd.index("-r") + 1] == str(REFERENCE_FASTA)
     assert "--no-motif-validation" not in cmd
 
 
-def test_build_rapidsplice_command_disables_motif_validation_explicitly() -> None:
+def test_build_braid_command_disables_motif_validation_explicitly() -> None:
     """Motif-off runs should not pass a reference FASTA and must add the flag."""
-    cmd = _build_rapidsplice_command(
+    cmd = _build_braid_command(
         "sample.bam",
         "out.gtf",
-        RealBenchmarkConfig(rapidsplice_enable_motif_validation=False),
+        RealBenchmarkConfig(braid_enable_motif_validation=False),
     )
 
     assert "--no-motif-validation" in cmd
     assert "-r" not in cmd
 
 
-def test_build_rapidsplice_command_forwards_chromosomes_and_diagnostics() -> None:
+def test_build_braid_command_forwards_chromosomes_and_diagnostics() -> None:
     """Proxy runs should forward chromosome filters and diagnostics output."""
-    cmd = _build_rapidsplice_command(
+    cmd = _build_braid_command(
         "sample.bam",
         "out.gtf",
-        RealBenchmarkConfig(rapidsplice_diagnostics_dir="diag"),
+        RealBenchmarkConfig(braid_diagnostics_dir="diag"),
         chromosomes=["21", "22"],
     )
 

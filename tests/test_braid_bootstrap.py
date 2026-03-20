@@ -7,8 +7,8 @@ import types
 
 import pytest
 
-from rapidsplice.target import psi_bootstrap as braid
-from rapidsplice.target.rmats_bootstrap import parse_rmats_output
+from braid.target import psi_bootstrap as braid
+from braid.target.rmats_bootstrap import parse_rmats_output
 
 
 class FakeRead:

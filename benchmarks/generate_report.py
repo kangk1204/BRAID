@@ -386,7 +386,7 @@ def generate_report(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Create temporary directory for chart images
-    tmp_dir = tempfile.mkdtemp(prefix="rapidsplice_report_")
+    tmp_dir = tempfile.mkdtemp(prefix="braid_report_")
 
     try:
         # Generate all chart images

@@ -11,10 +11,10 @@ from statistics import median
 
 sys.path.insert(0, ".")
 
-from rapidsplice.target.multi_replicate_bootstrap import (
+from braid.target.multi_replicate_bootstrap import (
     combine_isoform_bootstrap_results,
 )
-from rapidsplice.target.stringtie_bootstrap import (
+from braid.target.stringtie_bootstrap import (
     STBootstrapConfig,
     run_stringtie_bootstrap,
 )

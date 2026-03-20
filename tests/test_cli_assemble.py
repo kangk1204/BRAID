@@ -6,7 +6,7 @@ from argparse import Namespace
 
 import pytest
 
-from rapidsplice.cli import _run_assemble
+from braid.cli import _run_assemble
 
 
 def _assemble_args(**overrides: object) -> Namespace:
@@ -71,7 +71,7 @@ def test_run_assemble_forwards_builder_controls(monkeypatch: pytest.MonkeyPatch)
         def run(self) -> str:
             return "dummy.gtf"
 
-    monkeypatch.setattr("rapidsplice.cli.AssemblyPipeline", DummyPipeline)
+    monkeypatch.setattr("braid.cli.AssemblyPipeline", DummyPipeline)
 
     _run_assemble(_assemble_args(
         min_anchor_length=12,

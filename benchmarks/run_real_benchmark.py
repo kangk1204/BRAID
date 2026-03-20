@@ -45,15 +45,15 @@ class RealBenchmarkConfig:
     skip_download: bool = False
     skip_align: bool = False
     chr_filter: str | None = None
-    rapidsplice_only: bool = False
-    rapidsplice_decomposer: str = "legacy"
-    rapidsplice_builder_profile: str = "default"
-    rapidsplice_min_junction_support: int = 3
-    rapidsplice_min_coverage: float = 1.0
-    rapidsplice_min_score: float = 0.1
-    rapidsplice_max_paths: int = 500
-    rapidsplice_enable_motif_validation: bool = True
-    rapidsplice_diagnostics_dir: str | None = None
+    braid_only: bool = False
+    braid_decomposer: str = "legacy"
+    braid_builder_profile: str = "default"
+    braid_min_junction_support: int = 3
+    braid_min_coverage: float = 1.0
+    braid_min_score: float = 0.1
+    braid_max_paths: int = 500
+    braid_enable_motif_validation: bool = True
+    braid_diagnostics_dir: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ def run_command(
         raise RuntimeError(f"{description} timed out after {timeout}s")
 
 
-def _build_rapidsplice_command(
+def _build_braid_command(
     bam_path: str,
     output_gtf: str,
     config: RealBenchmarkConfig,
@@ -106,7 +106,7 @@ def _build_rapidsplice_command(
     cmd = [
         sys.executable,
         "-m",
-        "rapidsplice.cli",
+        "braid.cli",
         "assemble",
         bam_path,
         "-o",
@@ -114,26 +114,26 @@ def _build_rapidsplice_command(
         "-t",
         str(config.threads),
         "-c",
-        str(config.rapidsplice_min_coverage),
+        str(config.braid_min_coverage),
         "-s",
-        str(config.rapidsplice_min_score),
+        str(config.braid_min_score),
         "-j",
-        str(config.rapidsplice_min_junction_support),
+        str(config.braid_min_junction_support),
         "--decomposer",
-        config.rapidsplice_decomposer,
+        config.braid_decomposer,
         "--builder-profile",
-        config.rapidsplice_builder_profile,
+        config.braid_builder_profile,
         "--max-paths",
-        str(config.rapidsplice_max_paths),
+        str(config.braid_max_paths),
     ]
-    if config.rapidsplice_enable_motif_validation:
+    if config.braid_enable_motif_validation:
         cmd.extend(["-r", str(REFERENCE_FASTA)])
     else:
         cmd.append("--no-motif-validation")
     if chromosomes:
         cmd.extend(["--chromosomes", ",".join(chromosomes)])
-    if config.rapidsplice_diagnostics_dir:
-        cmd.extend(["--diagnostics-dir", config.rapidsplice_diagnostics_dir])
+    if config.braid_diagnostics_dir:
+        cmd.extend(["--diagnostics-dir", config.braid_diagnostics_dir])
     return cmd
 
 
@@ -370,7 +370,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
         "sample": sample,
         "tools": {},
     }
-    proxy_chromosomes = _parse_chr_filter(config.chr_filter) if config.rapidsplice_only else None
+    proxy_chromosomes = _parse_chr_filter(config.chr_filter) if config.braid_only else None
 
     # --- Step 1: Check inputs ---
     if not os.path.exists(str(ANNOTATION_GTF_CHR)):
@@ -384,11 +384,11 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
     if not os.path.exists(hisat2_check):
         logger.error("HISAT2 index not found: %s", hisat2_check)
         return results
-    if config.rapidsplice_enable_motif_validation and not os.path.exists(str(REFERENCE_FASTA)):
+    if config.braid_enable_motif_validation and not os.path.exists(str(REFERENCE_FASTA)):
         logger.error("Reference FASTA not found for motif validation: %s", REFERENCE_FASTA)
         return results
     reference_fai = Path(f"{REFERENCE_FASTA}.fai")
-    if config.rapidsplice_enable_motif_validation and not reference_fai.exists():
+    if config.braid_enable_motif_validation and not reference_fai.exists():
         logger.error("Reference FASTA index not found for motif validation: %s", reference_fai)
         return results
 
@@ -437,7 +437,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
         "Detected BAM contig style '%s'; using annotation %s",
         bam_contig_style, annotation_gtf,
     )
-    if config.rapidsplice_enable_motif_validation:
+    if config.braid_enable_motif_validation:
         reference_contig_style = _detect_contig_style_from_fai(reference_fai)
         if reference_contig_style != bam_contig_style:
             raise RuntimeError(
@@ -448,7 +448,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
             "Reference FASTA contig style '%s' matches BAM naming.",
             reference_contig_style,
         )
-    if config.chr_filter and not config.rapidsplice_only:
+    if config.chr_filter and not config.braid_only:
         logger.warning(
             "--chr filter is ignored in real benchmark to keep tool "
             "comparisons fair across assemblers."
@@ -481,10 +481,10 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
     logger.info("BAM has %d aligned reads", total_reads)
 
     # --- Step 3: Run RapidSplice ---
-    rs_gtf = str(out_dir / f"{sample}_rapidsplice.gtf")
+    rs_gtf = str(out_dir / f"{sample}_braid.gtf")
     if os.path.exists(rs_gtf):
         os.remove(rs_gtf)
-    rs_cmd = _build_rapidsplice_command(
+    rs_cmd = _build_braid_command(
         bam_path,
         rs_gtf,
         config,
@@ -497,21 +497,21 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
 
     if os.path.exists(rs_gtf):
         rs_n_tx = count_transcripts(rs_gtf)
-        rs_prefix = str(out_dir / f"{sample}_rapidsplice_gffcmp")
+        rs_prefix = str(out_dir / f"{sample}_braid_gffcmp")
         rs_metrics = run_gffcompare(rs_gtf, str(annotation_gtf), rs_prefix)
         results["tools"]["RapidSplice"] = {
             "gtf_path": rs_gtf,
             "runtime_seconds": rs_elapsed,
             "n_transcripts": rs_n_tx,
             "metrics": rs_metrics,
-            "diagnostics_dir": config.rapidsplice_diagnostics_dir,
+            "diagnostics_dir": config.braid_diagnostics_dir,
         }
         logger.info(
             "RapidSplice: %d transcripts in %.1fs", rs_n_tx, rs_elapsed,
         )
 
     # --- Step 4: Run StringTie ---
-    if not config.rapidsplice_only and shutil.which("stringtie"):
+    if not config.braid_only and shutil.which("stringtie"):
         st_gtf = str(out_dir / f"{sample}_stringtie.gtf")
         if os.path.exists(st_gtf):
             os.remove(st_gtf)
@@ -541,7 +541,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
 
     # --- Step 5: Run Scallop2 ---
     scallop_bin = shutil.which("scallop2") or shutil.which("scallop")
-    if not config.rapidsplice_only and scallop_bin:
+    if not config.braid_only and scallop_bin:
         sc_gtf = str(out_dir / f"{sample}_scallop.gtf")
         if os.path.exists(sc_gtf):
             os.remove(sc_gtf)
@@ -639,7 +639,7 @@ def main() -> None:
         help="Restrict to specific chromosomes (comma-separated)",
     )
     parser.add_argument(
-        "--rapidsplice-only", action="store_true",
+        "--braid-only", action="store_true",
         help="Run only RapidSplice on the real-data benchmark.",
     )
     parser.add_argument(
@@ -694,15 +694,15 @@ def main() -> None:
         skip_download=args.skip_download,
         skip_align=args.skip_align,
         chr_filter=args.chr_filter,
-        rapidsplice_only=args.rapidsplice_only,
-        rapidsplice_decomposer=args.decomposer,
-        rapidsplice_builder_profile=args.builder_profile,
-        rapidsplice_min_junction_support=args.min_junction_support,
-        rapidsplice_min_coverage=args.min_coverage,
-        rapidsplice_min_score=args.min_score,
-        rapidsplice_max_paths=args.max_paths,
-        rapidsplice_enable_motif_validation=not args.no_motif_validation,
-        rapidsplice_diagnostics_dir=args.diagnostics_dir,
+        braid_only=args.braid_only,
+        braid_decomposer=args.decomposer,
+        braid_builder_profile=args.builder_profile,
+        braid_min_junction_support=args.min_junction_support,
+        braid_min_coverage=args.min_coverage,
+        braid_min_score=args.min_score,
+        braid_max_paths=args.max_paths,
+        braid_enable_motif_validation=not args.no_motif_validation,
+        braid_diagnostics_dir=args.diagnostics_dir,
     )
 
     run_benchmark(config)

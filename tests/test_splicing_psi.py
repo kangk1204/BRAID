@@ -6,11 +6,11 @@ import math
 
 import numpy as np
 
-from rapidsplice.io.bam_reader import JunctionEvidence
-from rapidsplice.io.gtf_writer import TranscriptRecord
-from rapidsplice.splicing.events import ASEvent, EventType
-from rapidsplice.splicing.psi import PSIResult, calculate_all_psi, calculate_psi
-from rapidsplice.splicing.statistics import (
+from braid.io.bam_reader import JunctionEvidence
+from braid.io.gtf_writer import TranscriptRecord
+from braid.splicing.events import ASEvent, EventType
+from braid.splicing.psi import PSIResult, calculate_all_psi, calculate_psi
+from braid.splicing.statistics import (
     add_confidence_intervals,
     beta_binomial_ci,
     psi_significance_filter,

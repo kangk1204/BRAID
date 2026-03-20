@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from rapidsplice.target.comparator import (
+from braid.target.comparator import (
     _chains_match,
     _exons_to_intron_chain,
     classify_isoform,
 )
-from rapidsplice.target.extractor import (
+from braid.target.extractor import (
     TargetRegion,
     parse_region_string,
 )

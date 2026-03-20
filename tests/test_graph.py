@@ -9,24 +9,24 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from rapidsplice.graph.builder import (
+from braid.graph.builder import (
     GraphBuilderConfig,
     LocusDefinition,
     SpliceGraphBuilder,
 )
-from rapidsplice.pipeline import (
+from braid.pipeline import (
     PipelineConfig,
     _effective_builder_profile,
     _make_builder_config,
 )
-from rapidsplice.graph.splice_graph import (
+from braid.graph.splice_graph import (
     BatchedCSRGraphs,
     CSRGraph,
     EdgeType,
     NodeType,
     SpliceGraph,
 )
-from rapidsplice.io.bam_reader import JunctionEvidence, ReadData
+from braid.io.bam_reader import JunctionEvidence, ReadData
 
 # ===================================================================
 # SpliceGraph tests
@@ -633,7 +633,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_exon_skipping_produces_skip_edge(self) -> None:
         """Classic exon-skipping: E1-E2-E3 and E1-E3 paths."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         # Junctions: E1->E2 (500->1000), E2->E3 (1500->2000), E1->E3 skip (500->2000)
         j_starts = np.array([500, 1500, 500], dtype=np.int64)
@@ -652,7 +652,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_a3ss_produces_separate_segments(self) -> None:
         """A3SS: two acceptors at 1000 and 1050 must produce distinct segments."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         # Junctions: (500->1000) and (500->1050) and (1500->2000)
         j_starts = np.array([500, 500, 1500], dtype=np.int64)
@@ -666,7 +666,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_a5ss_produces_separate_segments(self) -> None:
         """A5SS: two donors at 450 and 500 must produce distinct segments."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         # Junctions: (450->1000) and (500->1000) and (1500->2000)
         j_starts = np.array([450, 500, 1500], dtype=np.int64)
@@ -680,7 +680,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_mxe_produces_correct_exons(self) -> None:
         """MXE: mutually exclusive exons produce all four exon nodes."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         # E1->E2a (500->1000), E2a->E3 (1500->2000),
         # E1->E2b (500->1600), E2b->E3 (1900->2000)
@@ -699,7 +699,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_no_junctions_returns_single_exon(self) -> None:
         """No junctions: entire locus is one exon."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         j_starts = np.array([], dtype=np.int64)
         j_ends = np.array([], dtype=np.int64)
@@ -708,7 +708,7 @@ class TestSegmentGraphExonBoundaries:
 
     def test_segment_graph_no_overlapping_exons(self) -> None:
         """Segment graph should never produce overlapping exon intervals."""
-        from rapidsplice.graph.builder import _determine_exon_boundaries
+        from braid.graph.builder import _determine_exon_boundaries
 
         # Complex case with multiple alternative splice sites
         j_starts = np.array([500, 500, 500, 1500, 1500], dtype=np.int64)

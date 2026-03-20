@@ -38,7 +38,7 @@ def test_build_assemble_command_enables_diagnostics_and_relaxed_pruning() -> Non
         min_phasing_support=2,
     )
 
-    assert cmd[:4] == [sys.executable, "-m", "rapidsplice.cli", "assemble"]
+    assert cmd[:4] == [sys.executable, "-m", "braid.cli", "assemble"]
     assert "--diagnostics-dir" in cmd
     assert "--decomposer" in cmd
     assert "--shadow-decomposer" in cmd

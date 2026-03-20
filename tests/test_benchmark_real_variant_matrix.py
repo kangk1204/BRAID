@@ -32,7 +32,7 @@ def test_build_benchmark_command_for_proxy_mode_includes_chr_and_diagnostics(tmp
     )
 
     assert cmd[:2] == [sys.executable, "benchmarks/run_real_benchmark.py"]
-    assert "--rapidsplice-only" in cmd
+    assert "--braid-only" in cmd
     assert "--chr" in cmd
     assert cmd[cmd.index("--chr") + 1] == "21,22"
     assert "--diagnostics-dir" in cmd

@@ -132,10 +132,10 @@ def main() -> None:
 
     # Versions to compare
     versions = {
-        "RapidSplice v5": results_dir / "rapidsplice_v5.gtf",
-        "RapidSplice v7": results_dir / "rapidsplice_v7.gtf",
-        "RapidSplice v8": results_dir / "rapidsplice_v8c.gtf",
-        "RapidSplice v10": results_dir / "rapidsplice_v10c.gtf",
+        "RapidSplice v5": results_dir / "braid_v5.gtf",
+        "RapidSplice v7": results_dir / "braid_v7.gtf",
+        "RapidSplice v8": results_dir / "braid_v8c.gtf",
+        "RapidSplice v10": results_dir / "braid_v10c.gtf",
         "StringTie": results_dir / "stringtie.gtf",
     }
 

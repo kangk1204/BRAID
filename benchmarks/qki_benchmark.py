@@ -20,7 +20,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from statistics import median
 
-from rapidsplice.target.psi_bootstrap import (
+from braid.target.psi_bootstrap import (
     DEFAULT_MIN_MAPQ,
     PSIResult,
     compute_psi_from_junctions,

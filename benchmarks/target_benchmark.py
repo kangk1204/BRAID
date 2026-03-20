@@ -13,8 +13,8 @@ import time
 
 sys.path.insert(0, ".")
 
-from rapidsplice.target.assembler import TargetConfig, assemble_target
-from rapidsplice.target.extractor import lookup_gene
+from braid.target.assembler import TargetConfig, assemble_target
+from braid.target.extractor import lookup_gene
 
 # 50 cancer-relevant genes with diverse splicing complexity
 CANCER_GENES = [

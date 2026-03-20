@@ -143,7 +143,7 @@ def run_suppa2_generate_events(
     return counts
 
 
-def run_rapidsplice_analyze(
+def run_braid_analyze(
     gtf_path: str,
     bam_path: str,
     output_tsv: str,
@@ -152,7 +152,7 @@ def run_rapidsplice_analyze(
 ) -> tuple[float, dict[str, int]]:
     """Run RapidSplice analyze and return (elapsed_time, event_type_counts)."""
     cmd = [
-        sys.executable, "-m", "rapidsplice.cli",
+        sys.executable, "-m", "braid.cli",
         "analyze", gtf_path, bam_path,
         "-o", output_tsv,
         "-q", str(min_mapq),
@@ -181,9 +181,9 @@ def run_assembler(
     chr_filter: str | None = None,
 ) -> float:
     """Run a transcript assembler and return elapsed time."""
-    if tool == "rapidsplice":
+    if tool == "braid":
         cmd = [
-            sys.executable, "-m", "rapidsplice.cli",
+            sys.executable, "-m", "braid.cli",
             "assemble", bam_path,
             "-o", output_gtf,
             "-t", str(threads),
@@ -421,13 +421,13 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     assemblers = {}
 
     # RapidSplice
-    rs_gtf = str(out_dir / "rapidsplice.gtf")
+    rs_gtf = str(out_dir / "braid.gtf")
     if os.path.exists(rs_gtf) and count_transcripts(rs_gtf) > 0:
         rs_time = 0.0
         print(f"  RapidSplice: reusing existing {count_transcripts(rs_gtf)} transcripts")
     else:
         rs_time = run_assembler(
-            "rapidsplice", bam_path, rs_gtf, config.threads, config.chr_filter,
+            "braid", bam_path, rs_gtf, config.threads, config.chr_filter,
         )
         print(f"  RapidSplice: {count_transcripts(rs_gtf)} transcripts in {rs_time:.1f}s")
     if os.path.exists(rs_gtf) and count_transcripts(rs_gtf) > 0:
@@ -484,8 +484,8 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
         print(f"  SUPPA2: {sum(suppa_mapped.values())} events in {suppa_elapsed:.1f}s")
 
         # RapidSplice analyze
-        rs_tsv = str(out_dir / f"rapidsplice_analyze_{assembler_name.lower()}.tsv")
-        rs_elapsed, rs_counts = run_rapidsplice_analyze(
+        rs_tsv = str(out_dir / f"braid_analyze_{assembler_name.lower()}.tsv")
+        rs_elapsed, rs_counts = run_braid_analyze(
             gtf_path, bam_path, rs_tsv, min_reads=config.min_reads,
         )
 

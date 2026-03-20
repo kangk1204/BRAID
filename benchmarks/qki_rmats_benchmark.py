@@ -17,7 +17,7 @@ import numpy as np
 sys.path.insert(0, ".")
 
 from benchmarks.qki_benchmark import QKITarget, _load_target_tables
-from rapidsplice.target.psi_bootstrap import (
+from braid.target.psi_bootstrap import (
     CONFIDENT_CI_WIDTH_THRESHOLD,
     CONFIDENT_CV_THRESHOLD,
     DEFAULT_MIN_MAPQ,
@@ -27,7 +27,7 @@ from rapidsplice.target.psi_bootstrap import (
     merge_event_evidence,
     sample_psi_posterior,
 )
-from rapidsplice.target.rmats_bootstrap import RmatsEvent, parse_rmats_output
+from braid.target.rmats_bootstrap import RmatsEvent, parse_rmats_output
 
 
 SUPPORT_BINS: tuple[tuple[int, int | None, str], ...] = (

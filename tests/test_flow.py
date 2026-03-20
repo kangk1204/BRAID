@@ -9,15 +9,15 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from rapidsplice.flow.decompose import (
+from braid.flow.decompose import (
     DecomposeConfig,
     Transcript,
     decompose_graph,
 )
-from rapidsplice.flow.min_cost_flow import flow_to_weighted_paths, min_cost_flow
-from rapidsplice.flow.push_relabel import push_relabel_maxflow
-from rapidsplice.flow.safe_paths import compute_safe_paths
-from rapidsplice.graph.splice_graph import (
+from braid.flow.min_cost_flow import flow_to_weighted_paths, min_cost_flow
+from braid.flow.push_relabel import push_relabel_maxflow
+from braid.flow.safe_paths import compute_safe_paths
+from braid.graph.splice_graph import (
     CSRGraph,
     NodeType,
     SpliceGraph,
@@ -442,28 +442,28 @@ class TestMergeAdjacentExons:
 
     def test_single_exon_unchanged(self) -> None:
         """Single exon passes through unchanged."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         result = _merge_adjacent_exons([(100, 500)])
         assert result == [(100, 500)]
 
     def test_abutting_segments_merged(self) -> None:
         """Abutting segments (end == start) are merged into one exon."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         result = _merge_adjacent_exons([(100, 450), (450, 500)])
         assert result == [(100, 500)]
 
     def test_separated_exons_not_merged(self) -> None:
         """Non-abutting exons remain separate."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         result = _merge_adjacent_exons([(100, 500), (1000, 1500)])
         assert result == [(100, 500), (1000, 1500)]
 
     def test_mixed_abutting_and_separated(self) -> None:
         """Mix of abutting and separated segments."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         # (100,450) + (450,500) → (100,500), then gap, then (1000,1050) + (1050,1500) → (1000,1500)
         result = _merge_adjacent_exons([
@@ -473,14 +473,14 @@ class TestMergeAdjacentExons:
 
     def test_empty_returns_empty(self) -> None:
         """Empty input returns empty output."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         result = _merge_adjacent_exons([])
         assert result == []
 
     def test_three_abutting_segments(self) -> None:
         """Three abutting segments merge into one."""
-        from rapidsplice.flow.decompose import _merge_adjacent_exons
+        from braid.flow.decompose import _merge_adjacent_exons
 
         result = _merge_adjacent_exons([(100, 200), (200, 300), (300, 500)])
         assert result == [(100, 500)]

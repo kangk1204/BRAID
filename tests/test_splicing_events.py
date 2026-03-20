@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from rapidsplice.io.gtf_writer import TranscriptRecord
-from rapidsplice.splicing.events import (
+from braid.io.gtf_writer import TranscriptRecord
+from braid.splicing.events import (
     EventType,
     _detect_alternative_3ss,
     _detect_alternative_5ss,
