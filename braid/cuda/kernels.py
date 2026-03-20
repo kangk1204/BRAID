@@ -1,7 +1,7 @@
 """Custom Numba JIT kernels for GPU-acceleratable operations.
 
 Provides parallel implementations of performance-critical operations used
-throughout the RapidSplice assembler.  All kernels are compiled with
+throughout the BRAID assembler.  All kernels are compiled with
 ``@njit(parallel=True, cache=True)`` so they run as optimised native code on
 the CPU with automatic thread-level parallelism via ``prange``.  The
 algorithmic structure of each kernel mirrors what a CUDA version would look

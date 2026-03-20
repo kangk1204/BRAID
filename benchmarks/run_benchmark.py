@@ -1,6 +1,6 @@
-"""Benchmark runner for RapidSplice transcript assembler.
+"""Benchmark runner for BRAID transcript assembler.
 
-Downloads or generates synthetic RNA-seq data, runs RapidSplice and baseline tools
+Downloads or generates synthetic RNA-seq data, runs BRAID and baseline tools
 (StringTie, Scallop2) on the same input, and evaluates assembly quality using
 GFFcompare-style metrics (transcript/exon/intron sensitivity and precision).
 Runtime and peak memory usage are measured for each tool.
@@ -351,7 +351,7 @@ class SyntheticDataGenerator:
             gtf_path: Output GTF file path.
         """
         with open(gtf_path, "w", encoding="utf-8") as fh:
-            fh.write("# Synthetic ground-truth GTF for RapidSplice benchmarking\n")
+            fh.write("# Synthetic ground-truth GTF for BRAID benchmarking\n")
 
             for gene in self._genes:
                 for tx in gene.transcripts:
@@ -676,7 +676,7 @@ def _extract_attribute(attrs: str, key: str) -> str | None:
 
 
 class BenchmarkRunner:
-    """Runs benchmarks comparing RapidSplice against baseline assemblers.
+    """Runs benchmarks comparing BRAID against baseline assemblers.
 
     Orchestrates the full benchmark pipeline: synthetic data generation,
     tool execution, output evaluation, and results collection.
@@ -693,7 +693,7 @@ class BenchmarkRunner:
     def run_braid(
         self, bam_path: str, reference_path: str
     ) -> tuple[str, float, float]:
-        """Run RapidSplice on the input BAM and measure performance.
+        """Run BRAID on the input BAM and measure performance.
 
         Args:
             bam_path: Path to the input BAM file.
@@ -715,19 +715,19 @@ class BenchmarkRunner:
             "-s", "0.1",
         ]
 
-        logger.info("Running RapidSplice: %s", " ".join(cmd))
+        logger.info("Running BRAID: %s", " ".join(cmd))
         elapsed, peak_mb = self._run_command(cmd)
         logger.info(
-            "RapidSplice completed: %.2f s, %.1f MB peak", elapsed, peak_mb,
+            "BRAID completed: %.2f s, %.1f MB peak", elapsed, peak_mb,
         )
 
         # Verify output exists; if CLI run failed, create a minimal output
         if not os.path.exists(gtf_path):
             logger.warning(
-                "RapidSplice did not produce output; creating empty GTF."
+                "BRAID did not produce output; creating empty GTF."
             )
             with open(gtf_path, "w", encoding="utf-8") as fh:
-                fh.write("# RapidSplice - no output\n")
+                fh.write("# BRAID - no output\n")
 
         return gtf_path, elapsed, peak_mb
 
@@ -915,10 +915,10 @@ class BenchmarkRunner:
             "tools": {},
         }
 
-        # Run RapidSplice
+        # Run BRAID
         rs_gtf, rs_time, rs_mem = self.run_braid(bam_path, ref_path)
         rs_metrics = self.evaluate_gtf(rs_gtf, truth_gtf)
-        results["tools"]["RapidSplice"] = {
+        results["tools"]["BRAID"] = {
             "gtf_path": rs_gtf,
             "runtime_seconds": rs_time,
             "peak_memory_mb": rs_mem,
@@ -1206,7 +1206,7 @@ def main() -> None:
     arguments, and executes :meth:`BenchmarkRunner.run_all`.
     """
     parser = argparse.ArgumentParser(
-        description="RapidSplice benchmark runner.",
+        description="BRAID benchmark runner.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(

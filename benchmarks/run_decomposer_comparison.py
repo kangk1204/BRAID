@@ -1,7 +1,7 @@
-"""Focused benchmark runner for comparing RapidSplice decomposers.
+"""Focused benchmark runner for comparing BRAID decomposers.
 
 This script targets the existing synthetic benchmark dataset under
-``benchmark_results/synthetic_data`` and runs multiple RapidSplice
+``benchmark_results/synthetic_data`` and runs multiple BRAID
 configuration variants on the same BAM. Each variant writes:
 
 - assembled GTF output
@@ -78,7 +78,7 @@ SUMMARY_FIELDS = (
 
 @dataclass(frozen=True)
 class VariantSpec:
-    """One RapidSplice decomposer configuration to benchmark."""
+    """One BRAID decomposer configuration to benchmark."""
 
     name: str
     decomposer: str
@@ -978,7 +978,7 @@ def run_comparison(args: argparse.Namespace) -> dict[str, Any]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run RapidSplice decomposer comparisons on the existing synthetic BAM "
+            "Run BRAID decomposer comparisons on the existing synthetic BAM "
             "and capture diagnostics-rich outputs."
         )
     )
@@ -1030,7 +1030,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--backend",
         choices=["cpu", "gpu"],
         default="cpu",
-        help="RapidSplice backend to use (default: cpu).",
+        help="BRAID backend to use (default: cpu).",
     )
     parser.add_argument(
         "--builder-profile",
@@ -1045,7 +1045,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--threads",
         type=int,
         default=1,
-        help="Thread count passed to RapidSplice (default: 1).",
+        help="Thread count passed to BRAID (default: 1).",
     )
     parser.add_argument(
         "-c",

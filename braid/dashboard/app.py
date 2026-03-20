@@ -1,4 +1,4 @@
-"""Multi-page Streamlit dashboard for RapidSplice AS event analysis.
+"""Multi-page Streamlit dashboard for BRAID AS event analysis.
 
 Pages:
 1. Overview - metric cards, event type pie chart, PSI histogram
@@ -19,7 +19,7 @@ def parse_dashboard_args() -> argparse.Namespace:
     Returns:
         Parsed arguments namespace.
     """
-    parser = argparse.ArgumentParser(description="RapidSplice Dashboard")
+    parser = argparse.ArgumentParser(description="BRAID Dashboard")
     parser.add_argument("--events-tsv", required=True, help="Events TSV file.")
     parser.add_argument("--gtf", required=True, help="GTF file.")
     parser.add_argument("--bam", default=None, help="Optional BAM file.")
@@ -31,7 +31,7 @@ def main() -> None:
     import streamlit as st
 
     st.set_page_config(
-        page_title="RapidSplice Dashboard",
+        page_title="BRAID Dashboard",
         page_icon=":dna:",
         layout="wide",
     )
@@ -54,7 +54,7 @@ def main() -> None:
     transcripts_df = _load_transcripts(args.gtf)
 
     # Sidebar navigation
-    st.sidebar.title("RapidSplice")
+    st.sidebar.title("BRAID")
     st.sidebar.markdown("---")
     page = st.sidebar.radio(
         "Navigate",

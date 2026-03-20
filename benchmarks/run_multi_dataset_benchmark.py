@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Multi-dataset benchmark for RapidSplice vs StringTie.
+"""Multi-dataset benchmark for BRAID vs StringTie.
 
 Aligns FASTQ files with HISAT2, runs both assemblers, evaluates with
 GFFcompare against GENCODE v38, and generates a combined benchmark report.
@@ -160,10 +160,10 @@ def align_with_hisat2(ds: DatasetConfig, threads: int = 8) -> bool:
 
 
 def run_braid(ds: DatasetConfig, threads: int = 8) -> str | None:
-    """Run RapidSplice on a dataset."""
+    """Run BRAID on a dataset."""
     output_gtf = RESULTS_DIR / f"braid_{ds.name}.gtf"
     if output_gtf.exists():
-        print(f"  RapidSplice output exists: {output_gtf}")
+        print(f"  BRAID output exists: {output_gtf}")
         return str(output_gtf)
 
     cmd = [
@@ -177,9 +177,9 @@ def run_braid(ds: DatasetConfig, threads: int = 8) -> str | None:
     ]
 
     t0 = time.time()
-    if run_cmd(cmd, f"RapidSplice assembly on {ds.name}"):
+    if run_cmd(cmd, f"BRAID assembly on {ds.name}"):
         elapsed = time.time() - t0
-        print(f"  RapidSplice {ds.name}: {elapsed:.1f}s")
+        print(f"  BRAID {ds.name}: {elapsed:.1f}s")
         return str(output_gtf)
     return None
 
@@ -284,7 +284,7 @@ def generate_report(all_results: dict[str, list[dict]]) -> None:
         # Page 1: Summary table
         fig, ax = plt.subplots(figsize=(12, 8))
         ax.axis("off")
-        ax.set_title("RapidSplice Multi-Dataset Benchmark", fontsize=16, fontweight="bold", pad=20)
+        ax.set_title("BRAID Multi-Dataset Benchmark", fontsize=16, fontweight="bold", pad=20)
 
         headers = ["Dataset", "Tool", "Transcripts", "IntronPr", "TxSn", "TxPr", "Exact Match"]
         table_data = []
@@ -319,7 +319,7 @@ def generate_report(all_results: dict[str, list[dict]]) -> None:
 
             # Color rows by tool
             for i, row in enumerate(table_data, start=1):
-                color = "#e8f5e9" if "RapidSplice" in row[1] else "#e3f2fd"
+                color = "#e8f5e9" if "BRAID" in row[1] else "#e3f2fd"
                 for j in range(len(headers)):
                     table[i, j].set_facecolor(color)
 
@@ -339,12 +339,12 @@ def generate_report(all_results: dict[str, list[dict]]) -> None:
             rs_intron_pr = []
             st_intron_pr = []
             for ds in datasets:
-                rs_val = next((r["intron_pr"] for r in all_results[ds] if "RapidSplice" in r.get("tool", "")), 0)
+                rs_val = next((r["intron_pr"] for r in all_results[ds] if "BRAID" in r.get("tool", "")), 0)
                 st_val = next((r["intron_pr"] for r in all_results[ds] if "StringTie" in r.get("tool", "")), 0)
                 rs_intron_pr.append(rs_val)
                 st_intron_pr.append(st_val)
 
-            ax.bar([i - width/2 for i in x], rs_intron_pr, width, label="RapidSplice", color="#2ecc71")
+            ax.bar([i - width/2 for i in x], rs_intron_pr, width, label="BRAID", color="#2ecc71")
             ax.bar([i + width/2 for i in x], st_intron_pr, width, label="StringTie", color="#3498db")
             ax.set_ylabel("Intron Precision (%)")
             ax.set_title("Intron Precision")
@@ -358,12 +358,12 @@ def generate_report(all_results: dict[str, list[dict]]) -> None:
             rs_exact = []
             st_exact = []
             for ds in datasets:
-                rs_val = next((r["exact_matches"] for r in all_results[ds] if "RapidSplice" in r.get("tool", "")), 0)
+                rs_val = next((r["exact_matches"] for r in all_results[ds] if "BRAID" in r.get("tool", "")), 0)
                 st_val = next((r["exact_matches"] for r in all_results[ds] if "StringTie" in r.get("tool", "")), 0)
                 rs_exact.append(rs_val)
                 st_exact.append(st_val)
 
-            ax.bar([i - width/2 for i in x], rs_exact, width, label="RapidSplice", color="#2ecc71")
+            ax.bar([i - width/2 for i in x], rs_exact, width, label="BRAID", color="#2ecc71")
             ax.bar([i + width/2 for i in x], st_exact, width, label="StringTie", color="#3498db")
             ax.set_ylabel("Exact Transcript Matches")
             ax.set_title("Exact Matches")
@@ -405,7 +405,7 @@ def process_dataset(ds: DatasetConfig, threads: int = 8) -> list[dict] | None:
     if rs_gtf:
         r = run_gffcompare(rs_gtf, f"rs_{ds.name}", chr_prefix=ds.chr_prefix)
         if r:
-            r["tool"] = "RapidSplice"
+            r["tool"] = "BRAID"
             results.append(r)
 
     if st_gtf:
@@ -419,7 +419,7 @@ def process_dataset(ds: DatasetConfig, threads: int = 8) -> list[dict] | None:
 
 def main() -> None:
     """Main entry point."""
-    parser = argparse.ArgumentParser(description="Multi-dataset RapidSplice benchmark")
+    parser = argparse.ArgumentParser(description="Multi-dataset BRAID benchmark")
     parser.add_argument(
         "--dataset",
         choices=list(DATASETS.keys()),

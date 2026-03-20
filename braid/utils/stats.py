@@ -32,7 +32,7 @@ class AssemblyStats:
         """Return a formatted summary string."""
         lines = [
             "=" * 60,
-            "RapidSplice Assembly Summary",
+            "BRAID Assembly Summary",
             "=" * 60,
             f"  Reads:       {self.total_reads:>12,} total",
             f"               {self.mapped_reads:>12,} mapped",

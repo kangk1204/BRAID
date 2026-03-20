@@ -1,4 +1,4 @@
-"""Shared fixtures for RapidSplice test suite.
+"""Shared fixtures for BRAID test suite.
 
 Provides reusable synthetic test data fixtures for splice graph assembly tests.
 All data is created in-memory with no external file dependencies.

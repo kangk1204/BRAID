@@ -55,14 +55,14 @@ echo "=== StringTie GM12878 ==="
 stringtie "$GM_BAM" -p 8 -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/stringtie_GM12878.gtf
 echo "StringTie GM12878 done"
 
-# RapidSplice GM12878 (with bootstrap)
-echo "=== RapidSplice GM12878 ==="
+# BRAID GM12878 (with bootstrap)
+echo "=== BRAID GM12878 ==="
 python -m braid assemble \
     --bam "$GM_BAM" \
     --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
     -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/braid_GM12878.gtf \
     -t 8 --bootstrap
-echo "RapidSplice GM12878 done"
+echo "BRAID GM12878 done"
 
 # GFFcompare GM12878
 GENCODE_CHR="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/annotation/gencode.v38.annotation.gtf"
@@ -80,14 +80,14 @@ echo "=== StringTie IMR90 ==="
 stringtie "$IMR_BAM" -p 8 -o "$RESULTS/stringtie_IMR90.gtf"
 echo "StringTie IMR90 done"
 
-# RapidSplice IMR90 (with bootstrap)
-echo "=== RapidSplice IMR90 ==="
+# BRAID IMR90 (with bootstrap)
+echo "=== BRAID IMR90 ==="
 python -m braid assemble \
     --bam "$IMR_BAM" \
     --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
     -o "$RESULTS/braid_IMR90.gtf" \
     -t 8 --bootstrap
-echo "RapidSplice IMR90 done"
+echo "BRAID IMR90 done"
 
 # GFFcompare IMR90
 echo "=== GFFcompare IMR90 ==="
@@ -103,7 +103,7 @@ echo ""
 # Print results
 for ds in GM12878 IMR90; do
     echo "=== $ds ==="
-    echo "--- RapidSplice ---"
+    echo "--- BRAID ---"
     grep -E "Intron level|Transcript level" "$RESULTS/rs_${ds}.stats" 2>/dev/null || echo "  (no stats)"
     echo "--- StringTie ---"
     grep -E "Intron level|Transcript level" "$RESULTS/st_${ds}.stats" 2>/dev/null || echo "  (no stats)"

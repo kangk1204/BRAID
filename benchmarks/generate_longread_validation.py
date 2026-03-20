@@ -1,4 +1,4 @@
-"""Generate long-read cross-validation report for RapidSplice vs StringTie.
+"""Generate long-read cross-validation report for BRAID vs StringTie.
 
 Uses ENCODE PacBio Iso-Seq K562 data (ENCSR589FUJ, rep1 ENCFF652QLH) as
 independent validation reference. Compares short-read assembler outputs
@@ -105,16 +105,16 @@ def main() -> None:
 
     # Parse all stats
     comparisons = {
-        "RapidSplice v10c": val_dir / "braid_v10c_vs_lr.stats",
-        "RapidSplice v8c": val_dir / "braid_v8c_vs_lr.stats",
+        "BRAID v10c": val_dir / "braid_v10c_vs_lr.stats",
+        "BRAID v8c": val_dir / "braid_v8c_vs_lr.stats",
         "StringTie": val_dir / "stringtie_vs_lr.stats",
     }
     lr_quality = parse_gffcompare_stats(str(val_dir / "longread_vs_gencode.stats"))
 
     # Also parse vs GENCODE stats for comparison
     gencode_comparisons = {
-        "RapidSplice v10c": Path("real_benchmark/results/gffcompare/braid_v10c.stats"),
-        "RapidSplice v8c": Path("real_benchmark/results/gffcompare/braid_v8c.stats"),
+        "BRAID v10c": Path("real_benchmark/results/gffcompare/braid_v10c.stats"),
+        "BRAID v8c": Path("real_benchmark/results/gffcompare/braid_v8c.stats"),
         "StringTie": Path("real_benchmark/results/gffcompare/stringtie.stats"),
     }
 
@@ -282,8 +282,8 @@ def main() -> None:
         fig4, ax4 = plt.subplots(figsize=(11, 8.5))
         ax4.axis("off")
 
-        rs10 = all_metrics.get("RapidSplice v10c", {})
-        rs8 = all_metrics.get("RapidSplice v8c", {})
+        rs10 = all_metrics.get("BRAID v10c", {})
+        rs8 = all_metrics.get("BRAID v8c", {})
         st = all_metrics.get("StringTie", {})
 
         analysis = "Long-Read Cross-Validation Analysis\n\n"
@@ -295,32 +295,32 @@ def main() -> None:
         analysis += "KEY FINDINGS:\n\n"
 
         analysis += "1. JUNCTION QUALITY (IntronPr vs Long-read):\n"
-        analysis += f"   RapidSplice v10c: {rs10.get('IntronPr', 0):.1f}%\n"
-        analysis += f"   RapidSplice v8c:  {rs8.get('IntronPr', 0):.1f}%\n"
+        analysis += f"   BRAID v10c: {rs10.get('IntronPr', 0):.1f}%\n"
+        analysis += f"   BRAID v8c:  {rs8.get('IntronPr', 0):.1f}%\n"
         analysis += f"   StringTie:        {st.get('IntronPr', 0):.1f}%\n"
-        analysis += f"   -> RapidSplice has {rs10.get('IntronPr',0) - st.get('IntronPr',0):+.1f}pp higher IntronPr\n\n"
+        analysis += f"   -> BRAID has {rs10.get('IntronPr',0) - st.get('IntronPr',0):+.1f}pp higher IntronPr\n\n"
 
         analysis += "2. NOVEL INTRONS (false positives):\n"
-        analysis += f"   RapidSplice v10c: {rs10.get('novel_introns_pct', 0):.1f}%\n"
-        analysis += f"   RapidSplice v8c:  {rs8.get('novel_introns_pct', 0):.1f}%\n"
+        analysis += f"   BRAID v10c: {rs10.get('novel_introns_pct', 0):.1f}%\n"
+        analysis += f"   BRAID v8c:  {rs8.get('novel_introns_pct', 0):.1f}%\n"
         analysis += f"   StringTie:        {st.get('novel_introns_pct', 0):.1f}%\n"
-        analysis += "   -> RapidSplice produces fewer false junctions\n\n"
+        analysis += "   -> BRAID produces fewer false junctions\n\n"
 
         analysis += "3. SENSITIVITY (exact matches vs Long-read):\n"
-        analysis += f"   RapidSplice v10c: {int(rs10.get('exact_matches', 0)):,}\n"
-        analysis += f"   RapidSplice v8c:  {int(rs8.get('exact_matches', 0)):,}\n"
+        analysis += f"   BRAID v10c: {int(rs10.get('exact_matches', 0)):,}\n"
+        analysis += f"   BRAID v8c:  {int(rs8.get('exact_matches', 0)):,}\n"
         analysis += f"   StringTie:        {int(st.get('exact_matches', 0)):,}\n"
         analysis += "   -> StringTie finds more transcripts (more aggressive enumeration)\n\n"
 
         analysis += "4. CONSISTENCY CHECK:\n"
         analysis += "   Results vs GENCODE and vs Long-read show the same pattern:\n"
-        analysis += "   - RapidSplice: higher junction precision, lower sensitivity\n"
+        analysis += "   - BRAID: higher junction precision, lower sensitivity\n"
         analysis += "   - StringTie: higher sensitivity, lower junction precision\n"
         analysis += "   This confirms no data leakage — independent reference gives\n"
         analysis += "   consistent relative rankings.\n\n"
 
         analysis += "5. CONCLUSION:\n"
-        analysis += "   Long-read validation CONFIRMS that RapidSplice's splice\n"
+        analysis += "   Long-read validation CONFIRMS that BRAID's splice\n"
         analysis += "   junctions are more accurate than StringTie's, while\n"
         analysis += "   StringTie discovers more transcript isoforms. The tradeoff\n"
         analysis += "   is genuine and not an artifact of GENCODE annotation bias.\n"

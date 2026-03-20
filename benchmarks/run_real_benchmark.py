@@ -1,4 +1,4 @@
-"""Real-data benchmark for RapidSplice on ENCODE RNA-seq samples.
+"""Real-data benchmark for BRAID on ENCODE RNA-seq samples.
 
 Downloads, aligns, and evaluates transcript assembly on real ENCODE10
 RNA-seq data using HISAT2 alignment and GFFcompare evaluation against
@@ -102,7 +102,7 @@ def _build_braid_command(
     *,
     chromosomes: list[str] | None = None,
 ) -> list[str]:
-    """Build the RapidSplice command for the real-data benchmark."""
+    """Build the BRAID command for the real-data benchmark."""
     cmd = [
         sys.executable,
         "-m",
@@ -465,7 +465,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
             annotation_gtf, proxy_annotation, proxy_chromosomes,
         )
         logger.info(
-            "Proxy mode enabled for RapidSplice-only run on chromosomes: %s",
+            "Proxy mode enabled for BRAID-only run on chromosomes: %s",
             ",".join(proxy_chromosomes),
         )
     total_reads = sum(
@@ -480,7 +480,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
         results["proxy_chromosomes"] = proxy_chromosomes
     logger.info("BAM has %d aligned reads", total_reads)
 
-    # --- Step 3: Run RapidSplice ---
+    # --- Step 3: Run BRAID ---
     rs_gtf = str(out_dir / f"{sample}_braid.gtf")
     if os.path.exists(rs_gtf):
         os.remove(rs_gtf)
@@ -492,14 +492,14 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
     )
 
     rs_start = time.perf_counter()
-    run_command(rs_cmd, "RapidSplice", timeout=3600)
+    run_command(rs_cmd, "BRAID", timeout=3600)
     rs_elapsed = time.perf_counter() - rs_start
 
     if os.path.exists(rs_gtf):
         rs_n_tx = count_transcripts(rs_gtf)
         rs_prefix = str(out_dir / f"{sample}_braid_gffcmp")
         rs_metrics = run_gffcompare(rs_gtf, str(annotation_gtf), rs_prefix)
-        results["tools"]["RapidSplice"] = {
+        results["tools"]["BRAID"] = {
             "gtf_path": rs_gtf,
             "runtime_seconds": rs_elapsed,
             "n_transcripts": rs_n_tx,
@@ -507,7 +507,7 @@ def run_benchmark(config: RealBenchmarkConfig) -> dict:
             "diagnostics_dir": config.braid_diagnostics_dir,
         }
         logger.info(
-            "RapidSplice: %d transcripts in %.1fs", rs_n_tx, rs_elapsed,
+            "BRAID: %d transcripts in %.1fs", rs_n_tx, rs_elapsed,
         )
 
     # --- Step 4: Run StringTie ---
@@ -640,42 +640,42 @@ def main() -> None:
     )
     parser.add_argument(
         "--braid-only", action="store_true",
-        help="Run only RapidSplice on the real-data benchmark.",
+        help="Run only BRAID on the real-data benchmark.",
     )
     parser.add_argument(
         "--decomposer", choices=["legacy", "iterative_v2"], default="legacy",
-        help="RapidSplice decomposer to use (default: legacy).",
+        help="BRAID decomposer to use (default: legacy).",
     )
     parser.add_argument(
         "--builder-profile",
         choices=["default", "conservative_correctness", "aggressive_recall"],
         default="default",
-        help="RapidSplice builder profile (default: default).",
+        help="BRAID builder profile (default: default).",
     )
     parser.add_argument(
         "--min-junction-support", type=int, default=3,
-        help="RapidSplice minimum junction support (default: 3).",
+        help="BRAID minimum junction support (default: 3).",
     )
     parser.add_argument(
         "--min-coverage", type=float, default=1.0,
-        help="RapidSplice minimum coverage (default: 1.0).",
+        help="BRAID minimum coverage (default: 1.0).",
     )
     parser.add_argument(
         "--min-score", type=float, default=0.1,
-        help="RapidSplice minimum transcript score (default: 0.1).",
+        help="BRAID minimum transcript score (default: 0.1).",
     )
     parser.add_argument(
         "--max-paths", type=int, default=500,
-        help="RapidSplice max_paths for legacy decomposition (default: 500).",
+        help="BRAID max_paths for legacy decomposition (default: 500).",
     )
     parser.add_argument(
         "--no-motif-validation", action="store_true",
-        help="Disable RapidSplice motif validation. Leave off for real-data motif-on validation.",
+        help="Disable BRAID motif validation. Leave off for real-data motif-on validation.",
     )
     parser.add_argument(
         "--diagnostics-dir",
         default=None,
-        help="Optional directory for RapidSplice diagnostics JSONL/summary output.",
+        help="Optional directory for BRAID diagnostics JSONL/summary output.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
 

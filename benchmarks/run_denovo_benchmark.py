@@ -1,7 +1,7 @@
 """Benchmark de novo assembler against Trinity/rnaSPAdes.
 
 Generates synthetic FASTQ reads from known transcript sequences,
-runs RapidSplice de novo assembler and competing tools, then evaluates
+runs BRAID de novo assembler and competing tools, then evaluates
 transcript recovery using BLAST-based metrics.
 """
 
@@ -423,7 +423,7 @@ def run_braid_denovo(
     output_dir: str,
     k: int = 25,
 ) -> AssemblyResult:
-    """Run RapidSplice de novo assembler.
+    """Run BRAID de novo assembler.
 
     Args:
         fastq_path: Input FASTQ path.
@@ -451,7 +451,7 @@ def run_braid_denovo(
     n_tx, n50, mean_len, max_len = compute_assembly_stats(out_fa)
 
     result = AssemblyResult(
-        name="RapidSplice-denovo",
+        name="BRAID-denovo",
         n_transcripts=n_tx,
         total_bases=stats.total_transcript_bases,
         n50=n50,
@@ -744,7 +744,7 @@ def run_benchmark(
         output_dir: Output directory.
         n_transcripts: Number of synthetic transcripts.
         read_length: Simulated read length.
-        k_sizes: K-mer sizes to test for RapidSplice.
+        k_sizes: K-mer sizes to test for BRAID.
     """
     if k_sizes is None:
         k_sizes = [25]
@@ -778,12 +778,12 @@ def run_benchmark(
     # --- Run assemblers ---
     results: list[AssemblyResult] = []
 
-    # RapidSplice de novo with different k sizes
+    # BRAID de novo with different k sizes
     for k in k_sizes:
-        logger.info("Running RapidSplice de novo (k=%d)...", k)
+        logger.info("Running BRAID de novo (k=%d)...", k)
         result, out_fa = run_braid_denovo(fastq_path, output_dir, k=k)
         if len(k_sizes) > 1:
-            result.name = f"RapidSplice-k{k}"
+            result.name = f"BRAID-k{k}"
 
         # Evaluate
         if out_fa and os.path.exists(out_fa):
@@ -797,7 +797,7 @@ def run_benchmark(
 
         results.append(result)
         logger.info(
-            "  RapidSplice-k%d: %d transcripts, N50=%d, recall=%.1f%%, "
+            "  BRAID-k%d: %d transcripts, N50=%d, recall=%.1f%%, "
             "precision=%.1f%%, time=%.1fs",
             k, result.n_transcripts, result.n50,
             result.recall * 100, result.precision * 100,

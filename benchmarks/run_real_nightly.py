@@ -1,4 +1,4 @@
-"""Preset wrapper for full-BAM nightly RapidSplice real-data runs."""
+"""Preset wrapper for full-BAM nightly BRAID real-data runs."""
 
 from __future__ import annotations
 

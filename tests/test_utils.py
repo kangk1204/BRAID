@@ -368,7 +368,7 @@ class TestAssemblyStats:
         summary = stats.summary()
         assert "100,000" in summary
         assert "95,000" in summary
-        assert "RapidSplice" in summary
+        assert "BRAID" in summary
         assert "12.5" in summary
 
     def test_per_stage_times(self) -> None:

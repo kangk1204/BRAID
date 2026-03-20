@@ -1,4 +1,4 @@
-"""Run a matrix of RapidSplice real-data benchmarks with optional proxy mode."""
+"""Run a matrix of BRAID real-data benchmarks with optional proxy mode."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class VariantSpec:
-    """One RapidSplice real-data benchmark variant."""
+    """One BRAID real-data benchmark variant."""
 
     name: str
     decomposer: str
@@ -193,7 +193,7 @@ def _summarize_variant_result(
 ) -> dict[str, Any]:
     """Build one summary row from a completed variant run."""
     results = _load_results_json(run_dir, sample)
-    braid = results.get("tools", {}).get("RapidSplice", {})
+    braid = results.get("tools", {}).get("BRAID", {})
     metrics = braid.get("metrics", {})
     peak_tree_rss_mb = max((row["rss_mb"] for row in cpu_rows), default=0.0)
     row = {
@@ -346,7 +346,7 @@ def _write_summary(output_dir: Path, rows: list[dict[str, Any]]) -> None:
 def build_parser(default_mode: str | None = None) -> argparse.ArgumentParser:
     """Build the CLI parser for real-data variant matrix runs."""
     parser = argparse.ArgumentParser(
-        description="Run a real-data RapidSplice variant matrix in full or proxy mode.",
+        description="Run a real-data BRAID variant matrix in full or proxy mode.",
     )
     parser.add_argument("--sample", default="SRR387661")
     parser.add_argument("--threads", type=int, default=8)

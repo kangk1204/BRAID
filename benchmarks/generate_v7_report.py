@@ -1,4 +1,4 @@
-"""Generate benchmark comparison report for RapidSplice v7 vs previous versions and StringTie."""
+"""Generate benchmark comparison report for BRAID v7 vs previous versions and StringTie."""
 
 from __future__ import annotations
 
@@ -132,10 +132,10 @@ def main() -> None:
 
     # Versions to compare
     versions = {
-        "RapidSplice v5": results_dir / "braid_v5.gtf",
-        "RapidSplice v7": results_dir / "braid_v7.gtf",
-        "RapidSplice v8": results_dir / "braid_v8c.gtf",
-        "RapidSplice v10": results_dir / "braid_v10c.gtf",
+        "BRAID v5": results_dir / "braid_v5.gtf",
+        "BRAID v7": results_dir / "braid_v7.gtf",
+        "BRAID v8": results_dir / "braid_v8c.gtf",
+        "BRAID v10": results_dir / "braid_v10c.gtf",
         "StringTie": results_dir / "stringtie.gtf",
     }
 
@@ -248,7 +248,7 @@ def main() -> None:
             fig_title, ax_title = plt.subplots(figsize=(11, 8.5))
             ax_title.axis("off")
 
-            title_text = "RapidSplice v7 Benchmark Report\n"
+            title_text = "BRAID v7 Benchmark Report\n"
             title_text += "SOTA Improvements + GPU Acceleration\n\n"
             title_text += "Dataset: K562 SRR387661 (124.8M PE reads)\n"
             title_text += "Reference: GENCODE v38\n"
@@ -333,10 +333,10 @@ def main() -> None:
             ax_a.axis("off")
 
             analysis = "Analysis\n\n"
-            best_ver = "RapidSplice v10" if "RapidSplice v10" in all_metrics else ("RapidSplice v8" if "RapidSplice v8" in all_metrics else "RapidSplice v7")
-            if best_ver in all_metrics and "RapidSplice v5" in all_metrics:
+            best_ver = "BRAID v10" if "BRAID v10" in all_metrics else ("BRAID v8" if "BRAID v8" in all_metrics else "BRAID v7")
+            if best_ver in all_metrics and "BRAID v5" in all_metrics:
                 vbest = all_metrics[best_ver]
-                v5 = all_metrics["RapidSplice v5"]
+                v5 = all_metrics["BRAID v5"]
                 analysis += f"{best_ver} vs v5 improvements:\n"
                 for metric in ["IntronPr", "TranscriptPr", "TranscriptSn"]:
                     vb_val = vbest.get(metric, 0)

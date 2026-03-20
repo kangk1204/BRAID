@@ -21,8 +21,6 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from braid.target.psi_bootstrap import (
-    BRAIDConfig,
-    PSIResult,
     bootstrap_psi,
 )
 
@@ -166,8 +164,8 @@ def generate_html_report(results: list[dict], summary: dict) -> str:
     event_ids = [r["event_id"] for r in results]
 
     type_colors = {"SE": "#3498db", "A3SS": "#e74c3c", "A5SS": "#2ecc71", "RI": "#f39c12"}
-    colors = [type_colors.get(t, "#999") for t in types]
-    marker_symbols = ["circle" if c else "x" for c in covers]
+    _colors = [type_colors.get(t, "#999") for t in types]
+    _marker_symbols = ["circle" if c else "x" for c in covers]
 
     html = f"""<!DOCTYPE html>
 <html>

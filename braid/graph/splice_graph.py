@@ -1,7 +1,7 @@
 """Splice graph data structures for GPU-accelerated RNA-seq transcript assembly.
 
 This module defines the core splice graph representation used throughout
-RapidSplice. A splice graph is a directed acyclic graph (DAG) where nodes
+BRAID. A splice graph is a directed acyclic graph (DAG) where nodes
 represent exonic regions and edges represent splicing events (introns) or
 continuations between adjacent exons. Every graph has a virtual SOURCE node
 and SINK node to provide a single-entry, single-exit structure required by

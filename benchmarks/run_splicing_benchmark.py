@@ -1,13 +1,13 @@
 """Benchmark for alternative splicing event detection.
 
-Compares RapidSplice AS event detection against SUPPA2 using real RNA-seq
+Compares BRAID AS event detection against SUPPA2 using real RNA-seq
 data (K562 ENCODE, SRR387661) aligned with HISAT2.
 
 Evaluation protocol:
-1. Run StringTie/RapidSplice assembly on aligned BAM
+1. Run StringTie/BRAID assembly on aligned BAM
 2. Run SUPPA2 generateEvents on GENCODE annotation (ground truth events)
 3. Run SUPPA2 generateEvents on each assembler's GTF
-4. Run RapidSplice analyze on each assembler's GTF
+4. Run BRAID analyze on each assembler's GTF
 5. Compare detected events: overlap, PSI correlation, event type distribution
 
 Usage:
@@ -42,7 +42,7 @@ SUPPA2_SCRIPT = BASE_DIR / "suppa2_repo" / "suppa.py"
 
 # SUPPA2 event codes: SE, SS (A5+A3 splice sites), MX, RI, FL (first/last exon)
 EVENT_TYPES = ["SE", "SS", "MX", "RI", "FL"]
-RAPIDSPLICE_EVENT_TYPES = ["SE", "A5SS", "A3SS", "MXE", "RI", "AFE", "ALE"]
+BRAID_EVENT_TYPES = ["SE", "A5SS", "A3SS", "MXE", "RI", "AFE", "ALE"]
 # SUPPA2 SS events produce A5/A3 sub-types, FL produces AF/AL sub-types in IOE IDs
 SUPPA_TO_RS_MAP = {
     "SE": "SE", "A5": "A5SS", "A3": "A3SS",
@@ -150,7 +150,7 @@ def run_braid_analyze(
     min_reads: int = 10,
     min_mapq: int = 0,
 ) -> tuple[float, dict[str, int]]:
-    """Run RapidSplice analyze and return (elapsed_time, event_type_counts)."""
+    """Run BRAID analyze and return (elapsed_time, event_type_counts)."""
     cmd = [
         sys.executable, "-m", "braid.cli",
         "analyze", gtf_path, bam_path,
@@ -159,7 +159,7 @@ def run_braid_analyze(
         "--min-reads", str(min_reads),
     ]
 
-    elapsed = run_cmd(cmd, "RapidSplice analyze", timeout=1800)
+    elapsed = run_cmd(cmd, "BRAID analyze", timeout=1800)
 
     counts: dict[str, int] = {}
     if os.path.exists(output_tsv):
@@ -250,7 +250,7 @@ def generate_report(
 
     # --- Figure 1: Event type distribution comparison ---
     fig1, ax1 = plt.subplots(1, 1, figsize=(10, 5))
-    x_labels = RAPIDSPLICE_EVENT_TYPES
+    x_labels = BRAID_EVENT_TYPES
     x_pos = np.arange(len(x_labels))
     width = 0.25
 
@@ -317,7 +317,7 @@ def generate_report(
     story.append(Paragraph("Alternative Splicing Event Detection Benchmark", styles["Title"]))
     story.append(Spacer(1, 12))
     story.append(Paragraph(
-        "Comparison of RapidSplice AS event detection against SUPPA2 "
+        "Comparison of BRAID AS event detection against SUPPA2 "
         "on real RNA-seq data (K562 ENCODE, SRR387661).",
         styles["Normal"],
     ))
@@ -345,7 +345,7 @@ def generate_report(
 
     header = ["Event Type"] + list(tools_data.keys())
     table_data = [header]
-    for et in RAPIDSPLICE_EVENT_TYPES:
+    for et in BRAID_EVENT_TYPES:
         row = [et]
         for tool_name in tools_data:
             row.append(str(tools_data[tool_name].get(et, 0)))
@@ -355,7 +355,7 @@ def generate_report(
     for tool_name in tools_data:
         total = sum(
             tools_data[tool_name].get(et, 0)
-            for et in RAPIDSPLICE_EVENT_TYPES
+            for et in BRAID_EVENT_TYPES
         )
         total_row.append(str(total))
     table_data.append(total_row)
@@ -420,18 +420,18 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     print("\n=== Step 1: Transcript Assembly ===")
     assemblers = {}
 
-    # RapidSplice
+    # BRAID
     rs_gtf = str(out_dir / "braid.gtf")
     if os.path.exists(rs_gtf) and count_transcripts(rs_gtf) > 0:
         rs_time = 0.0
-        print(f"  RapidSplice: reusing existing {count_transcripts(rs_gtf)} transcripts")
+        print(f"  BRAID: reusing existing {count_transcripts(rs_gtf)} transcripts")
     else:
         rs_time = run_assembler(
             "braid", bam_path, rs_gtf, config.threads, config.chr_filter,
         )
-        print(f"  RapidSplice: {count_transcripts(rs_gtf)} transcripts in {rs_time:.1f}s")
+        print(f"  BRAID: {count_transcripts(rs_gtf)} transcripts in {rs_time:.1f}s")
     if os.path.exists(rs_gtf) and count_transcripts(rs_gtf) > 0:
-        assemblers["RapidSplice"] = rs_gtf
+        assemblers["BRAID"] = rs_gtf
 
     # StringTie
     st_gtf = str(out_dir / "stringtie.gtf")
@@ -450,7 +450,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     suppa_ref_prefix = str(out_dir / "suppa_gencode")
     suppa_ref_counts = run_suppa2_generate_events(str(ANNOTATION_GTF), suppa_ref_prefix)
 
-    # Map SUPPA event types to RapidSplice types
+    # Map SUPPA event types to BRAID types
     ref_counts_mapped: dict[str, int] = {}
     for stype, count in suppa_ref_counts.items():
         rs_type = SUPPA_TO_RS_MAP.get(stype, stype)
@@ -461,7 +461,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     for et, c in sorted(ref_counts_mapped.items()):
         print(f"    {et}: {c}")
 
-    # --- Step 3: Run SUPPA2 + RapidSplice analyze on each assembler's GTF ---
+    # --- Step 3: Run SUPPA2 + BRAID analyze on each assembler's GTF ---
     print("\n=== Step 3: AS Event Detection ===")
 
     for assembler_name, gtf_path in assemblers.items():
@@ -483,16 +483,16 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
         results["runtimes"][label_suppa] = suppa_elapsed
         print(f"  SUPPA2: {sum(suppa_mapped.values())} events in {suppa_elapsed:.1f}s")
 
-        # RapidSplice analyze
+        # BRAID analyze
         rs_tsv = str(out_dir / f"braid_analyze_{assembler_name.lower()}.tsv")
         rs_elapsed, rs_counts = run_braid_analyze(
             gtf_path, bam_path, rs_tsv, min_reads=config.min_reads,
         )
 
-        label_rs = f"RapidSplice ({assembler_name})"
+        label_rs = f"BRAID ({assembler_name})"
         results["event_counts"][label_rs] = rs_counts
         results["runtimes"][label_rs] = rs_elapsed
-        print(f"  RapidSplice: {sum(rs_counts.values())} events in {rs_elapsed:.1f}s")
+        print(f"  BRAID: {sum(rs_counts.values())} events in {rs_elapsed:.1f}s")
 
         # Load PSI distributions
         if os.path.exists(rs_tsv):
@@ -527,7 +527,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     analysis_parts = []
     analysis_parts.append(
         "This benchmark compares alternative splicing event detection between "
-        "RapidSplice and SUPPA2 on real RNA-seq data from the ENCODE K562 cell line "
+        "BRAID and SUPPA2 on real RNA-seq data from the ENCODE K562 cell line "
         "(SRR387661, 124.8M paired-end reads, 92.1% alignment rate). "
     )
 
@@ -540,7 +540,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
 
     for assembler_name in assemblers:
         label_suppa = f"SUPPA2 ({assembler_name})"
-        label_rs = f"RapidSplice ({assembler_name})"
+        label_rs = f"BRAID ({assembler_name})"
 
         suppa_total = sum(results["event_counts"].get(label_suppa, {}).values())
         rs_total = sum(results["event_counts"].get(label_rs, {}).values())
@@ -550,37 +550,37 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
 
         analysis_parts.append(
             f"On {assembler_name} transcripts: SUPPA2 detected {suppa_total:,} events "
-            f"in {suppa_rt:.1f}s, while RapidSplice detected {rs_total:,} events in "
+            f"in {suppa_rt:.1f}s, while BRAID detected {rs_total:,} events in "
             f"{rs_rt:.1f}s. "
         )
 
         if rs_total > 0 and suppa_total > 0:
             ratio = rs_total / suppa_total
             analysis_parts.append(
-                f"RapidSplice found {ratio:.1f}x the events compared to SUPPA2. "
+                f"BRAID found {ratio:.1f}x the events compared to SUPPA2. "
             )
 
         # Detail which event types each tool missed
         suppa_counts = results["event_counts"].get(label_suppa, {})
         rs_counts = results["event_counts"].get(label_rs, {})
-        suppa_zeros = [et for et in RAPIDSPLICE_EVENT_TYPES if suppa_counts.get(et, 0) == 0]
-        rs_zeros = [et for et in RAPIDSPLICE_EVENT_TYPES if rs_counts.get(et, 0) == 0]
+        suppa_zeros = [et for et in BRAID_EVENT_TYPES if suppa_counts.get(et, 0) == 0]
+        rs_zeros = [et for et in BRAID_EVENT_TYPES if rs_counts.get(et, 0) == 0]
         if suppa_zeros:
             analysis_parts.append(
                 f"SUPPA2 missed event types: {', '.join(suppa_zeros)}. "
             )
         if rs_zeros:
             analysis_parts.append(
-                f"RapidSplice missed event types: {', '.join(rs_zeros)}. "
+                f"BRAID missed event types: {', '.join(rs_zeros)}. "
             )
 
     analysis_parts.append(
         "Key findings: (1) SUPPA2 generateEvents only detects SE, MXE, and RI events "
         "from assembled transcripts, missing A5SS, A3SS, AFE, and ALE events entirely. "
-        "RapidSplice detects all 7 standard AS event types. "
-        "(2) RapidSplice additionally provides junction-based PSI quantification with "
+        "BRAID detects all 7 standard AS event types. "
+        "(2) BRAID additionally provides junction-based PSI quantification with "
         "Beta-binomial confidence intervals and ML-based confidence scoring per event. "
-        "(3) SUPPA2 is faster for the limited event types it supports, while RapidSplice "
+        "(3) SUPPA2 is faster for the limited event types it supports, while BRAID "
         "provides more comprehensive analysis at the cost of longer runtime."
     )
 
@@ -603,7 +603,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     print("-" * 80)
 
     header = f"{'Tool':<30}"
-    for et in RAPIDSPLICE_EVENT_TYPES:
+    for et in BRAID_EVENT_TYPES:
         header += f" {et:>6}"
     header += f" {'Total':>8} {'Time(s)':>8}"
     print(header)
@@ -612,7 +612,7 @@ def run_benchmark(config: SplicingBenchmarkConfig) -> dict:
     for tool_name, counts in results["event_counts"].items():
         line = f"{tool_name:<30}"
         total = 0
-        for et in RAPIDSPLICE_EVENT_TYPES:
+        for et in BRAID_EVENT_TYPES:
             c = counts.get(et, 0)
             total += c
             line += f" {c:>6}"

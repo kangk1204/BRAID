@@ -1,4 +1,4 @@
-"""Tests for the RapidSplice install diagnostics."""
+"""Tests for the BRAID install diagnostics."""
 
 from __future__ import annotations
 

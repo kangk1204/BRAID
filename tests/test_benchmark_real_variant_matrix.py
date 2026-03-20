@@ -1,4 +1,4 @@
-"""Tests for real-data RapidSplice variant matrix runner."""
+"""Tests for real-data BRAID variant matrix runner."""
 
 from __future__ import annotations
 

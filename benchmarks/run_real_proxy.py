@@ -1,4 +1,4 @@
-"""Preset wrapper for fast proxy RapidSplice real-data runs."""
+"""Preset wrapper for fast proxy BRAID real-data runs."""
 
 from __future__ import annotations
 

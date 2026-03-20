@@ -1,4 +1,4 @@
-"""Main assembly pipeline orchestrating all RapidSplice modules."""
+"""Main assembly pipeline orchestrating all BRAID modules."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class PipelineConfig:
-    """Configuration for the RapidSplice assembly pipeline.
+    """Configuration for the BRAID assembly pipeline.
 
     Controls every user-facing parameter of the assembler, from input
     paths and output format to algorithmic thresholds and hardware
@@ -793,7 +793,7 @@ def _infer_strand_static(
 
 
 class AssemblyPipeline:
-    """Orchestrates the full RapidSplice transcript assembly workflow.
+    """Orchestrates the full BRAID transcript assembly workflow.
 
     The pipeline proceeds through the following stages for each chromosome:
 

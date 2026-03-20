@@ -1,1 +1,1 @@
-"""Benchmark suite for RapidSplice transcript assembler."""
+"""Benchmark suite for BRAID transcript assembler."""

@@ -1,4 +1,4 @@
-"""Benchmark report generator for RapidSplice.
+"""Benchmark report generator for BRAID.
 
 Reads benchmark results (as a JSON file or a Python dictionary) and produces
 a comprehensive PDF report containing:
@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _TOOL_COLORS: dict[str, str] = {
-    "RapidSplice": "#2196F3",
+    "BRAID": "#2196F3",
     "StringTie": "#4CAF50",
     "Scallop2": "#FF9800",
     "CLASS2": "#9C27B0",
@@ -521,7 +521,7 @@ def _build_story(
 
     # ---- Title Page ----
     story.append(Spacer(1, 2 * inch))
-    story.append(Paragraph("RapidSplice", title_style))
+    story.append(Paragraph("BRAID", title_style))
     story.append(Paragraph("Benchmark Report", title_style))
     story.append(Spacer(1, 0.5 * inch))
     story.append(
@@ -542,7 +542,7 @@ def _build_story(
     story.append(Paragraph("1. Task Description", heading_style))
     story.append(
         Paragraph(
-            "This report evaluates RapidSplice, a GPU-accelerated RNA-seq "
+            "This report evaluates BRAID, a GPU-accelerated RNA-seq "
             "transcript assembler, against established baseline tools on "
             "synthetic RNA-seq data. The task is reference-guided transcript "
             "assembly: given aligned short reads (BAM) and a reference genome, "
@@ -814,9 +814,9 @@ def _build_results_table(results: dict) -> Table | None:
         ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
     ])
 
-    # Highlight RapidSplice row
+    # Highlight BRAID row
     for row_idx, row in enumerate(data[1:], start=1):
-        if row[0] == "RapidSplice":
+        if row[0] == "BRAID":
             style.add(
                 "BACKGROUND",
                 (0, row_idx),
@@ -867,25 +867,25 @@ def _generate_analysis(results: dict) -> list[str]:
         f"enabling exact measurement of assembly accuracy."
     )
 
-    # RapidSplice-specific analysis
-    if "RapidSplice" in metrics_by_tool:
-        rs_m = metrics_by_tool["RapidSplice"]
+    # BRAID-specific analysis
+    if "BRAID" in metrics_by_tool:
+        rs_m = metrics_by_tool["BRAID"]
         rs_tx_sn = rs_m.get("transcript_sensitivity", 0) * 100
         rs_tx_pr = rs_m.get("transcript_precision", 0) * 100
         rs_ex_sn = rs_m.get("exon_sensitivity", 0) * 100
         rs_in_sn = rs_m.get("intron_sensitivity", 0) * 100
 
         paragraphs.append(
-            f"<b>RapidSplice</b> achieved a transcript-level sensitivity of "
+            f"<b>BRAID</b> achieved a transcript-level sensitivity of "
             f"{rs_tx_sn:.1f}% and precision of {rs_tx_pr:.1f}%. At the exon "
             f"level, sensitivity was {rs_ex_sn:.1f}%, and intron-level "
             f"sensitivity was {rs_in_sn:.1f}%."
         )
 
     # Compare against baselines
-    baselines = {k: v for k, v in metrics_by_tool.items() if k != "RapidSplice"}
-    if baselines and "RapidSplice" in metrics_by_tool:
-        rs_m = metrics_by_tool["RapidSplice"]
+    baselines = {k: v for k, v in metrics_by_tool.items() if k != "BRAID"}
+    if baselines and "BRAID" in metrics_by_tool:
+        rs_m = metrics_by_tool["BRAID"]
 
         for baseline_name, bl_m in baselines.items():
             wins: list[str] = []
@@ -910,12 +910,12 @@ def _generate_analysis(results: dict) -> list[str]:
 
             if wins:
                 paragraphs.append(
-                    f"Compared to <b>{baseline_name}</b>, RapidSplice shows "
+                    f"Compared to <b>{baseline_name}</b>, BRAID shows "
                     f"improvements in: {'; '.join(wins)}."
                 )
             if losses:
                 paragraphs.append(
-                    f"Conversely, {baseline_name} outperforms RapidSplice in: "
+                    f"Conversely, {baseline_name} outperforms BRAID in: "
                     f"{'; '.join(losses)}."
                 )
 
@@ -934,25 +934,25 @@ def _generate_analysis(results: dict) -> list[str]:
             f"{slowest[1]:.2f}s."
         )
 
-        if "RapidSplice" in runtimes and len(runtimes) > 1:
-            rs_time = runtimes["RapidSplice"]
+        if "BRAID" in runtimes and len(runtimes) > 1:
+            rs_time = runtimes["BRAID"]
             for other_name, other_time in runtimes.items():
-                if other_name != "RapidSplice" and other_time > 0:
+                if other_name != "BRAID" and other_time > 0:
                     speedup = other_time / rs_time if rs_time > 0 else float("inf")
                     if speedup > 1.0:
                         paragraphs.append(
-                            f"RapidSplice was {speedup:.1f}x faster than "
+                            f"BRAID was {speedup:.1f}x faster than "
                             f"{other_name}."
                         )
                     elif speedup < 1.0 and speedup > 0:
                         paragraphs.append(
-                            f"RapidSplice was {1.0 / speedup:.1f}x slower than "
+                            f"BRAID was {1.0 / speedup:.1f}x slower than "
                             f"{other_name}."
                         )
 
     # Concluding remarks
     paragraphs.append(
-        "<b>Conclusions:</b> RapidSplice demonstrates competitive assembly "
+        "<b>Conclusions:</b> BRAID demonstrates competitive assembly "
         "quality through its combination of safe flow decomposition and "
         "ML-based transcript scoring. The safe path framework provides "
         "high-confidence transcript skeletons that serve as a foundation "
@@ -978,7 +978,7 @@ def main() -> None:
     Loads results from a JSON file and calls :func:`generate_report`.
     """
     parser = argparse.ArgumentParser(
-        description="Generate RapidSplice benchmark report PDF.",
+        description="Generate BRAID benchmark report PDF.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(

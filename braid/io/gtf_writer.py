@@ -125,13 +125,13 @@ class GtfWriter:
         writer.write_transcripts(transcript_list)
     """
 
-    def __init__(self, output_path: str, source: str = "RapidSplice") -> None:
+    def __init__(self, output_path: str, source: str = "BRAID") -> None:
         """Initialize the GTF writer.
 
         Args:
             output_path: Filesystem path for the output GTF file.
             source: Value for the *source* column (column 2). Defaults to
-                ``"RapidSplice"``.
+                ``"BRAID"``.
         """
         self.output_path: str = output_path
         self.source: str = source
@@ -242,13 +242,13 @@ class Gff3Writer:
         writer.write_transcripts(transcript_list)
     """
 
-    def __init__(self, output_path: str, source: str = "RapidSplice") -> None:
+    def __init__(self, output_path: str, source: str = "BRAID") -> None:
         """Initialize the GFF3 writer.
 
         Args:
             output_path: Filesystem path for the output GFF3 file.
             source: Value for the *source* column (column 2). Defaults to
-                ``"RapidSplice"``.
+                ``"BRAID"``.
         """
         self.output_path: str = output_path
         self.source: str = source
