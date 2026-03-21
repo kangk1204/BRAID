@@ -283,6 +283,14 @@ def create_parser() -> argparse.ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="command")
 
+    # --- psi subcommand (NEW) ---
+    from braid.commands.psi import add_psi_subparser
+    add_psi_subparser(subparsers)
+
+    # --- differential subcommand (NEW) ---
+    from braid.commands.differential import add_differential_subparser
+    add_differential_subparser(subparsers)
+
     # --- assemble subcommand ---
     assemble_parser = subparsers.add_parser(
         "assemble",
@@ -1135,7 +1143,7 @@ def main() -> None:
     # or a BAM file path
     known_commands = {
         "assemble", "analyze", "denovo", "dashboard", "doctor", "target",
-        "fastq-target", "-h", "--help", "--version",
+        "fastq-target", "psi", "differential", "-h", "--help", "--version",
     }
     if len(sys.argv) > 1 and sys.argv[1] not in known_commands:
         # Could be a BAM file path — use legacy parser
@@ -1180,6 +1188,8 @@ def main() -> None:
             _run_target(args)
         elif args.command == "fastq-target":
             _run_fastq_target(args)
+        elif args.command in ("psi", "differential"):
+            args.func(args)
     except FileNotFoundError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(1)
