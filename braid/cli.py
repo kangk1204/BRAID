@@ -20,12 +20,16 @@ def _add_assembly_args(parser: argparse.ArgumentParser) -> None:
     """
     parser.add_argument(
         "bam",
-        help="Input BAM file (coordinate-sorted, indexed).",
+        nargs="+",
+        help="Input BAM file(s) (coordinate-sorted, indexed). "
+             "Multiple BAMs are assembled independently; a summary "
+             "table is written when more than one BAM is provided.",
     )
     parser.add_argument(
         "-o", "--output",
-        default="braid_output.gtf",
-        help="Output file path (default: braid_output.gtf).",
+        default="braid_output",
+        help="Output path. For single BAM: GTF file (default: braid_output.gtf). "
+             "For multiple BAMs: output directory (default: braid_output/).",
     )
     parser.add_argument(
         "-f", "--format",
@@ -612,15 +616,13 @@ def _parse_chromosomes(raw: str | None) -> list[str] | None:
     return result or None
 
 
-def _run_assemble(args: argparse.Namespace) -> None:
-    """Run the assembly pipeline from parsed arguments.
-
-    Args:
-        args: Parsed CLI arguments.
-    """
+def _build_pipeline_config(
+    bam_path: str,
+    args: argparse.Namespace,
+    output_path: str,
+) -> PipelineConfig:
+    """Build a PipelineConfig for one BAM file."""
     chromosomes = _parse_chromosomes(getattr(args, "chromosomes", None))
-
-    # --gpu flag is shorthand for --backend gpu
     backend = getattr(args, "backend", "auto")
     if getattr(args, "gpu", False):
         backend = "gpu"
@@ -635,11 +637,10 @@ def _run_assemble(args: argparse.Namespace) -> None:
             raise SystemExit(
                 "--nmf cannot be combined with --shadow-decomposer."
             )
-
-    config = PipelineConfig(
-        bam_path=args.bam,
+    return PipelineConfig(
+        bam_path=bam_path,
         reference_path=getattr(args, "reference", None),
-        output_path=args.output,
+        output_path=output_path,
         output_format=getattr(args, "output_format", "gtf"),
         backend=backend,
         threads=getattr(args, "threads", 1),
@@ -675,9 +676,147 @@ def _run_assemble(args: argparse.Namespace) -> None:
         guide_tolerance=getattr(args, "guide_tolerance", 5),
     )
 
-    pipeline = AssemblyPipeline(config)
-    output_path = pipeline.run()
-    print(f"Assembly complete. Output written to: {output_path}")
+
+def _parse_gtf_bootstrap_attributes(gtf_path: str) -> list[dict]:
+    """Parse isoform-level attributes from a BRAID GTF with bootstrap info."""
+    import os
+    records: list[dict] = []
+    if not os.path.exists(gtf_path):
+        return records
+    with open(gtf_path) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            fields = line.strip().split("\t")
+            if len(fields) < 9 or fields[2] != "transcript":
+                continue
+            attrs = fields[8]
+            rec: dict = {}
+            for part in attrs.split(";"):
+                part = part.strip()
+                if not part:
+                    continue
+                key_val = part.split('"')
+                if len(key_val) >= 2:
+                    key = key_val[0].strip()
+                    val = key_val[1].strip()
+                    rec[key] = val
+            records.append(rec)
+    return records
+
+
+def _write_summary_table(
+    sample_results: dict[str, list[dict]],
+    output_path: str,
+) -> None:
+    """Write a cross-sample summary TSV from per-sample GTF attributes."""
+    import os
+    import numpy as np
+
+    # Collect all transcript IDs
+    all_tids: dict[str, dict] = {}
+    sample_names = list(sample_results.keys())
+
+    for sample, records in sample_results.items():
+        for rec in records:
+            tid = rec.get("transcript_id", "")
+            gid = rec.get("gene_id", "")
+            if not tid:
+                continue
+            if tid not in all_tids:
+                all_tids[tid] = {"transcript_id": tid, "gene_id": gid}
+            all_tids[tid][f"{sample}_TPM"] = rec.get("TPM", "0")
+            all_tids[tid][f"{sample}_cov"] = rec.get("cov", "0")
+            all_tids[tid][f"{sample}_cv"] = rec.get("bootstrap_cv", "NA")
+            all_tids[tid][f"{sample}_ci_low"] = rec.get("bootstrap_ci_low", "NA")
+            all_tids[tid][f"{sample}_ci_high"] = rec.get("bootstrap_ci_high", "NA")
+            all_tids[tid][f"{sample}_presence"] = rec.get("bootstrap_presence", "NA")
+
+    # Compute cross-sample stats
+    rows = []
+    for tid, info in sorted(all_tids.items()):
+        cvs = []
+        for s in sample_names:
+            cv_val = info.get(f"{s}_cv", "NA")
+            if cv_val != "NA":
+                try:
+                    cvs.append(float(cv_val))
+                except ValueError:
+                    pass
+        info["mean_cv"] = f"{np.mean(cvs):.4f}" if cvs else "NA"
+        info["n_samples_detected"] = str(sum(
+            1 for s in sample_names
+            if info.get(f"{s}_TPM", "0") not in ("0", "0.0", "0.00", "NA")
+        ))
+        info["confident"] = "yes" if (cvs and np.mean(cvs) <= 0.2) else "no"
+        rows.append(info)
+
+    # Write TSV
+    base_cols = ["transcript_id", "gene_id"]
+    sample_cols = []
+    for s in sample_names:
+        sample_cols.extend([
+            f"{s}_TPM", f"{s}_cv", f"{s}_ci_low", f"{s}_ci_high", f"{s}_presence",
+        ])
+    summary_cols = ["mean_cv", "n_samples_detected", "confident"]
+    all_cols = base_cols + sample_cols + summary_cols
+
+    with open(output_path, "w") as f:
+        f.write("\t".join(all_cols) + "\n")
+        for row in rows:
+            f.write("\t".join(str(row.get(c, "NA")) for c in all_cols) + "\n")
+
+
+def _run_assemble(args: argparse.Namespace) -> None:
+    """Run the assembly pipeline from parsed arguments.
+
+    Supports multiple BAM files: each is assembled independently,
+    and a cross-sample summary table is generated.
+    """
+    import os
+
+    bam_list = args.bam if isinstance(args.bam, list) else [args.bam]
+    n_bams = len(bam_list)
+
+    if n_bams == 1:
+        # Single BAM — original behavior
+        out = args.output if args.output.endswith(".gtf") else args.output + ".gtf"
+        config = _build_pipeline_config(bam_list[0], args, out)
+        pipeline = AssemblyPipeline(config)
+        output_path = pipeline.run()
+        print(f"Assembly complete. Output written to: {output_path}")
+        return
+
+    # Multiple BAMs — assemble each, then create summary
+    outdir = args.output
+    os.makedirs(outdir, exist_ok=True)
+
+    sample_results: dict[str, list[dict]] = {}
+    gtf_paths: list[str] = []
+
+    for bam_path in bam_list:
+        sample_name = os.path.splitext(os.path.basename(bam_path))[0]
+        gtf_out = os.path.join(outdir, f"{sample_name}.gtf")
+        gtf_paths.append(gtf_out)
+
+        print(f"Assembling {sample_name} ({bam_path})...")
+        config = _build_pipeline_config(bam_path, args, gtf_out)
+        pipeline = AssemblyPipeline(config)
+        pipeline.run()
+        print(f"  → {gtf_out}")
+
+        # Parse bootstrap attributes from GTF
+        records = _parse_gtf_bootstrap_attributes(gtf_out)
+        sample_results[sample_name] = records
+
+    # Write summary table
+    summary_path = os.path.join(outdir, "summary.tsv")
+    _write_summary_table(sample_results, summary_path)
+
+    n_total = sum(len(r) for r in sample_results.values())
+    print(f"\nAll {n_bams} samples assembled.")
+    print(f"Per-sample GTFs: {outdir}/*.gtf")
+    print(f"Summary table:   {summary_path} ({n_total} isoform-sample entries)")
 
 
 def _run_analyze(args: argparse.Namespace) -> None:
