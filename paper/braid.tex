@@ -201,11 +201,11 @@ From 15 cancer-related genes (AKT1, BAX, BCR, BRAF, BRCA1, DNMT3A, EZH2, GATA2, 
 
 \begin{table}[h]
 \centering
-\caption{PacBio cross-validation results (204 events, 15 genes).}
+\caption{PacBio cross-validation results (204 events, 15 genes). The binomial baseline corresponds to the Beta($n_{\text{inc}}+1$, $n_{\text{exc}}+1$) posterior used by MISO \citep{katz2010}, equivalent to BRAID with $\alpha=1$ and a uniform prior.}
 \label{tab:pacbio}
 \begin{tabular}{lcc}
 \toprule
-Metric & BRAID v2 & Legacy Poisson \\
+Metric & BRAID (calibrated) & Binomial (MISO-style) \\
 \midrule
 CI coverage (target: 95\%) & \textbf{94.6\%} & 72.5\% \\
 Pearson correlation ($r$) & 0.831 & 0.831 \\
@@ -217,7 +217,7 @@ Confident accuracy & \textbf{100\%} & 90.9\% \\
 \end{tabular}
 \end{table}
 
-The overdispersed Beta posterior with support-adaptive scaling increases CI coverage from 72.5\% to 94.6\% while maintaining identical point estimates ($r$, $R^2$, MAE are properties of $\hat{\Psi}$, not the CI). The legacy Poisson model produces too many confident calls (33), of which 3 are incorrect (90.9\% accuracy). BRAID's calibrated model produces fewer confident calls (10) but all are correct (100\%).
+The binomial baseline---a Beta($n_{\text{inc}}+1$, $n_{\text{exc}}+1$) posterior identical to the model used by MISO \citep{katz2010}---achieves only 72.5\% empirical coverage at a nominal 95\% level, confirming that RNA-seq overdispersion causes standard models to produce overconfident intervals. BRAID's overdispersed posterior with support-adaptive scaling increases coverage to 94.6\% while maintaining identical point estimates ($r$, $R^2$, MAE are properties of $\hat{\Psi}$, not the CI). The binomial model produces 33 confident calls with 3 errors (90.9\% accuracy); BRAID produces 10 confident calls with zero errors (100\% accuracy). Neither MAJIQ nor Whippet has published analogous calibration benchmarks against independent long-read ground truth, so direct numerical comparison is not possible; however, both use models that do not account for RNA-seq overdispersion (MAJIQ uses a beta-binomial with fixed dispersion estimated from replicates; Whippet uses EM-based maximum likelihood), suggesting their single-sample intervals may similarly undercover.
 
 
 \begin{figure*}[t]
