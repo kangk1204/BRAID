@@ -1268,9 +1268,14 @@ def _run_doctor(args: argparse.Namespace) -> None:
 def main() -> None:
     """Parse command-line arguments and dispatch to the appropriate subcommand.
 
-    This is the main entry point invoked by the ``braid`` console
-    script. Supports three subcommands: assemble (default), analyze, and
-    dashboard.
+    This is the main entry point invoked by the ``braid`` console script.
+    Supported subcommands: run, psi, differential, assemble, analyze,
+    denovo, dashboard, doctor, target, and fastq-target.
+
+    When the first positional argument is not a recognised subcommand and
+    looks like a file path (contains ``/`` or ``.``), the legacy assemble
+    parser is used for backward compatibility.  Otherwise an error is
+    printed directing the user to ``braid -h``.
     """
     # Handle backward compatibility: detect if first arg is a subcommand
     # or a BAM file path
@@ -1280,7 +1285,18 @@ def main() -> None:
         "-h", "--help", "--version",
     }
     if len(sys.argv) > 1 and sys.argv[1] not in known_commands:
-        # Could be a BAM file path — use legacy parser
+        first_arg = sys.argv[1]
+        # Only fall through to legacy assemble when the first arg looks
+        # like a file path (contains '/' or '.' — e.g. reads.bam,
+        # ./data/sample.cram).  Otherwise it is an unrecognised command.
+        if "/" not in first_arg and "." not in first_arg:
+            print(
+                f"Unknown command: {first_arg}. "
+                "Run 'braid -h' for help.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        # Looks like a BAM/CRAM file path — use legacy parser
         legacy_parser = _create_assemble_parser()
         args = legacy_parser.parse_args()
         try:

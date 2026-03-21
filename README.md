@@ -4,24 +4,80 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
 
-**Calibrated confidence intervals for RNA-seq splicing analysis.**
+**BRAID adds calibrated confidence intervals to StringTie and rMATS results.**
 
-
-
-
-BRAID runs on macOS and Ubuntu. BRAID benchmarking works best in a conda
-environment because it depends on external bioinformatics tools such as
-`samtools`, `stringtie`, and `rmats.py`.
+Given aligned RNA-seq BAMs, BRAID wraps existing transcript assemblers and
+splicing tools and augments every reported isoform or splicing event with
+bootstrap-based confidence intervals, uncertainty tiers, and reproducibility
+scores.  The goal is not to replace StringTie or rMATS but to tell you *how
+much you should trust* their output.
 
 ---
 
-## What It Does
+## The Four Modes of `braid run`
 
-- **Transcript assembly** from coordinate-sorted BAM files.
-- **Targeted splicing analysis** with PSI and confidence intervals.
-- **Optional GPU acceleration** for heavier workloads.
-- **CPU fallback by default**, so a laptop install is enough for basic use.
-- **Benchmark and paper helpers** for reproducible evaluation.
+BRAID auto-detects what you want based on the inputs you provide:
+
+```bash
+# Mode 1 — Assemble: BAM only -> de novo assembly + CI
+braid run sample1.bam sample2.bam -o results/
+
+# Mode 2 — Score: BAM + StringTie GTF -> isoform-level CI
+braid run *.bam --stringtie merged.gtf -o results/
+
+# Mode 3 — PSI: BAM + rMATS output -> event-level PSI CI
+braid run *.bam --rmats rMATS_output/ -o results/
+
+# Mode 4 — Differential: two groups + rMATS -> differential splicing + tiers
+braid run --ctrl c1.bam c2.bam --treat kd.bam --rmats rMATS_output/ -o results/
+```
+
+| Mode | Inputs | What BRAID adds |
+|---|---|---|
+| **assemble** | BAM files | Transcript assembly with per-isoform bootstrap CI |
+| **score** | BAM + StringTie GTF | Confidence intervals on StringTie isoform abundances |
+| **psi** | BAM + rMATS dir | Calibrated PSI posterior intervals per splicing event |
+| **differential** | ctrl BAMs + treat BAMs + rMATS | Tiered differential splicing calls with CI |
+
+---
+
+## Complete Pipeline Example
+
+A typical workflow from raw data to confidence-annotated results:
+
+```bash
+# 1. Align reads (e.g. HISAT2)
+hisat2 -x genome -1 R1.fq.gz -2 R2.fq.gz --dta | samtools sort -o aligned.bam
+samtools index aligned.bam
+
+# 2. Assemble transcripts with StringTie
+stringtie aligned.bam -G gencode.v38.gtf -o stringtie.gtf -p 8
+
+# 3. Detect differential splicing with rMATS (two-group comparison)
+rmats.py --b1 ctrl.txt --b2 treat.txt --gtf gencode.v38.gtf \
+    --od rmats_out/ -t paired --readLength 150
+
+# 4. Add BRAID confidence intervals
+braid run --ctrl ctrl.bam --treat treat.bam \
+    --rmats rmats_out/ --stringtie stringtie.gtf -o braid_results/
+```
+
+BRAID reads the existing StringTie and rMATS output, resamples junction
+counts via Poisson bootstrap, and writes augmented results with CI bounds,
+uncertainty tiers, and reproducibility flags.
+
+---
+
+## What BRAID Provides
+
+- **Per-isoform confidence intervals** on StringTie transcript abundances.
+- **Calibrated PSI posteriors** for every rMATS splicing event.
+- **Tiered differential calls** (high / medium / low confidence) with
+  bootstrap-derived FDR calibration.
+- **Multi-replicate variance decomposition** separating biological from
+  sampling uncertainty.
+- **De novo assembly path** when no upstream tool output is available.
+- **Optional GPU acceleration** for heavier workloads; CPU fallback by default.
 
 ---
 
@@ -37,7 +93,7 @@ environment because it depends on external bioinformatics tools such as
 
 Use the smallest option that matches your goal:
 
-- `Core CPU install`: run the assembler and core Python workflows.
+- `Core CPU install`: run BRAID bootstrap and scoring workflows.
 - `BRAID benchmark / paper install`: reproduce QKI, PacBio, and paper figures.
 - `GPU install`: optional Ubuntu path for CUDA 12 systems.
 
@@ -148,7 +204,8 @@ pages are:
 
 If `rmats.py` still does not appear on `PATH`, open a new shell and activate the
 conda environment again. BRAID itself does not need `stringtie` or `rmats` for
-basic assembly; they are only required for benchmark and paper reproduction.
+core confidence-interval workflows; they are only required for benchmark and
+paper reproduction.
 
 
 ### Optional: Development Install
@@ -164,31 +221,39 @@ python -m pip install -e ".[dev]"
 ### Minimal usage
 
 ```bash
-braid assemble aligned.bam
+braid run sample.bam -o results/
 ```
 
-This reads a coordinate-sorted, indexed BAM file and writes assembled transcripts
-to `braid_output.gtf`.
+Auto-detects mode (assemble) and writes transcripts with bootstrap CI.
 
-### With reference genome and custom output
+### Add confidence to StringTie output
+
+```bash
+braid run sample.bam --stringtie transcripts.gtf -o results/
+```
+
+### Add confidence to rMATS output
+
+```bash
+braid run sample.bam --rmats rmats_output/ -o results/
+```
+
+### Differential splicing with tiers
+
+```bash
+braid run --ctrl c1.bam c2.bam --treat kd1.bam kd2.bam --rmats rmats_output/ -o results/
+```
+
+### De novo assembly (legacy mode)
 
 ```bash
 braid assemble aligned.bam -o transcripts.gtf -r genome.fa
 ```
 
-Providing a reference FASTA (with `.fai` index) enables splice-site motif
-validation for improved precision.
-
 ### GPU-accelerated run
 
 ```bash
 braid assemble aligned.bam --backend gpu -t 8 -o transcripts.gtf
-```
-
-### Process specific chromosomes
-
-```bash
-braid assemble aligned.bam --chromosomes chr1,chr2,chr3 -v
 ```
 
 ### Verify the install
@@ -227,14 +292,20 @@ python -m pytest tests/ -v
 ## CLI Reference
 
 ```
-usage: braid [-h] [-o OUTPUT] [-f {gtf,gff3}] [-r REFERENCE]
-                   [--backend {auto,cpu,gpu}] [-t THREADS] [-q MIN_MAPQ]
-                   [-j MIN_JUNCTION_SUPPORT] [-c MIN_COVERAGE] [-s MIN_SCORE]
-                   [--max-intron-length MAX_INTRON_LENGTH] [--no-safe-paths]
-                   [--no-ml-scoring] [--model MODEL] [--chromosomes CHROMOSOMES]
-                   [-v] [--version]
-                   bam
+usage: braid [-h] {run,psi,differential,assemble,analyze,denovo,dashboard,doctor,target,fq} ...
 ```
+
+### `braid run` (recommended entry point)
+
+```
+braid run [BAMs...] [--stringtie GTF] [--rmats DIR]
+          [--ctrl BAMs...] [--treat BAMs...]
+          [-o OUTPUT_DIR] [-t THREADS]
+```
+
+Auto-detects mode from provided inputs. See the four modes above.
+
+### `braid assemble` (direct assembly)
 
 | Argument | Default | Description |
 |---|---|---|
@@ -258,19 +329,12 @@ usage: braid [-h] [-o OUTPUT] [-f {gtf,gff3}] [-r REFERENCE]
 
 ---
 
-## How It Works
-
-BRAID's assembly path scans BAM files, builds splice graphs for each locus, decomposes
-compatible paths into transcripts, and scores the results with a compact
-feature-based filter. If you only want to run the assembler, you can stop at the
-Install and Quick Start sections above.
-
----
-
 ## Benchmarks
 
 Benchmark scripts live in `benchmarks/`. The paper figures and evaluation
-artifacts are generated from there.
+artifacts are generated from there. All benchmark scripts accept a
+`BRAID_DATA_DIR` environment variable (default: `real_benchmark`) to locate
+BAM files and reference data.
 
 ---
 

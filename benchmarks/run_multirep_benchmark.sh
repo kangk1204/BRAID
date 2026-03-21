@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
-cd /home/keunsoo/projects/23_rna-seq_assembler
+
+BRAID_DATA_DIR="${BRAID_DATA_DIR:-real_benchmark}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+cd "$PROJECT_DIR"
 
 echo "=== BRAID Multi-Replicate Benchmark ==="
 echo "Waiting for all downloads and alignments..."
@@ -12,9 +17,9 @@ while pgrep -f "fasterq.*SRR1173|hisat2.*SRR1173|wget.*ENCFF729" > /dev/null 2>&
 done
 echo "All jobs complete"
 
-QKI=real_benchmark/rtpcr_benchmark/qki
-REF=real_benchmark/reference/grch38/genome
-GTF=real_benchmark/annotation/gencode.v38.nochr.gtf
+QKI="$BRAID_DATA_DIR/rtpcr_benchmark/qki"
+REF="$BRAID_DATA_DIR/reference/grch38/genome"
+GTF="$BRAID_DATA_DIR/annotation/gencode.v38.nochr.gtf"
 RUN_GM12878=${RUN_GM12878:-0}
 
 # Align QKI control rep2 if FASTQ available
@@ -38,8 +43,8 @@ samtools index $QKI/ctrl_rep1.bam 2>/dev/null || true
 
 if [ "$RUN_GM12878" = "1" ]; then
     # Prepare GM12878 Rep1 without mutating the source BAM
-    GM_REP1=real_benchmark/bam/GM12878_Rep1_ENCFF729OOW.bam
-    GM_REP1_NOCHR=real_benchmark/bam/GM12878_Rep1.nochr.bam
+    GM_REP1="$BRAID_DATA_DIR/bam/GM12878_Rep1_ENCFF729OOW.bam"
+    GM_REP1_NOCHR="$BRAID_DATA_DIR/bam/GM12878_Rep1.nochr.bam"
     if [ -f "$GM_REP1_NOCHR" ]; then
         echo "GM12878 Rep1 ready"
     elif [ -f "$GM_REP1" ]; then
@@ -55,15 +60,17 @@ fi
 echo ""
 echo "=== Running Multi-Replicate Benchmarks ==="
 
-python3 << 'PYEOF'
+python3 << PYEOF
 import os
 import sys, json, time, numpy as np
 sys.path.insert(0, ".")
 
+BRAID_DATA_DIR = os.environ.get("BRAID_DATA_DIR", "real_benchmark")
+
 results = {
     "metadata": {
-        "qki_dir": "real_benchmark/rtpcr_benchmark/qki",
-        "gtf": "real_benchmark/annotation/gencode.v38.nochr.gtf",
+        "qki_dir": f"{BRAID_DATA_DIR}/rtpcr_benchmark/qki",
+        "gtf": f"{BRAID_DATA_DIR}/annotation/gencode.v38.nochr.gtf",
         "seed": 42,
     },
     "qki_multi_replicate": {},
@@ -78,7 +85,7 @@ print("  Benchmark 2a: QKI Multi-Replicate")
 print("=" * 60)
 
 import os
-QKI = "real_benchmark/rtpcr_benchmark/qki"
+QKI = f"{BRAID_DATA_DIR}/rtpcr_benchmark/qki"
 ctrl1 = f"{QKI}/ctrl_rep1.bam"
 ctrl2 = f"{QKI}/ctrl_rep2.bam"
 
@@ -87,7 +94,7 @@ if os.path.exists(ctrl1) and os.path.exists(ctrl2):
     from braid.target.psi_bootstrap import compute_psi_from_junctions
     from braid.target.extractor import lookup_gene
 
-    GTF = "real_benchmark/annotation/gencode.v38.nochr.gtf"
+    GTF = f"{BRAID_DATA_DIR}/annotation/gencode.v38.nochr.gtf"
 
     GENES = ["EZH2", "AKT1", "STAT3", "RUNX1", "BCL2L1"]
 
@@ -161,8 +168,8 @@ print("\n" + "=" * 60)
 print("  Benchmark 2b: GM12878 Multi-Replicate Isoform CI")
 print("=" * 60)
 
-gm_rep1 = "real_benchmark/bam/GM12878_Rep1.nochr.bam"
-gm_rep2 = "real_benchmark/bam/GM12878_ENCFF550SET.nochr.bam"
+gm_rep1 = f"{BRAID_DATA_DIR}/bam/GM12878_Rep1.nochr.bam"
+gm_rep2 = f"{BRAID_DATA_DIR}/bam/GM12878_ENCFF550SET.nochr.bam"
 run_gm12878 = os.environ.get("RUN_GM12878") == "1"
 
 if not run_gm12878:
@@ -172,8 +179,8 @@ elif os.path.exists(gm_rep1) and os.path.exists(gm_rep2):
     from braid.target.multi_replicate_bootstrap import multi_replicate_isoform_bootstrap
     from braid.target.stringtie_bootstrap import STBootstrapConfig, run_stringtie_bootstrap
 
-    ST_GTF = "real_benchmark/results/stringtie_GM12878_rf.gtf"
-    REF = "real_benchmark/reference/grch38/genome.fa"
+    ST_GTF = f"{BRAID_DATA_DIR}/results/stringtie_GM12878_rf.gtf"
+    REF = f"{BRAID_DATA_DIR}/reference/grch38/genome.fa"
 
     # Single-sample (Rep2 only - already have results)
     print("  Single-sample (Rep2): loading previous results...")

@@ -1,9 +1,14 @@
 #!/bin/bash
 set -euo pipefail
-cd /home/keunsoo/projects/23_rna-seq_assembler
 
-QKI_DIR=real_benchmark/rtpcr_benchmark/qki
-GTF=real_benchmark/annotation/gencode.v38.nochr.gtf
+BRAID_DATA_DIR="${BRAID_DATA_DIR:-real_benchmark}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+cd "$PROJECT_DIR"
+
+QKI_DIR="$BRAID_DATA_DIR/rtpcr_benchmark/qki"
+GTF="$BRAID_DATA_DIR/annotation/gencode.v38.nochr.gtf"
 RMATS_DIR=benchmarks/results/qki_rmats
 RMATS_TMP=$RMATS_DIR/tmp
 OUTPUT_JSON=$QKI_DIR/qki_rmats_benchmark_results.json

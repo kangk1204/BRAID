@@ -121,10 +121,100 @@ def get_group_counts(
     event: RmatsEvent,
     sample: str = "sample_1",
 ) -> tuple[int, int]:
-    """Return inclusion/exclusion counts for the requested rMATS group."""
+    """Return inclusion/exclusion counts for the requested rMATS group.
+
+    Args:
+        event: An rMATS-detected AS event.
+        sample: Which group to return counts for (``"sample_1"`` or ``"sample_2"``).
+
+    Raises:
+        ValueError: If *sample* is not ``"sample_1"`` or ``"sample_2"``.
+    """
+    if sample == "sample_1":
+        return event.sample_1_inc_count, event.sample_1_exc_count
     if sample == "sample_2":
         return event.sample_2_inc_count, event.sample_2_exc_count
-    return event.sample_1_inc_count, event.sample_1_exc_count
+    raise ValueError(
+        f"Invalid sample label {sample!r}; expected 'sample_1' or 'sample_2'"
+    )
+
+
+def _build_event_id(
+    event_type: str,
+    chrom: str,
+    es: int,
+    ee: int,
+    up_es: int | None,
+    up_ee: int | None,
+    dn_es: int | None,
+    dn_ee: int | None,
+    fields: list[str],
+    cols: dict[str, int],
+) -> str:
+    """Build a collision-resistant event identifier.
+
+    For SE events the upstream and downstream exon coordinates are
+    appended so that two SE events sharing the same skipped exon but
+    different flanking exons produce distinct IDs.  For A3SS/A5SS the
+    long and short exon boundaries disambiguate.  For MXE both
+    alternative exons are included.  For RI the flanking exon
+    boundaries are appended.
+    """
+    base = f"{event_type}:{chrom}:{es}-{ee}"
+
+    if event_type == "SE":
+        parts: list[str] = []
+        if up_ee is not None:
+            parts.append(f"u{up_ee}")
+        if dn_es is not None:
+            parts.append(f"d{dn_es}")
+        if parts:
+            return f"{base}:{'/'.join(parts)}"
+        return base
+
+    if event_type in ("A3SS", "A5SS"):
+        long_es = _get_field(fields, cols, "longExonStart_0base")
+        long_ee = _get_field(fields, cols, "longExonEnd")
+        short_es = _get_field(fields, cols, "shortES")
+        short_ee = _get_field(fields, cols, "shortEE")
+        extras: list[str] = []
+        if long_es is not None and long_ee is not None:
+            extras.append(f"l{long_es}-{long_ee}")
+        if short_es is not None and short_ee is not None:
+            extras.append(f"s{short_es}-{short_ee}")
+        if extras:
+            return f"{base}:{'/'.join(extras)}"
+        return base
+
+    if event_type == "MXE":
+        e1_es = _get_field(fields, cols, "1stExonStart_0base")
+        e1_ee = _get_field(fields, cols, "1stExonEnd")
+        e2_es = _get_field(fields, cols, "2ndExonStart_0base")
+        e2_ee = _get_field(fields, cols, "2ndExonEnd")
+        mxe_parts: list[str] = []
+        if e1_es is not None and e1_ee is not None:
+            mxe_parts.append(f"e1={e1_es}-{e1_ee}")
+        if e2_es is not None and e2_ee is not None:
+            mxe_parts.append(f"e2={e2_es}-{e2_ee}")
+        if up_ee is not None:
+            mxe_parts.append(f"u{up_ee}")
+        if dn_es is not None:
+            mxe_parts.append(f"d{dn_es}")
+        if mxe_parts:
+            return f"{base}:{'/'.join(mxe_parts)}"
+        return base
+
+    if event_type == "RI":
+        ri_parts: list[str] = []
+        if up_es is not None:
+            ri_parts.append(f"u{up_es}-{up_ee}")
+        if dn_es is not None:
+            ri_parts.append(f"d{dn_es}-{dn_ee}")
+        if ri_parts:
+            return f"{base}:{'/'.join(ri_parts)}"
+        return base
+
+    return base
 
 
 def _resolve_rmats_table(rmats_dir: str, event_type: str) -> str | None:
@@ -171,11 +261,12 @@ def parse_rmats_output(
             # Column indices
             cols = {h: i for i, h in enumerate(header)}
 
-            for line in f:
+            for line_no, line in enumerate(f, start=2):
                 fields = line.strip().split("\t")
                 if len(fields) < len(header):
                     continue
 
+                gene = ""
                 try:
                     chrom = fields[cols.get("chr", 3)]
                     strand = fields[cols.get("strand", 4)]
@@ -209,7 +300,33 @@ def parse_rmats_output(
                     es = int(fields[cols.get("exonStart_0base", 5)])
                     ee = int(fields[cols.get("exonEnd", 6)])
 
-                    eid = f"{et}:{chrom}:{es}-{ee}"
+                    # Flanking exon coordinates (when present)
+                    up_es = (
+                        int(_get_field(fields, cols, "upstreamES") or "0")
+                        if _get_field(fields, cols, "upstreamES") is not None
+                        else None
+                    )
+                    up_ee = (
+                        int(_get_field(fields, cols, "upstreamEE") or "0")
+                        if _get_field(fields, cols, "upstreamEE") is not None
+                        else None
+                    )
+                    dn_es = (
+                        int(_get_field(fields, cols, "downstreamES") or "0")
+                        if _get_field(fields, cols, "downstreamES") is not None
+                        else None
+                    )
+                    dn_ee = (
+                        int(_get_field(fields, cols, "downstreamEE") or "0")
+                        if _get_field(fields, cols, "downstreamEE") is not None
+                        else None
+                    )
+
+                    eid = _build_event_id(
+                        et, chrom, es, ee,
+                        up_es, up_ee, dn_es, dn_ee,
+                        fields, cols,
+                    )
 
                     events.append(RmatsEvent(
                         event_id=eid,
@@ -234,28 +351,16 @@ def parse_rmats_output(
                         rmats_dpsi=dpsi,
                         exon_start=es,
                         exon_end=ee,
-                        upstream_es=(
-                            int(_get_field(fields, cols, "upstreamES") or "0")
-                            if _get_field(fields, cols, "upstreamES") is not None
-                            else None
-                        ),
-                        upstream_ee=(
-                            int(_get_field(fields, cols, "upstreamEE") or "0")
-                            if _get_field(fields, cols, "upstreamEE") is not None
-                            else None
-                        ),
-                        downstream_es=(
-                            int(_get_field(fields, cols, "downstreamES") or "0")
-                            if _get_field(fields, cols, "downstreamES") is not None
-                            else None
-                        ),
-                        downstream_ee=(
-                            int(_get_field(fields, cols, "downstreamEE") or "0")
-                            if _get_field(fields, cols, "downstreamEE") is not None
-                            else None
-                        ),
+                        upstream_es=up_es,
+                        upstream_ee=up_ee,
+                        downstream_es=dn_es,
+                        downstream_ee=dn_ee,
                     ))
-                except (ValueError, IndexError, KeyError):
+                except (ValueError, IndexError, KeyError) as exc:
+                    logger.warning(
+                        "Skipping %s line %d (gene=%s): %s",
+                        fname, line_no, gene or "unknown", exc,
+                    )
                     continue
 
     logger.info(

@@ -2,7 +2,9 @@
 # Wait for BAM downloads to complete, then run benchmarks
 set -e
 
-BAM_DIR="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/bam"
+BRAID_DATA_DIR="${BRAID_DATA_DIR:-real_benchmark}"
+
+BAM_DIR="$BRAID_DATA_DIR/bam"
 GM_BAM="$BAM_DIR/GM12878_ENCFF550SET.bam"
 IMR_BAM="$BAM_DIR/IMR90_ENCFF560TMJ.bam"
 
@@ -52,21 +54,22 @@ echo "Running GM12878 benchmark..."
 
 # StringTie GM12878
 echo "=== StringTie GM12878 ==="
-stringtie "$GM_BAM" -p 8 -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/stringtie_GM12878.gtf
+RESULTS="$BRAID_DATA_DIR/results"
+mkdir -p "$RESULTS"
+stringtie "$GM_BAM" -p 8 -o "$RESULTS/stringtie_GM12878.gtf"
 echo "StringTie GM12878 done"
 
 # BRAID GM12878 (with bootstrap)
 echo "=== BRAID GM12878 ==="
 python -m braid assemble \
     --bam "$GM_BAM" \
-    --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
-    -o /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results/braid_GM12878.gtf \
+    --reference "$BRAID_DATA_DIR/reference/grch38/genome.fa" \
+    -o "$RESULTS/braid_GM12878.gtf" \
     -t 8 --bootstrap
 echo "BRAID GM12878 done"
 
 # GFFcompare GM12878
-GENCODE_CHR="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/annotation/gencode.v38.annotation.gtf"
-RESULTS="/home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/results"
+GENCODE_CHR="$BRAID_DATA_DIR/annotation/gencode.v38.annotation.gtf"
 
 echo "=== GFFcompare GM12878 ==="
 gffcompare -r "$GENCODE_CHR" -o "$RESULTS/rs_GM12878" "$RESULTS/braid_GM12878.gtf"
@@ -84,7 +87,7 @@ echo "StringTie IMR90 done"
 echo "=== BRAID IMR90 ==="
 python -m braid assemble \
     --bam "$IMR_BAM" \
-    --reference /home/keunsoo/projects/23_rna-seq_assembler/real_benchmark/reference/grch38/genome.fa \
+    --reference "$BRAID_DATA_DIR/reference/grch38/genome.fa" \
     -o "$RESULTS/braid_IMR90.gtf" \
     -t 8 --bootstrap
 echo "BRAID IMR90 done"
