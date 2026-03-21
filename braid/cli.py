@@ -1,4 +1,4 @@
-"""Command-line interface for BRAID with a legacy ``braid`` alias."""
+"""Command-line interface for BRAID."""
 
 from __future__ import annotations
 
@@ -262,9 +262,8 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="braid",
         description=(
-            "BRAID: RNA-seq splicing confidence and assembly toolkit.  "
-            "Public command name is `braid`; the legacy `braid` alias "
-            "continues to work for backward compatibility."
+            "BRAID: calibrated confidence intervals for "
+            "RNA-seq alternative splicing analysis."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(

@@ -15,18 +15,18 @@
 
 \author{Keunsoo Kang\textsuperscript{1,*}}
 
-\date{}
+\date{March 2026}
 
 \begin{document}
 \maketitle
 
-\noindent\textsuperscript{1}Department of Bioinformatics\\
+\noindent\textsuperscript{1}Department of Microbiology, College of Science \& Technology, Dankook University, Cheonan, Republic of Korea\\
 \textsuperscript{*}Corresponding author. E-mail: kangk1204@gmail.com
 
 \begin{abstract}
 \noindent\textbf{Motivation:} RNA-seq alternative splicing (AS) analysis tools such as rMATS and StringTie report point estimates of percent spliced-in (PSI) and isoform abundances, but do not provide per-event confidence intervals from a single sample. Researchers therefore cannot distinguish well-supported events from uncertain ones without biological replicates, and even with replicates, existing $p$-values reflect differential testing rather than per-sample measurement precision.
 
-\noindent\textbf{Results:} We present BRAID, a post-processing tool that adds calibrated bootstrap confidence intervals to the output of existing AS analysis pipelines. BRAID uses an overdispersed Beta posterior with support-adaptive scaling, calibrated via leave-one-gene-out cross-validation against PacBio long-read ground truth. On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage (target: 95\%) with $r = 0.831$ correlation to long-read PSI. On the QKI RT-PCR benchmark (80 validated exon-skipping events + 80 matched null controls), BRAID's high-confidence tier identifies 10 validated events and yields \textbf{zero false positives} on matched null controls. In multi-replicate mode, biological variance contributes 1.9$\times$ more than sampling variance to total uncertainty, demonstrating the importance of replicate-aware CI estimation. BRAID post-processes 16,292 rMATS SE events in 18.6 seconds on a laptop-class WSL2 system and requires no modifications to existing workflows.
+\noindent\textbf{Results:} We present BRAID, a post-processing tool that adds calibrated bootstrap confidence intervals to the output of existing AS analysis pipelines. BRAID uses an overdispersed Beta posterior with support-adaptive scaling, calibrated via leave-one-gene-out cross-validation against PacBio long-read ground truth. On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage (target: 95\%) with $r = 0.831$ correlation to long-read PSI. On the QKI RT-PCR benchmark (80 validated exon-skipping events + 80 matched null controls), BRAID's high-confidence tier classifies 10 validated events as trustworthy and yields \textbf{zero false positives} on matched null controls. In multi-replicate mode, biological variance contributes 1.9$\times$ more than sampling variance to total uncertainty, demonstrating the importance of replicate-aware CI estimation. BRAID post-processes 16,292 rMATS SE events in 18.6 seconds on a laptop-class WSL2 system and requires no modifications to existing workflows.
 
 \noindent\textbf{Availability:} \url{https://github.com/kangk1204/BRAID}
 
@@ -56,7 +56,7 @@ We present BRAID (\textbf{B}ootstrap \textbf{R}eliability \textbf{A}ssessment fo
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig1_workflow}
-\caption{\textbf{BRAID workflow.} BRAID takes as input RNA-seq BAM files, StringTie GTF, or rMATS output tables. Junction counts are extracted and modeled with an overdispersed Beta posterior. Support-adaptive calibration (trained via leave-one-gene-out cross-validation) produces calibrated CI. Output includes per-event PSI with CI, confidence tiers, and biological/sampling variance decomposition.}
+\caption{\textbf{BRAID workflow.} BRAID takes as input RNA-seq BAM files, StringTie GTF, or rMATS output tables. Junction counts are extracted and modeled with an overdispersed Beta posterior. Support-adaptive calibration (trained via leave-one-gene-out cross-validation) produces calibrated CI (Figure~\ref{fig:workflow}). Output includes per-event PSI with CI, confidence tiers, and biological/sampling variance decomposition.}
 \label{fig:workflow}
 \end{figure*}
 
@@ -91,7 +91,7 @@ The optimal $\alpha$ depends on the total read support: events with more reads t
     \item Report the median $\alpha_b$ across folds for each bin.
 \end{enumerate}
 
-This produces a monotonically decreasing schedule (Table~\ref{tab:scale_schedule}); the fitted scale values decrease with support, while the resulting intervals still narrow in the high-support bins because the larger raw counts dominate posterior concentration.
+This produces a monotonically decreasing schedule (Table~\ref{tab:scale_schedule})\footnote{The overall 94.6\% coverage is event-count-weighted across bins; per-bin coverages in Table~\ref{tab:scale_schedule} reflect bin-specific performance.}; the fitted scale values decrease with support, while the resulting intervals still narrow in the high-support bins because the larger raw counts dominate posterior concentration.
 
 \begin{table}[h]
 \centering
@@ -174,7 +174,7 @@ BRAID filters alignments before counting: secondary alignments, supplementary al
 
 We validated BRAID against PacBio Sequel long-read sequencing data from ENCODE (K562 cell line, ENCSR589FUJ). Long reads provide independent PSI estimates at single-molecule resolution, serving as ground truth for short-read uncertainty quantification.
 
-From 15 cancer-related genes (AKT1, BAX, BCR, BRAF, BRCA1, DNMT3A, EZH2, GATA2, MDM2, MYC, RUNX1, STAT3, TET2, TP53, VHL), we extracted 204 A3SS/A5SS events with sufficient junction support in both short-read and long-read data.
+From 15 cancer-related genes (Figure~\ref{fig:pacbio}) (AKT1, BAX, BCR, BRAF, BRCA1, DNMT3A, EZH2, GATA2, MDM2, MYC, RUNX1, STAT3, TET2, TP53, VHL), we extracted 204 A3SS/A5SS events with sufficient junction support in both short-read and long-read data.
 
 \begin{table}[h]
 \centering
@@ -208,7 +208,7 @@ The binomial baseline---a Beta($n_{\text{inc}}+1$, $n_{\text{exc}}+1$) posterior
 
 We evaluated BRAID on the QKI knockdown dataset \citep{hall2013}, which provides RT-PCR-validated exon-skipping events. The published RT-PCR target tables are hg19-based, so we lifted both validated and null-control coordinates to hg38 before matching them to BRAID/rMATS output. This dataset contains 80 validated SE events (confirmed by RT-PCR to change upon QKI knockdown) and we constructed 80 matched null control events (SE events in the same genes with similar read support but no differential splicing).
 
-We ran rMATS on control replicates (SRR1173996, SRR1173997) versus QKI knockdown (SRR1173998), then applied BRAID confidence tiering to the rMATS output.
+We ran rMATS on control replicates (SRR1173996, SRR1173997) versus QKI knockdown (SRR1173998), then applied BRAID confidence tiering to the rMATS output (Table~\ref{tab:qki}, Figure~\ref{fig:qki}).
 
 \begin{table}[h]
 \centering
@@ -238,7 +238,7 @@ The key result is that \textbf{all final BRAID tiers maintain zero false positiv
 
 \subsection{Multi-Replicate Variance Decomposition}
 
-Using GM12878 ENCODE biological replicates (ENCFF729OOW, ENCFF550SET), we decomposed isoform-level uncertainty across 32,771 StringTie isoforms.
+Using GM12878 ENCODE biological replicates (ENCFF729OOW, ENCFF550SET), we decomposed isoform-level uncertainty across 32,771 StringTie isoforms (Table~\ref{tab:multirep}, Figure~\ref{fig:calibration}).
 
 \begin{table}[h]
 \centering
@@ -251,7 +251,7 @@ Component & Median \\
 Biological $\sigma$ (between-replicate) & 7.73 \\
 Sampling $\sigma$ (within-replicate bootstrap) & 4.08 \\
 Total CV & 0.359 \\
-Biological / Sampling ratio & 1.89$\times$ \\
+Biological / Sampling ratio & 1.9$\times$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -291,7 +291,7 @@ For AKT1, multi-replicate mode narrows the CI from 0.124 to 0.081, because the t
 
 \subsection{Computational Performance}
 
-BRAID is designed as a lightweight post-processing layer:
+BRAID is designed as a lightweight post-processing layer (Table~\ref{tab:runtime}):
 
 \begin{table}[h]
 \centering
@@ -353,11 +353,22 @@ Integrating BRAID with long-read sequencing workflows (PacBio, Oxford Nanopore) 
 
 \section{Conclusion}
 
-BRAID provides calibrated confidence intervals for RNA-seq alternative splicing analysis, complementing rather than replacing existing tools. Its key properties---94.6\% CI coverage, 100\% confident accuracy, zero false positives on matched null controls under the reported final tiers, and 18.6-second post-processing for 16,292 QKI SE events---make it a practical addition to standard AS analysis workflows. BRAID is freely available at \url{https://github.com/kangk1204/BRAID}.
+BRAID provides calibrated confidence intervals for RNA-seq alternative splicing analysis, complementing rather than replacing existing tools. Its key properties---94.6\% CI coverage, 100\% confident accuracy, zero false positives on matched null controls under the reported final tiers, and 18.6-second post-processing for 16,292 QKI SE events---make it a practical addition to standard AS analysis workflows. BRAID is freely available at \url{https://github.com/kangk1204/BRAID} (Figure~\ref{fig:positioning}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{fig5_positioning}
+\caption{\textbf{BRAID adds confidence-based prioritization to existing workflows.} Without BRAID, all significant events are treated equally. With BRAID, events are stratified by confidence tier, enabling researchers to prioritize validation of high-confidence events (100\% accuracy, 0\% FPR).}
+\label{fig:positioning}
+\end{figure}
 
 \section*{Acknowledgements}
 
 PacBio long-read data from ENCODE (ENCSR589FUJ). QKI knockdown data from \citet{hall2013}. GM12878 and K562 RNA-seq from ENCODE. GENCODE v38 annotation.
+
+\section*{Data Availability}
+
+BRAID source code is available at \url{https://github.com/kangk1204/BRAID}. PacBio long-read data: ENCODE ENCSR589FUJ. QKI knockdown RNA-seq: SRA SRR1173996--SRR1173999. GM12878 RNA-seq: ENCODE ENCFF729OOW, ENCFF550SET. K562 RNA-seq: SRA SRR387661. GENCODE v38 annotation: \url{https://www.gencodegenes.org}.
 
 \bibliographystyle{apalike}
 \begin{thebibliography}{99}
@@ -376,11 +387,6 @@ Quaking and PTB control overlapping splicing regulatory networks during muscle c
 Katz, Y. et al. (2010).
 Analysis and design of RNA sequencing experiments for identifying isoform regulation.
 \textit{Nat. Methods}, 7(12):1009--1015.
-
-\bibitem[Liu et al., 2021]{liu2021}
-Liu, Q. et al. (2021).
-Systematic evaluation of isoform-level AS quantification methods.
-\textit{Brief. Bioinform.}, 22(6):bbab248.
 
 \bibitem[Pertea et al., 2015]{pertea2015}
 Pertea, M. et al. (2015).

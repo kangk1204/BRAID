@@ -14,6 +14,7 @@ import logging
 from dataclasses import dataclass, field
 
 import numpy as np
+from scipy.stats import norm
 import pysam
 
 from braid.target.psi_bootstrap import (
@@ -227,7 +228,7 @@ def multi_replicate_psi(
             total_std = float(np.sqrt(total_var))
 
             mean_psi = float(np.mean(rep_psis))
-            z = 1.96 if confidence_level == 0.95 else 2.576
+            z = float(norm.ppf(1 - (1 - confidence_level) / 2))
 
             combined_lo = max(0.0, mean_psi - z * total_std)
             combined_hi = min(1.0, mean_psi + z * total_std)
@@ -318,7 +319,7 @@ def multi_replicate_psi(
             total_std = float(np.sqrt(total_var))
             mean_psi = float(np.mean(rep_psis))
 
-            z = 1.96
+            z = float(norm.ppf(1 - (1 - confidence_level) / 2))
             combined_lo = max(0.0, mean_psi - z * total_std)
             combined_hi = min(1.0, mean_psi + z * total_std)
             ci_width = combined_hi - combined_lo
