@@ -276,6 +276,10 @@ def _combine_replicate_results(
         ci_high = min(1.0, mean_psi + z * total_std)
         cv = total_std / mean_psi if mean_psi > 0 else float("nan")
 
+        # Sum counts across replicates for output
+        total_inc = sum(rep[i].inclusion_count for rep in all_rep_results if i < len(rep))
+        total_exc = sum(rep[i].exclusion_count for rep in all_rep_results if i < len(rep))
+
         from dataclasses import replace
         combined.append(replace(
             base_r,
@@ -284,6 +288,8 @@ def _combine_replicate_results(
             ci_high=ci_high,
             cv=cv,
             ci_width=ci_high - ci_low,
+            inclusion_count=total_inc,
+            exclusion_count=total_exc,
             is_confident=(ci_high - ci_low) < 0.2 and np.isfinite(cv) and cv <= 0.5,
         ))
 

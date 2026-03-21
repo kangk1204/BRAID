@@ -40,7 +40,7 @@ braid run --ctrl c1.bam c2.bam --treat kd.bam --rmats rMATS_output/ -o results/
 | **differential** | ctrl BAMs + treat BAMs + rMATS | Tiered differential splicing calls with CI |
 
 Modes can be combined: e.g. `--stringtie` + `--rmats` + `--ctrl`/`--treat` runs
-all applicable modes (score, psi, and differential) in one invocation.
+all applicable modes (score and differential) in one invocation.
 
 ---
 

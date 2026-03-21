@@ -1,10 +1,10 @@
-"""Add BRAID bootstrap CI to rMATS-detected AS events.
+"""Add BRAID calibrated CI to rMATS-detected AS events.
 
 Takes rMATS output (SE/A3SS/A5SS/MXE/RI junction count files) and
-a BAM file, then computes per-event bootstrap PSI confidence intervals
-using Poisson resampling of the junction read counts.
+computes per-event PSI confidence intervals using an overdispersed
+Beta posterior with support-adaptive scaling.
 
-This combines rMATS's proven event detection with BRAID's bootstrap
+This combines rMATS's proven event detection with BRAID's calibrated
 CI — the best of both tools.
 """
 
