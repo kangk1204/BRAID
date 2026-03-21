@@ -30,7 +30,7 @@ Researchers cannot distinguish well-measured events from uncertain ones, making 
 We present BRAID, a lightweight post-processing tool that adds calibrated confidence intervals, coefficients of variation (CV), and confidence tiers directly to existing rMATS or StringTie output---without requiring users to change pipelines.
 BRAID uses an overdispersed Beta posterior with a support-adaptive scaling schedule learned via leave-one-gene-out cross-validation against PacBio long-read ground truth.
 On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), compared to 72.5\% for the standard binomial model.
-On the QKI knockdown RT-PCR benchmark, the rMATS + BRAID hybrid workflow classifies 10 of 80 validated events as high-confidence, with zero false positives on both 25 experimentally confirmed negatives and 80 matched null controls.
+On the QKI knockdown RT-PCR benchmark, rMATS alone calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$), whereas BRAID's high-confidence tier retains 10 validated events with zero false positives across both 25 experimental negatives and 80 matched null controls.
 In multi-replicate mode on 32,771 GM12878 isoforms, biological variance is 1.9$\times$ larger than sampling variance, demonstrating that single-sample intervals underestimate total uncertainty.
 BRAID post-processes 16,292 rMATS events in 18.6 seconds and is freely available at \url{https://github.com/kangk1204/BRAID}.
 \end{abstract}
@@ -110,22 +110,25 @@ To test whether BRAID's confidence tiers improve the practical utility of rMATS 
 This dataset provides three independent cohorts: 80 RT-PCR-validated exon-skipping events (\textit{validated}), 25 events that were tested by RT-PCR but showed no splicing change (\textit{RT-PCR failed}), and 80 computationally selected non-differential events with matched read support (\textit{matched null}).
 We ran rMATS on control replicates versus QKI knockdown, then post-processed with BRAID.
 
-Among the 44 events called significant by rMATS, BRAID classified 14 as \textit{supported} and 10 as \textit{high-confidence} (Table~\ref{tab:qki}, Figure~\ref{fig:qki}).
-Critically, \textbf{zero} events from either negative cohort---the 25 experimentally confirmed negatives and the 80 computationally matched nulls---were classified as supported or high-confidence at any tier.
-The experimental negative cohort (RT-PCR failed) is particularly informative because these events were actually tested by RT-PCR and found to show no differential splicing, providing independent \textit{experimental} rather than \textit{computational} evidence that BRAID does not generate false confident calls.
+Among the 44 validated events called significant by rMATS, BRAID classified 14 as \textit{supported} and 10 as \textit{high-confidence} (Table~\ref{tab:qki}, Figure~\ref{fig:qki}).
+
+The RT-PCR Failed cohort reveals a striking result: rMATS calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$; median FDR $= 0.002$, median $|\Delta\Psi| = 0.42$).
+These are events that passed rMATS's statistical threshold yet show no splicing change by RT-PCR---a 68\% false positive rate among the experimental negatives.
+In contrast, BRAID classified \textbf{zero} of these 25 events as supported or high-confidence.
+This demonstrates that BRAID's calibrated confidence tiers provide a safeguard against false positives that $p$-value thresholds alone cannot offer.
 
 \begin{table}[htbp]
 \centering
-\caption{QKI RT-PCR benchmark across three independent cohorts. Tiers are nested subsets: 44 rMATS significant $\supset$ 14 supported $\supset$ 10 high-confidence. The RT-PCR Failed cohort provides \textit{experimental} (not computational) evidence of zero false positives.}
+\caption{QKI RT-PCR benchmark. The RT-PCR Failed cohort contains events experimentally tested by RT-PCR with \textit{no} observed splicing change. Notably, rMATS calls 17 of these 25 negatives as significant (FDR $< 0.05$, median FDR $= 0.002$), whereas BRAID classifies zero as supported or high-confidence.}
 \label{tab:qki}
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
  & Validated & RT-PCR Failed & Matched Null \\
 Tier & ($n=80$) & ($n=25$) & ($n=80$) \\
 \midrule
-rMATS significant & 44 (55\%) & 0 (0\%) & 0 (0\%) \\
-\quad + BRAID supported & 14 (18\%) & 0 (0\%) & 0 (0\%) \\
-\quad\quad + BRAID high-confidence & 10 (13\%) & 0 (0\%) & 0 (0\%) \\
+rMATS FDR $< 0.05$ & 44 (55\%) & \textbf{17 (68\%)} & 0 (0\%) \\
+\quad + BRAID supported & 14 (18\%) & \textbf{0 (0\%)} & 0 (0\%) \\
+\quad\quad + BRAID high-confidence & 10 (13\%) & \textbf{0 (0\%)} & 0 (0\%) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -140,7 +143,10 @@ BRAID adds confidence tiers with zero false positives on 80 matched null control
 \label{fig:qki}
 \end{figure*}
 
-This result demonstrates BRAID's intended use case: it does not replace rMATS as a differential splicing caller, but adds a confidence layer that helps researchers prioritize the 10 most trustworthy events for experimental follow-up out of 44 significant calls.
+This result demonstrates BRAID's intended use case.
+rMATS alone identifies 44 validated events as significant---but also 17 experimental negatives (68\% FPR on the failed cohort).
+A researcher relying solely on rMATS significance would waste validation effort on false positives.
+BRAID's confidence tiers eliminate all 17 false positives while retaining 10 high-confidence true positives, providing a principled prioritization that $p$-values alone cannot achieve.
 
 \subsection*{Multi-replicate variance decomposition}
 
