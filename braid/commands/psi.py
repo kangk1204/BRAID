@@ -111,25 +111,22 @@ def run_psi(args: argparse.Namespace) -> None:
                 sample="sample_1",
             )
         else:
-            # Multi-replicate: all BAMs are replicates of the SAME condition.
-            # rMATS only has 2 groups (sample_1, sample_2).  All replicates
-            # here correspond to sample_1.  We run bootstrap independently
-            # per replicate (with different seeds) to capture between-
-            # replicate variability, then combine CIs.
+            # Multi-replicate: use per-replicate counts from rMATS table
+            # (IJC_SAMPLE_1 stores comma-separated per-replicate counts).
+            # Each replicate gets its own posterior, then we combine
+            # biological + sampling variance.
             logger.info(
-                "%d BAMs provided — treating as replicates of one condition "
-                "(bootstrap on sample_1 counts).",
+                "%d BAMs provided — using per-replicate counts from rMATS "
+                "for biological variance estimation.",
                 n_bams,
             )
             all_rep_results = []
-            for i, bam in enumerate(bams):
-                sample_key = "sample_1"
-                rep_results = add_bootstrap_ci(
-                    events,
+            for i in range(n_bams):
+                rep_results = _bootstrap_per_replicate(
+                    events, i,
                     n_replicates=args.replicates,
                     confidence_level=args.confidence,
                     seed=args.seed + i,
-                    sample=sample_key,
                 )
                 all_rep_results.append(rep_results)
 
@@ -172,6 +169,75 @@ def run_psi(args: argparse.Namespace) -> None:
     # Write output
     _write_psi_tsv(results, args.output, mode)
     print(f"BRAID psi: {len(results)} events → {args.output} ({mode})")
+
+
+def _bootstrap_per_replicate(
+    events: list,
+    replicate_index: int,
+    n_replicates: int = 500,
+    confidence_level: float = 0.95,
+    seed: int = 42,
+) -> list:
+    """Bootstrap PSI using per-replicate counts from rMATS.
+
+    rMATS stores per-replicate junction counts as comma-separated
+    values in IJC_SAMPLE_1 / SJC_SAMPLE_1. This function extracts
+    the counts for one specific replicate and runs the posterior.
+    Falls back to group-sum if replicate-level counts are unavailable.
+    """
+    from braid.target.psi_bootstrap import (
+        CONFIDENT_CI_WIDTH_THRESHOLD,
+        CONFIDENT_CV_THRESHOLD,
+        PSIResult,
+        bootstrap_psi,
+    )
+
+    rng = np.random.default_rng(seed)
+    results = []
+
+    for ev in events:
+        # Try per-replicate counts
+        inc_reps = getattr(ev, "sample_1_inc_replicates", ())
+        exc_reps = getattr(ev, "sample_1_exc_replicates", ())
+
+        if inc_reps and replicate_index < len(inc_reps):
+            inc = inc_reps[replicate_index]
+            exc = exc_reps[replicate_index] if replicate_index < len(exc_reps) else 0
+        else:
+            # Fallback to group sum
+            inc = ev.sample_1_inc_count
+            exc = ev.sample_1_exc_count
+
+        psi, ci_low, ci_high, cv = bootstrap_psi(
+            inc, exc,
+            n_replicates=n_replicates,
+            confidence_level=confidence_level,
+            seed=int(rng.integers(0, 2**31)),
+        )
+        ci_width = ci_high - ci_low
+        is_confident = (
+            ci_width < CONFIDENT_CI_WIDTH_THRESHOLD
+            and np.isfinite(cv)
+            and cv <= CONFIDENT_CV_THRESHOLD
+        )
+        results.append(PSIResult(
+            event_id=ev.event_id,
+            event_type=ev.event_type,
+            gene=ev.gene,
+            chrom=ev.chrom,
+            psi=psi,
+            ci_low=ci_low,
+            ci_high=ci_high,
+            cv=cv,
+            inclusion_count=inc,
+            exclusion_count=exc,
+            event_start=ev.exon_start,
+            event_end=ev.exon_end,
+            ci_width=ci_width,
+            is_confident=is_confident,
+        ))
+
+    return results
 
 
 def _combine_replicate_results(

@@ -379,7 +379,7 @@ def add_bootstrap_ci(
     """Add BRAID bootstrap CI to rMATS events.
 
     For each rMATS event, uses the inclusion/exclusion junction
-    counts directly (from rMATS output) and applies Poisson
+    counts directly (from rMATS output) and applies overdispersed Beta posterior
     bootstrap to compute CI.
 
     Args:

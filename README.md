@@ -66,7 +66,7 @@ braid run --ctrl ctrl.bam --treat treat.bam \
 ```
 
 BRAID reads the existing StringTie and rMATS output, resamples junction
-counts via Poisson bootstrap, and writes augmented results with CI bounds,
+counts via overdispersed Beta posterior, and writes augmented results with CI bounds,
 uncertainty tiers, and reproducibility flags.
 
 ---
@@ -75,8 +75,8 @@ uncertainty tiers, and reproducibility flags.
 
 - **Per-isoform confidence intervals** on StringTie transcript abundances.
 - **Calibrated PSI posteriors** for every rMATS splicing event.
-- **Tiered differential calls** (high / medium / low confidence) with
-  bootstrap-derived FDR calibration.
+- **Tiered differential calls** (high-confidence / supported / significant) with
+  null-calibrated posterior thresholds.
 - **Multi-replicate variance decomposition** separating biological from
   sampling uncertainty.
 - **Transcript assembly path** when no upstream tool output is available.
@@ -288,7 +288,7 @@ browser to explore:
 python -m pytest tests/ -v
 ```
 
-449 tests, all in-memory (no external data needed).
+451 tests, all in-memory (no external data needed).
 
 ---
 
@@ -303,7 +303,7 @@ usage: braid [-h] {run,psi,differential,assemble,analyze,denovo,dashboard,doctor
 ```
 braid run [BAMs...] [--stringtie GTF] [--rmats DIR]
           [--ctrl BAMs...] [--treat BAMs...]
-          [-o OUTPUT_DIR] [-t THREADS]
+          [-o OUTPUT_DIR]
 ```
 
 Auto-detects mode from provided inputs. See the four modes above.

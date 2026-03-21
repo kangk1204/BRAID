@@ -104,6 +104,11 @@ def run_differential(args: argparse.Namespace) -> None:
     rng = np.random.default_rng(args.seed)
     results = []
 
+    # Differential uses group-sum junction counts from rMATS rather than
+    # per-replicate counts.  The overdispersed Beta posterior already
+    # accounts for extra-binomial variance; a full hierarchical model
+    # over replicates would require explicit dispersion estimation and
+    # is left for future work.
     for ev in events:
         ctrl_inc, ctrl_exc = get_group_counts(ev, sample="sample_1")
         treat_inc, treat_exc = get_group_counts(ev, sample="sample_2")

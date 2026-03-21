@@ -1,17 +1,23 @@
 """BRAID unified ``run`` subcommand with auto-detected mode.
 
-Usage examples:
-    # Case 1: BAM only -> transcript assembly + CI
+Usage examples::
+
+    # Transcript assembly + CI
     braid run sample1.bam sample2.bam -o results/
 
-    # Case 2: BAM + StringTie GTF -> isoform CI
+    # Isoform CI from StringTie
     braid run *.bam --stringtie merged.gtf -o results/
 
-    # Case 3: BAM + rMATS -> event PSI CI
+    # Event PSI CI from rMATS
     braid run *.bam --rmats rMATS_output/ -o results/
 
-    # Case 4: Two groups + rMATS -> differential + tiers
-    braid run --ctrl c1.bam c2.bam --treat kd.bam --rmats rMATS_output/ -o results/
+    # Differential + tiers (modes combinable)
+    braid run --ctrl c1.bam c2.bam --treat kd.bam \\
+        --rmats rMATS_output/ --stringtie merged.gtf -o results/
+
+PSI and differential modes compute posteriors from rMATS junction
+count tables. BAM paths are recorded for provenance but counts are
+not re-extracted from the BAM files.
 """
 
 from __future__ import annotations
@@ -30,6 +36,9 @@ Mode = Literal["differential", "psi", "score", "assemble"]
 def _collect_bams(args: argparse.Namespace, mode: Mode) -> list[str]:
     """Collect all BAM files from arguments, validating presence.
 
+    Gathers BAMs from positional args first; if none, falls back to
+    --ctrl + --treat BAMs (which are valid for score mode too).
+
     Args:
         args: Parsed CLI arguments.
         mode: The detected run mode.
@@ -44,6 +53,11 @@ def _collect_bams(args: argparse.Namespace, mode: Mode) -> list[str]:
         return list(args.ctrl) + list(args.treat)
 
     bams = list(getattr(args, "bam", None) or [])
+    # Fall back to --ctrl + --treat BAMs for non-differential modes
+    if not bams:
+        ctrl = list(getattr(args, "ctrl", None) or [])
+        treat = list(getattr(args, "treat", None) or [])
+        bams = ctrl + treat
     if not bams:
         raise SystemExit(
             f"Error: at least one BAM file is required for {mode} mode."
@@ -357,10 +371,13 @@ def add_run_subparser(subparsers: argparse._SubParsersAction) -> None:
         help="Unified pipeline: auto-detects mode from inputs.",
         description=(
             "Unified BRAID pipeline that auto-detects the analysis mode:\n\n"
-            "  - BAM only            -> assemble (de novo assembly + CI)\n"
-            "  - BAM + --stringtie   -> score (isoform CI)\n"
-            "  - BAM + --rmats       -> psi (event PSI CI)\n"
-            "  - --ctrl/--treat + --rmats -> differential (DPSI + tiers)\n"
+            "  - BAM only                 -> assemble (transcript assembly + CI)\n"
+            "  - BAM + --stringtie        -> score (isoform CI)\n"
+            "  - BAM + --rmats            -> psi (event PSI CI)\n"
+            "  - --ctrl/--treat + --rmats -> differential (DPSI + tiers)\n\n"
+            "Modes can be combined: --stringtie + --ctrl/--treat + --rmats\n"
+            "runs score then differential. BAMs from --ctrl/--treat are\n"
+            "used for all modes when positional BAMs are not provided.\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
