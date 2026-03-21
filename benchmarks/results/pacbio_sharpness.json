@@ -1,0 +1,89 @@
+{
+  "analysis": "PacBio CI Sharpness Analysis",
+  "source": "/home/keunsoo/projects/24_BRAID/benchmarks/results/rtpcr_benchmark.json",
+  "n_events_total": 204,
+  "conditional_coverage_by_width": {
+    "width_lt_0.3": {
+      "n_events": 0,
+      "coverage": 0.0
+    },
+    "width_lt_0.5": {
+      "n_events": 0,
+      "coverage": 0.0
+    },
+    "width_lt_0.8": {
+      "n_events": 102,
+      "coverage": 0.951
+    }
+  },
+  "sharpness_table": [
+    {
+      "bin": "<20",
+      "n_events": 5,
+      "braid_coverage": 1.0,
+      "random_coverage": 0.7494,
+      "coverage_lift": 0.2507,
+      "braid_median_ci_width": 1.0,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "20-49",
+      "n_events": 16,
+      "braid_coverage": 0.9375,
+      "random_coverage": 0.7518,
+      "coverage_lift": 0.1857,
+      "braid_median_ci_width": 1.0,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "50-99",
+      "n_events": 39,
+      "braid_coverage": 0.9487,
+      "random_coverage": 0.7397,
+      "coverage_lift": 0.209,
+      "braid_median_ci_width": 0.9802,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "100-249",
+      "n_events": 42,
+      "braid_coverage": 0.9286,
+      "random_coverage": 0.7242,
+      "coverage_lift": 0.2044,
+      "braid_median_ci_width": 0.9503,
+      "confident_count": 2,
+      "confident_accuracy": 1.0
+    },
+    {
+      "bin": "250+",
+      "n_events": 102,
+      "braid_coverage": 0.951,
+      "random_coverage": 0.447,
+      "coverage_lift": 0.5039,
+      "braid_median_ci_width": 0.5132,
+      "confident_count": 8,
+      "confident_accuracy": 1.0
+    }
+  ],
+  "overall": {
+    "braid_coverage": 0.9461,
+    "random_coverage": 0.5914,
+    "coverage_lift": 0.3547,
+    "weighted_mean_width": 0.7426
+  },
+  "interpretation": {
+    "bins_with_informative_CIs": [
+      "250+"
+    ],
+    "bins_with_trivial_CIs": [
+      "<20",
+      "20-49",
+      "50-99",
+      "100-249"
+    ],
+    "explanation": "Only the 250+ support bin (102/204 events, 50%) has CIs narrow enough to be informative (median width 0.513). Lower-support bins have CIs spanning ~95-100% of [0,1], matching random interval coverage."
+  }
+}
