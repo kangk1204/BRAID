@@ -79,6 +79,20 @@ BRAID's support-adaptive scaling increases coverage to 94.6\%, though this comes
 Only the highest-support bin produces meaningfully informative intervals; confident calls (10 events, 100\% accuracy) come exclusively from this bin.
 For comparison, the uncalibrated model produces 33 confident calls with 3 errors (90.9\% accuracy).
 
+To assess whether the high coverage reflects genuine calibration rather than trivially wide intervals, we compared BRAID against a random-interval baseline of matched width (Figure~\ref{fig:sharpness}).
+For the 250+ read bin (102 events, median CI width 0.51), BRAID achieves 95.1\% coverage versus 44.7\% for random intervals---a 50-percentage-point lift that reflects genuine calibration.
+For low-support bins ($<$100 reads), the lift is smaller ($\sim$20~pp) because intervals spanning most of [0,1] achieve high random coverage by construction.
+The overall random baseline coverage is 59.1\%, confirming that BRAID's 94.6\% is not trivially achievable.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{fig_pacbio_sharpness}
+\caption{\textbf{CI sharpness analysis.}
+(\textbf{a})~BRAID coverage (blue) versus random intervals of matched width (gray) by support bin. The 250+ bin shows a 50~pp lift, demonstrating genuine calibration.
+(\textbf{b})~Median CI width narrows with increasing read support.}
+\label{fig:sharpness}
+\end{figure}
+
 \begin{table}[htbp]
 \centering
 \caption{PacBio cross-validation (204 events, 15 genes). The uncalibrated baseline uses the same overdispersed Beta posterior with a fixed global scale, without support-adaptive tuning.}
@@ -141,9 +155,9 @@ rMATS FDR $< 0.0001$ & 24 (30\%) & 8 (32\%) & 0 & simple threshold \\
 \centering
 \includegraphics[width=\textwidth]{fig3_qki_benchmark}
 \caption{\textbf{rMATS + BRAID hybrid workflow on QKI RT-PCR benchmark.}
-(\textbf{a})~rMATS detects 44/80 validated events as significant.
-BRAID adds confidence tiers with zero false positives on 80 matched null controls.
-(\textbf{b})~Confidence filtering funnel: from all rMATS SE events to 10 high-confidence validated events.}
+(\textbf{a})~rMATS detects 44/80 validated events as significant but also 17/25 RT-PCR negatives (68\% FPR).
+BRAID tiers reduce FPR to 16\% (high-confidence) while retaining 10 validated events.
+(\textbf{b})~Confidence filtering funnel from rMATS SE events to BRAID high-confidence events.}
 \label{fig:qki}
 \end{figure*}
 
@@ -151,6 +165,21 @@ This result demonstrates BRAID's intended use case.
 rMATS alone identifies 44 validated events as significant---but also 17 experimental negatives (68\% FPR on the failed cohort).
 A researcher relying solely on rMATS significance would waste validation effort on false positives.
 BRAID's confidence tiers reduce the false positive rate from 68\% to 16\% while retaining 10 high-confidence true positives---a better FPR-recall tradeoff than simple FDR threshold tightening (FDR $< 0.0001$: 32\% FPR, 24 true positives).
+
+Figure~\ref{fig:cases} illustrates BRAID's tiering on three representative genes.
+CLSTN1 (validated, high-confidence) shows a clear PSI shift with tight CIs excluding zero.
+PICALM (validated, significant-only) has wide, overlapping CIs---BRAID correctly flags this as uncertain despite rMATS significance.
+MAP4K4 (RT-PCR failed, significant-only) was called significant by rMATS but shows no RT-PCR change; BRAID's wide CIs spanning zero correctly filter this false positive.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_case_studies}
+\caption{\textbf{Gene-level case studies from the QKI benchmark.}
+(\textbf{a})~CLSTN1: RT-PCR validated event correctly classified as high-confidence by BRAID. Control and KD CIs do not overlap.
+(\textbf{b})~PICALM: RT-PCR validated but BRAID assigns ``significant only'' due to wide, overlapping CIs. The uncertainty is warranted---this event needs more evidence.
+(\textbf{c})~MAP4K4: RT-PCR failed (no splicing change). rMATS calls it significant (FDR $= 3.5 \times 10^{-4}$), but BRAID's CIs span zero, correctly filtering this false positive.}
+\label{fig:cases}
+\end{figure*}
 
 \subsection*{Consistency on additional knockdown datasets}
 
