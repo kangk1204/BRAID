@@ -10,6 +10,7 @@ pytest-cov>=4.0
 ruff>=0.1
 matplotlib>=3.7
 reportlab>=4.0
+psutil>=5.9
 # Dashboard (optional)
 # streamlit>=1.30
 # pandas>=2.0

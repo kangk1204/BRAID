@@ -25,8 +25,8 @@ try:
     import torch.nn as nn
 
     _TORCH_AVAILABLE = True
-except ImportError:
-    pass
+except Exception as exc:
+    logger.debug("PyTorch unavailable for transformer classifier fallback: %s", exc)
 
 NUM_EVENT_TYPES = 7
 

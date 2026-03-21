@@ -26,8 +26,8 @@ try:
     import torch.nn as nn
 
     _TORCH_AVAILABLE = True
-except ImportError:
-    pass
+except Exception as exc:
+    logger.debug("PyTorch unavailable for boundary detector fallback: %s", exc)
 
 # Default window size for boundary detection
 WINDOW_SIZE = 200

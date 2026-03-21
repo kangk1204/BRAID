@@ -160,7 +160,7 @@ def _try_gpu_bootstrap(
         import torch
         if not torch.cuda.is_available():
             return False
-    except ImportError:
+    except Exception:
         return False
 
     n_edges, n_paths = A.shape

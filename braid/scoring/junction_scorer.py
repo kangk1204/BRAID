@@ -26,8 +26,8 @@ try:
     import torch
     import torch.nn as nn
     _TORCH_AVAILABLE = True
-except ImportError:
-    pass
+except Exception as exc:
+    logger.debug("PyTorch unavailable for junction scorer fallback: %s", exc)
 
 
 @dataclass

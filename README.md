@@ -217,6 +217,16 @@ paper reproduction.
 python -m pip install -e ".[dev]"
 ```
 
+`.[dev]` includes the lightweight test dependencies used by the benchmark
+helper scripts, including `psutil`.
+
+If you also want to exercise the optional ML training paths, install the ML
+extra as well:
+
+```bash
+python -m pip install -e ".[dev,ml]"
+```
+
 ---
 
 ## Quick Start
@@ -282,13 +292,15 @@ browser to explore:
 - CI coverage by support bin
 - Forest plot with confidence intervals
 
-### Run the full test suite
+### Run the test suite
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-451 tests, all in-memory (no external data needed).
+The suite is entirely in-repo and does not require external BAM inputs.
+Optional ML training tests are skipped automatically unless PyTorch imports
+cleanly; install `.[dev,ml]` to exercise those paths as well.
 
 ---
 
@@ -359,6 +371,12 @@ ruff check .
 
 ```bash
 pip install -e ".[dev]"
+```
+
+To include the optional ML module tests:
+
+```bash
+pip install -e ".[dev,ml]"
 ```
 
 ---

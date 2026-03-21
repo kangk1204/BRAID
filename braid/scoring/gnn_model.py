@@ -28,10 +28,10 @@ try:
         from torch_geometric.data import Data
         from torch_geometric.nn import GATv2Conv
         _PYG_AVAILABLE = True
-    except ImportError:
-        pass
-except ImportError:
-    pass
+    except Exception as exc:
+        logger.debug("PyTorch Geometric unavailable for GNN fallback: %s", exc)
+except Exception as exc:
+    logger.debug("PyTorch unavailable for GNN fallback: %s", exc)
 
 # Node feature dimension: coverage, length, type_onehot(4), position
 NODE_FEATURE_DIM = 8

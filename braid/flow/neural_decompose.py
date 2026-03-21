@@ -28,8 +28,8 @@ try:
     import torch
     import torch.nn as nn
     _TORCH_AVAILABLE = True
-except ImportError:
-    pass
+except Exception as exc:
+    logger.debug("PyTorch unavailable for neural decomposer fallback: %s", exc)
 
 # Path feature dimension
 PATH_FEATURE_DIM = 12

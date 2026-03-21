@@ -24,8 +24,8 @@ try:
     import torch.nn as nn
 
     _TORCH_AVAILABLE = True
-except ImportError:
-    pass
+except Exception as exc:
+    logger.debug("PyTorch unavailable for neural PSI fallback: %s", exc)
 
 # Input feature dimension for the MDN
 PSI_FEATURE_DIM = 8

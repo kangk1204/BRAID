@@ -33,6 +33,7 @@ dependencies = [
 [project.optional-dependencies]
 benchmark = [
     "pyliftover>=0.4",
+    "psutil>=5.9",
 ]
 gpu = [
     "cupy-cuda12x>=13.0",
@@ -43,6 +44,7 @@ dev = [
     "ruff>=0.1",
     "matplotlib>=3.7",
     "reportlab>=4.0",
+    "psutil>=5.9",
 ]
 dashboard = [
     "streamlit>=1.30",

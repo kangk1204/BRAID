@@ -11,6 +11,21 @@ import math
 import numpy as np
 import pytest
 
+
+def _has_working_torch() -> bool:
+    """Return True only when PyTorch imports cleanly."""
+    try:
+        import torch  # noqa: F401
+    except Exception:
+        return False
+    return True
+
+
+_REQUIRES_WORKING_TORCH = pytest.mark.skipif(
+    not _has_working_torch(),
+    reason="requires a working PyTorch install",
+)
+
 # ---------------------------------------------------------------------------
 # Junction Scorer Tests
 # ---------------------------------------------------------------------------
@@ -96,6 +111,7 @@ class TestJunctionScorer:
         scores = scorer.score(features)
         assert scores.shape == (1,)
 
+    @_REQUIRES_WORKING_TORCH
     def test_junction_scorer_train(self) -> None:
         from braid.scoring.junction_scorer import JunctionScorer
 
@@ -223,6 +239,7 @@ class TestNeuralDecompose:
         weights = decomposer.fit_weights(A, b, features)
         assert weights.shape == (2,)
 
+    @_REQUIRES_WORKING_TORCH
     def test_neural_decomposer_train(self) -> None:
         from braid.flow.neural_decompose import NeuralDecomposer
 
@@ -385,6 +402,7 @@ class TestTransformerClassifier:
         score = clf.score(features)
         assert 0.0 <= score <= 1.0
 
+    @_REQUIRES_WORKING_TORCH
     def test_transformer_train_and_score(self) -> None:
         from braid.splicing.classifier import TransformerEventClassifier
 
@@ -491,6 +509,7 @@ class TestNeuralPSI:
         assert 0.0 <= result.psi_mean <= 1.0
         assert result.ci_low < result.ci_high
 
+    @_REQUIRES_WORKING_TORCH
     def test_neural_psi_train(self) -> None:
         from braid.splicing.neural_psi import NeuralPSIEstimator
 
@@ -502,6 +521,7 @@ class TestNeuralPSI:
         assert estimator.is_trained
         assert not math.isnan(loss)
 
+    @_REQUIRES_WORKING_TORCH
     def test_neural_psi_trained_estimate(self) -> None:
         from braid.splicing.neural_psi import NeuralPSIEstimator
 
@@ -605,6 +625,7 @@ class TestBoundaryDetector:
         assert refined_start >= 0
         assert refined_end > refined_start
 
+    @_REQUIRES_WORKING_TORCH
     def test_boundary_detector_train(self) -> None:
         from braid.graph.boundary_detector import BoundaryDetector
 
