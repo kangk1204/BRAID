@@ -29,7 +29,7 @@ RNA-seq alternative splicing (AS) tools such as rMATS and StringTie are widely u
 Researchers cannot distinguish well-measured events from uncertain ones, making it difficult to prioritize candidates for experimental validation.
 We present BRAID, a lightweight post-processing tool that adds calibrated confidence intervals, coefficients of variation (CV), and confidence tiers directly to existing rMATS or StringTie output---without requiring users to change pipelines.
 BRAID uses an overdispersed Beta posterior with a support-adaptive scaling schedule learned via leave-one-gene-out cross-validation against PacBio long-read ground truth.
-On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), compared to 72.5\% for the standard binomial model.
+On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), compared to 72.5\% without support-adaptive calibration.
 On the QKI knockdown RT-PCR benchmark, rMATS alone calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$), whereas BRAID's high-confidence tier retains 10 validated events with zero false positives across both 25 experimental negatives and 80 matched null controls.
 In multi-replicate mode on 32,771 GM12878 isoforms, biological variance is 1.9$\times$ larger than sampling variance, demonstrating that single-sample intervals underestimate total uncertainty.
 BRAID post-processes 16,292 rMATS events in 18.6 seconds and is freely available at \url{https://github.com/kangk1204/BRAID}.
@@ -39,7 +39,8 @@ BRAID post-processes 16,292 rMATS events in 18.6 seconds and is freely available
 \section*{Introduction}
 
 Alternative splicing (AS) affects over 95\% of multi-exon human genes and is central to transcript diversity, gene regulation, and disease\citep{wang2008,baralle2017}.
-Two tools dominate short-read AS analysis: \textbf{rMATS}\citep{shen2014}, which detects differential splicing events and reports $p$-values, and \textbf{StringTie}\citep{pertea2015}, which assembles transcripts and reports abundance (TPM).
+Several tools are widely used for short-read AS analysis, including event-level callers such as rMATS\citep{shen2014} and SUPPA2\citep{trincado2018}, and transcript assemblers such as StringTie\citep{pertea2015} and Scallop\citep{shao2017}.
+The two most prominent---rMATS, which detects differential splicing events and reports $p$-values, and StringTie, which assembles transcripts and reports abundance (TPM)---are used in thousands of studies each year.
 Together they are used in thousands of studies each year.
 
 Neither tool provides per-event confidence intervals.
@@ -73,17 +74,17 @@ A single command (\texttt{braid run}) auto-detects the appropriate mode from the
 We validated BRAID's confidence intervals against PacBio Sequel long-read sequencing from ENCODE (K562 cell line, ENCSR589FUJ).
 From 15 cancer-related genes, we extracted 204 A3SS and A5SS events with sufficient junction support in both short-read and long-read data (Figure~\ref{fig:pacbio}).
 
-The standard binomial posterior---Beta($n_{\text{inc}}+1$, $n_{\text{exc}}+1$), the model used by MISO\citep{katz2010}---achieves only 72.5\% empirical CI coverage at a nominal 95\% level (Table~\ref{tab:pacbio}).
-BRAID's overdispersed posterior with support-adaptive scaling achieves 94.6\% coverage while maintaining identical point estimates ($r = 0.831$, $R^2 = 0.691$).
-The binomial model produces 33 confident calls with 3 errors (90.9\% accuracy); BRAID produces 10 confident calls with zero errors (100\%).
+Without support-adaptive calibration, the same overdispersed Beta posterior using a fixed global scale achieves only 72.5\% empirical CI coverage at a nominal 95\% level (Table~\ref{tab:pacbio}).
+BRAID's support-adaptive scaling---where the scale parameter $\lambda$ is learned per support bin via leave-one-gene-out cross-validation---increases coverage to 94.6\% while maintaining identical point estimates ($r = 0.831$, $R^2 = 0.691$).
+The uncalibrated model produces 33 confident calls with 3 errors (90.9\% accuracy); BRAID produces 10 confident calls with zero errors (100\%).
 
 \begin{table}[htbp]
 \centering
-\caption{PacBio cross-validation (204 events, 15 genes). The binomial baseline is equivalent to MISO's Beta($n+1$, $m+1$) posterior.}
+\caption{PacBio cross-validation (204 events, 15 genes). The uncalibrated baseline uses the same overdispersed Beta posterior with a fixed global scale, without support-adaptive tuning.}
 \label{tab:pacbio}
 \begin{tabular}{lcc}
 \toprule
-Metric & BRAID & Binomial \\
+Metric & BRAID (calibrated) & Uncalibrated \\
 \midrule
 CI coverage (target 95\%) & \textbf{94.6\%} & 72.5\% \\
 Correlation ($r$) & 0.831 & 0.831 \\
@@ -175,7 +176,7 @@ Bio / Sampling ratio & 1.9$\times$ \\
 \centering
 \includegraphics[width=\columnwidth]{fig4_calibration_multirep}
 \caption{\textbf{Calibration and variance decomposition.}
-(\textbf{a})~Standard binomial posterior achieves 72.5\% CI coverage (33 confident, 90.9\% accuracy).
+(\textbf{a})~Uncalibrated fixed-scale posterior achieves 72.5\% CI coverage (33 confident, 90.9\% accuracy).
 BRAID achieves 94.6\% coverage (10 confident, 100\% accuracy).
 (\textbf{b})~GM12878: biological $\sigma$ is 1.9$\times$ larger than sampling $\sigma$.}
 \label{fig:calibration}
@@ -217,8 +218,8 @@ BRAID's novelty is not Bayesian uncertainty \textit{per se}---which has been ava
 
 \subsection*{Why calibration matters}
 
-The standard binomial posterior used by MISO achieves only 72.5\% empirical coverage at a nominal 95\% level on our PacBio benchmark.
-This under-coverage arises from RNA-seq overdispersion: library preparation, PCR amplification, and mapping artifacts introduce variance beyond the binomial assumption\citep{robinson2010}.
+Without support-adaptive calibration, a fixed-scale posterior achieves only 72.5\% empirical coverage at a nominal 95\% level on our PacBio benchmark.
+Without support-adaptive tuning, a single global scale cannot account for the different noise levels across support bins\citep{robinson2010}.
 BRAID addresses this with an overdispersed Beta posterior ($\alpha < 1$) whose scaling is learned per support bin via leave-one-gene-out cross-validation, achieving 94.6\% coverage.
 
 \subsection*{CV versus $p$-values}
