@@ -16,5 +16,7 @@ benchmark_results_postpatch/
 real_benchmark/
 benchmarks/results/
 benchmarks/denovo_results/
+paper/
+figures/
 braid_paper.pdf
 benchmark_report.pdf
