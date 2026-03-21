@@ -37,11 +37,31 @@
 
 Alternative splicing (AS) generates transcript diversity in eukaryotic genomes, with over 95\% of multi-exon human genes undergoing AS \citep{wang2008}. Accurate quantification of AS events---particularly percent spliced-in (PSI, $\Psi$)---is essential for understanding gene regulation, disease mechanisms, and drug response \citep{baralle2017}.
 
-Current computational tools for AS analysis can be broadly divided into event-level callers (rMATS \citep{shen2014}, SUPPA2 \citep{trincado2018}, MISO \citep{katz2010}) and transcript-level assemblers (StringTie \citep{pertea2015}, Scallop \citep{shao2017}). These tools produce PSI point estimates or isoform abundance values, but provide limited information about per-event measurement uncertainty from individual samples.
+Current computational tools for AS analysis can be broadly divided into event-level callers (rMATS \citep{shen2014}, SUPPA2 \citep{trincado2018}, MISO \citep{katz2010}) and transcript-level assemblers (StringTie \citep{pertea2015}, Scallop \citep{shao2017}). These tools produce PSI point estimates or isoform abundance values, but provide limited information about per-event measurement uncertainty (Table~\ref{tab:landscape}).
 
-rMATS, the most widely used event-level caller, provides $p$-values and false discovery rates for \textit{differential} splicing between conditions, but requires biological replicates and does not quantify the precision of PSI estimates within a single sample. StringTie provides transcript abundances but no confidence intervals. MISO uses a Bayesian framework to produce credible intervals, but assumes a simple binomial model that often underestimates uncertainty \citep{liu2021}.
+\begin{table}[h]
+\centering
+\caption{Uncertainty information provided by existing RNA-seq splicing tools. BRAID fills the gap highlighted in the rightmost column.}
+\label{tab:landscape}
+\begin{tabular}{lccccc}
+\toprule
+Tool & Point est. & $p$-value & Per-event CI & Single-sample & CV ranking \\
+\midrule
+StringTie & TPM, FPKM & --- & --- & --- & --- \\
+rMATS & PSI, $\Delta$PSI & \checkmark & --- & --- & --- \\
+MISO & PSI & --- & \checkmark$^*$ & \checkmark & --- \\
+SUPPA2 & PSI, $\Delta$PSI & \checkmark & --- & --- & --- \\
+\textbf{BRAID} & PSI & --- & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\begin{flushleft}
+\footnotesize{$^*$MISO CI assumes a binomial model, resulting in under-calibrated intervals (72.5\% coverage at nominal 95\%; see Section~3.1).}
+\end{flushleft}
+\end{table}
 
-This gap has practical consequences. When a researcher identifies hundreds of candidate AS events, they must decide which to prioritize for experimental validation (e.g., RT-PCR). Without per-event confidence measures, this prioritization relies on ad hoc heuristics such as read count thresholds, leading to wasted experimental effort on uncertain events.
+rMATS, the most widely used event-level caller, provides $p$-values and false discovery rates for \textit{differential} splicing between conditions. A $p$-value answers ``is there a difference between conditions?'' but does not quantify how precisely a given PSI value is measured. Moreover, rMATS requires biological replicates and cannot assess single-sample precision. StringTie, the dominant transcript assembler, reports abundance estimates (TPM, FPKM) with \textit{no confidence intervals, no $p$-values, and no uncertainty information whatsoever}---the user receives a point estimate and must decide how much to trust it based on heuristics alone. MISO uses a Bayesian framework to produce credible intervals, but assumes a simple binomial model that underestimates uncertainty in practice \citep{liu2021}.
+
+This gap has practical consequences. When a researcher identifies hundreds of candidate AS events, they must decide which to prioritize for experimental validation (e.g., RT-PCR). A $p$-value tells them that a difference exists, but not whether the underlying PSI measurement is precise enough to be actionable. Without per-event confidence measures, this prioritization relies on ad hoc heuristics such as read count thresholds, leading to wasted experimental effort on uncertain events.
 
 We present BRAID, a post-processing tool that adds calibrated confidence intervals to existing AS workflows. BRAID makes three contributions:
 
@@ -108,6 +128,18 @@ $<$20   & 0.0096 & 100.0\% & 1.000 & 0 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Coefficient of Variation as a Confidence Metric}
+
+BRAID reports the coefficient of variation (CV $= \sigma / \mu$) of the posterior PSI distribution as its primary per-event confidence metric. CV has several advantages over both CI width and $p$-values for event ranking:
+
+\begin{itemize}
+    \item \textbf{Scale-invariant}: CI width depends on absolute abundance; an event with PSI = 0.90 and CI = [0.85, 0.95] has the same width as one with PSI = 0.10 and CI = [0.05, 0.15], but the former is measured more precisely relative to its magnitude. CV captures this distinction (0.03 vs 0.29).
+    \item \textbf{Honest about read depth}: $p$-values are dominated by sample size---with sufficient reads, any trivial effect becomes significant. CV honestly reports ``this event has few reads and is therefore uncertain,'' regardless of whether a difference exists.
+    \item \textbf{Actionable ranking}: Events can be ranked by CV to prioritize experimental validation. A CV of 0.03 means the measurement varies by only 3\% of its value; a CV of 0.50 means the measurement is as uncertain as it is large.
+\end{itemize}
+
+In practice, $p$-values (from rMATS) and CV (from BRAID) answer complementary questions: $p$-values answer ``is there a difference?'' while CV answers ``how much should I trust this measurement?'' The former without the latter leads to overconfidence; the latter without the former lacks a hypothesis test. BRAID is designed to be used alongside, not instead of, existing differential testing tools.
 
 \subsection{Confidence Tiering}
 
@@ -301,11 +333,13 @@ The QKI post-processing runtime was measured on WSL2 Linux 6.6 with Python 3.10.
 
 BRAID addresses a specific gap in the RNA-seq analysis ecosystem: per-event confidence quantification. Rather than replacing existing tools, BRAID complements them by adding a confidence layer that enables researchers to prioritize events for experimental validation.
 
-\subsection{Positioning}
+\subsection{Positioning: Complementing, Not Replacing}
 
 BRAID is not an alternative splicing caller. It does not aim to detect more events than rMATS or assemble more transcripts than StringTie. Its value is in answering: \textit{among the events already detected, which ones should I trust?}
 
-This distinction is important. On the QKI benchmark, rMATS identifies 44/80 validated events as significant under the differential-splicing criterion (55\% recall). BRAID does not improve this caller-level recall. Instead, among the validated events detected by rMATS, 14 are supported, 10 are high-confidence, and 4 are near-strict. The matched null controls remain at zero across all reported BRAID tiers. A researcher using BRAID would start validation with the 10 high-confidence events, knowing that each one has passed calibrated uncertainty thresholds.
+This distinction matters because existing tools leave a critical information gap. StringTie reports ``this isoform has abundance 15.3 TPM'' with no indication of whether 15.3 means $15.3 \pm 1$ or $15.3 \pm 10$. rMATS reports ``this event has $p = 0.003$'' but does not tell the user whether the underlying PSI is measured at 3\% precision or 30\% precision. BRAID fills both gaps: for StringTie output, it adds per-isoform CI and CV; for rMATS output, it adds per-event measurement confidence that is orthogonal to the differential $p$-value.
+
+On the QKI benchmark, rMATS identifies 44/80 validated events as significant (55\% recall). BRAID does not improve this recall. Instead, it stratifies the 44 into tiers: 14 supported, 10 high-confidence, 4 near-strict---all with zero false positives on matched null controls. A researcher using BRAID would start experimental validation with the 10 high-confidence events (CV $\leq 0.08$, CI excluding zero), knowing that each one has passed calibrated uncertainty thresholds. The remaining 34 significant events are not discarded; they are flagged as requiring more evidence before committing experimental resources.
 
 \subsection{Calibration}
 
