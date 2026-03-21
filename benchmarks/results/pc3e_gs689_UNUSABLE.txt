@@ -1,0 +1,4 @@
+PC3E/GS689 benchmark: UNUSABLE without exact exon coordinates from supplementary tables.
+Gene-level matching gives r=-0.079 (wrong exon selected for multi-exon genes).
+Supplementary XLSX download blocked by Cloudflare.
+Would need manual extraction of coordinates from the PDF or direct author contact.
