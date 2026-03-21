@@ -37,39 +37,16 @@
 
 Alternative splicing (AS) generates transcript diversity in eukaryotic genomes, with over 95\% of multi-exon human genes undergoing AS \citep{wang2008}. Accurate quantification of AS events---particularly percent spliced-in (PSI, $\Psi$)---is essential for understanding gene regulation, disease mechanisms, and drug response \citep{baralle2017}.
 
-Current computational tools for AS analysis include event-level callers (rMATS \citep{shen2014}, SUPPA2 \citep{trincado2018}) and transcript-level assemblers (StringTie \citep{pertea2015}, Scallop \citep{shao2017}). Several tools do provide per-event uncertainty: MISO \citep{katz2010} computes Bayesian credible intervals via MCMC, MAJIQ \citep{vaquero2016} outputs full posterior PSI distributions, and Whippet \citep{sterne2018} reports EM-based confidence intervals. However, each operates as a standalone pipeline and cannot post-process the output of widely used tools such as rMATS or StringTie (Table~\ref{tab:landscape}).
+Current computational tools for AS analysis include event-level callers (rMATS \citep{shen2014}, SUPPA2 \citep{trincado2018}) and transcript-level assemblers (StringTie \citep{pertea2015}, Scallop \citep{shao2017}). The most widely used tools---rMATS and StringTie---report point estimates of PSI and isoform abundance, respectively, but provide no per-event confidence intervals. rMATS outputs $p$-values for differential splicing between conditions, answering ``is there a difference?'' but not ``how precisely is this PSI measured?'' StringTie reports abundance (TPM, FPKM) with no uncertainty information whatsoever.
 
-\begin{table}[h]
-\centering
-\caption{Uncertainty landscape of RNA-seq splicing tools. Calibrated = empirical CI coverage at nominal 95\%, validated against PacBio. N/R = not reported. Post-proc = can add CI to existing rMATS/StringTie output.}
-\label{tab:landscape}
-\begin{tabular}{lcccccc}
-\toprule
-Tool & Per-event CI & Calibrated & CV rank & Tiers & Bio/samp & Post-proc \\
-\midrule
-StringTie & --- & --- & --- & --- & --- & --- \\
-rMATS & --- ($p$-value) & --- & --- & --- & --- & --- \\
-MISO$^\dagger$ & \checkmark & 72.5\% & --- & --- & --- & --- \\
-MAJIQ$^\ddagger$ & \checkmark & N/R & --- & --- & --- & --- \\
-Whippet & \checkmark & N/R & --- & --- & --- & --- \\
-betAS & \checkmark$^*$ & N/R & --- & --- & --- & --- \\
-SUPPA2 & --- ($p$-value) & --- & --- & --- & --- & --- \\
-\textbf{BRAID} & \checkmark & \textbf{94.6\%} & \checkmark & \checkmark & \checkmark & \checkmark \\
-\bottomrule
-\end{tabular}
-\begin{flushleft}
-\footnotesize{$^\dagger$Unmaintained since 2016; Python~2 only. $^\ddagger$Academic license; closed-source. $^*$Beta distribution width (visual); no explicit CI output.}
-\end{flushleft}
-\end{table}
+A few tools do provide per-event uncertainty from single samples, notably MISO \citep{katz2010}, MAJIQ \citep{vaquero2016}, and Whippet \citep{sterne2018}. However, none of these tools can post-process existing rMATS or StringTie output; each requires its own complete analysis pipeline. Moreover, none reports whether its intervals are well-calibrated against independent ground truth, and none provides a continuous confidence metric (such as a coefficient of variation) for prioritizing events for experimental validation.
 
-Existing CI-producing tools share three critical limitations. First, none reports whether its intervals are \textit{well-calibrated}: MISO's binomial model achieves only 72.5\% empirical coverage at a nominal 95\% level (Section~3.1), and neither MAJIQ nor Whippet has published coverage benchmarks against independent long-read ground truth. Second, none provides a continuous confidence ranking (such as a coefficient of variation) that allows researchers to prioritize events for validation; the user receives intervals but no guidance on which events to trust first. Third, none decomposes total uncertainty into biological and sampling components when replicates are available.
-
-These gaps have practical consequences. StringTie, the dominant transcript assembler, reports abundance estimates with \textit{no uncertainty information whatsoever}. rMATS provides $p$-values for differential splicing, answering ``is there a difference?'' but not ``how precisely is this PSI measured?'' Even tools that do produce CI (MISO, MAJIQ, Whippet) require the user to abandon their existing rMATS/StringTie workflow and adopt an entirely new pipeline. A researcher who identifies hundreds of candidate events must decide which to validate by RT-PCR, yet lacks the tools to distinguish a PSI of $0.70 \pm 0.03$ from one of $0.70 \pm 0.30$.
+A researcher who identifies hundreds of candidate AS events must decide which to validate by RT-PCR, yet lacks the tools to distinguish a PSI of $0.70 \pm 0.03$ from one of $0.70 \pm 0.30$.
 
 We present BRAID (\textbf{B}ootstrap \textbf{R}eliability \textbf{A}ssessment for \textbf{I}soform \textbf{D}etection), a lightweight post-processing tool that adds calibrated confidence intervals to existing AS workflows without requiring users to switch pipelines. BRAID makes four contributions:
 
 \begin{enumerate}
-    \item \textbf{Post-processing compatibility}: BRAID adds CI, CV, and confidence tiers directly to rMATS and StringTie output, requiring no pipeline changes---unlike MISO, MAJIQ, or Whippet, which each require their own analysis stack.
+    \item \textbf{Post-processing compatibility}: BRAID adds CI, CV, and confidence tiers directly to rMATS and StringTie output, requiring no pipeline changes.
     \item \textbf{Calibrated per-event CI}: An overdispersed Beta posterior with support-adaptive scaling achieves 94.6\% empirical coverage against PacBio long-read ground truth (target: 95\%), compared to 72.5\% for standard binomial models.
     \item \textbf{CV-based ranking and confidence tiering}: Events are ranked by coefficient of variation and classified into tiers (supported, high-confidence, near-strict), with zero false positives on matched null controls in the QKI RT-PCR benchmark.
     \item \textbf{Multi-replicate uncertainty decomposition}: Separates biological variance from sampling variance, showing that biological variance dominates by $\sim$1.9$\times$ in standard RNA-seq experiments.
@@ -308,7 +285,7 @@ For AKT1, multi-replicate mode narrows the CI from 0.124 to 0.081, because the t
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig4_calibration_multirep}
-\caption{\textbf{Calibration and variance decomposition.} (\textbf{a}) Legacy Poisson bootstrap achieves only 72.5\% CI coverage with 33 confident calls (90.9\% accuracy). BRAID's overdispersed posterior achieves 94.6\% coverage with 10 confident calls (100\% accuracy). (\textbf{b}) GM12878 biological replicates: biological variance (between-replicate $\sigma = 7.73$) is 1.9$\times$ larger than sampling variance ($\sigma = 4.08$), demonstrating that multi-replicate CI is essential for proper calibration.}
+\caption{\textbf{Calibration and variance decomposition.} (\textbf{a}) Standard binomial posterior achieves only 72.5\% CI coverage with 33 confident calls (90.9\% accuracy). BRAID's calibrated overdispersed posterior achieves 94.6\% coverage with 10 confident calls (100\% accuracy). (\textbf{b}) GM12878 biological replicates: biological variance ($\sigma = 7.73$) is 1.9$\times$ larger than sampling variance ($\sigma = 4.08$).}
 \label{fig:calibration}
 \end{figure}
 
@@ -356,6 +333,10 @@ The leave-one-gene-out calibration estimates a support-dependent schedule that i
 The GM12878 variance decomposition reveals that the median biological standard deviation is about 1.9$\times$ the median sampling standard deviation. This means single-sample bootstrap CI, even when properly calibrated for sampling noise, underestimates total uncertainty. Multi-replicate mode addresses this by directly measuring between-replicate variance.
 
 In practice, biological replicates are standard in RNA-seq experiments. BRAID's multi-replicate mode is therefore the recommended default, with single-sample mode serving as a conservative fallback when replicates are unavailable.
+
+\subsection{Relationship to Existing Uncertainty Tools}
+
+MISO \citep{katz2010}, MAJIQ \citep{vaquero2016}, Whippet \citep{sterne2018}, and betAS \citep{vasconcelos2024} each provide forms of per-event PSI uncertainty. BRAID differs from these tools in three respects. First, BRAID is designed as a post-processor: it reads rMATS or StringTie output directly and adds confidence information without requiring users to rerun their analysis from raw reads. Second, BRAID provides calibrated intervals validated against PacBio long-read ground truth (94.6\% empirical coverage at nominal 95\%), whereas existing tools have not published analogous calibration benchmarks. Third, BRAID outputs a continuous CV metric and discrete confidence tiers for event prioritization, which none of the above tools provide. We note that a direct head-to-head benchmark of all tools on the same dataset would further clarify relative performance, and we encourage the community to adopt long-read-validated calibration as a standard evaluation criterion for splicing uncertainty tools.
 
 \subsection{Limitations}
 
