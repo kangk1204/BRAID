@@ -778,16 +778,6 @@ def _run_assemble(args: argparse.Namespace) -> None:
     bam_list = args.bam if isinstance(args.bam, list) else [args.bam]
     n_bams = len(bam_list)
 
-    if n_bams == 1:
-        # Single BAM — original behavior
-        out = args.output if args.output.endswith(".gtf") else args.output + ".gtf"
-        config = _build_pipeline_config(bam_list[0], args, out)
-        pipeline = AssemblyPipeline(config)
-        output_path = pipeline.run()
-        print(f"Assembly complete. Output written to: {output_path}")
-        return
-
-    # Multiple BAMs — assemble each, then create summary
     outdir = args.output
     os.makedirs(outdir, exist_ok=True)
 
