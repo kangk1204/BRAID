@@ -1918,7 +1918,8 @@ class AssemblyPipeline:
             chroms: Chromosomes that were processed.
         """
         from braid.splicing.classifier import EventClassifier
-        from braid.splicing.events import detect_all_events
+        from braid.io.bam_reader import BamReader
+        from braid.splicing.events import EventType, detect_all_events
         from braid.splicing.io import write_events_tsv
         from braid.splicing.psi import calculate_all_psi
         from braid.splicing.statistics import add_confidence_intervals
@@ -1932,6 +1933,12 @@ class AssemblyPipeline:
             if not events:
                 return
 
+            ri_chroms = {
+                event.chrom
+                for event in events
+                if event.event_type == EventType.RI
+            }
+
             # Extract junction evidence per chromosome
             je_by_chrom = {}
             for chrom in chroms:
@@ -1941,7 +1948,22 @@ class AssemblyPipeline:
                     reference=self._reference if cfg.enable_motif_validation else None,
                 )
 
-            psi_results = calculate_all_psi(events, je_by_chrom)
+            read_data_by_chrom = None
+            if ri_chroms:
+                bam_reader = BamReader(
+                    cfg.bam_path,
+                    min_mapq=cfg.min_mapq,
+                )
+                read_data_by_chrom = {
+                    chrom: bam_reader.fetch_region(chrom)
+                    for chrom in sorted(ri_chroms)
+                }
+
+            psi_results = calculate_all_psi(
+                events,
+                je_by_chrom,
+                read_data_by_chrom=read_data_by_chrom,
+            )
             add_confidence_intervals(psi_results)
 
             # Neural PSI refinement (optional)

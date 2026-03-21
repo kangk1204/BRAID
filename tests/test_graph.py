@@ -342,6 +342,9 @@ class TestGraphSimplify:
         g.simplify()
         # b should be merged into a, reducing node count by 1
         assert g.n_nodes < original_nodes
+        merged = g.get_node(a)
+        assert merged.start == 100
+        assert merged.end == 300
         assert g.validate()
 
     def test_simplify_does_not_remove_branches(self) -> None:

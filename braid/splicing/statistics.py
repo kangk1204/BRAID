@@ -8,6 +8,7 @@ The 95% highest-density credible interval is computed via ``scipy.stats.beta``.
 
 from __future__ import annotations
 
+import math
 import logging
 from dataclasses import dataclass
 
@@ -94,7 +95,7 @@ def add_confidence_intervals(
         beta_prior: Beta prior beta parameter.
     """
     for result in psi_results:
-        if result.total_reads == 0:
+        if result.total_reads == 0 or math.isnan(result.psi):
             result.ci_low = 0.0
             result.ci_high = 1.0
             continue
@@ -126,6 +127,8 @@ def psi_significance_filter(
     """
     filtered = []
     for result in psi_results:
+        if math.isnan(result.psi):
+            continue
         if result.total_reads < min_reads:
             continue
         ci_width = result.ci_high - result.ci_low

@@ -14,8 +14,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from braid.io.bam_reader import JunctionEvidence
+from braid.io.bam_reader import JunctionEvidence, ReadData
 from braid.splicing.events import ASEvent, EventType
+from braid.utils.cigar import CIGAR_N
 
 logger = logging.getLogger(__name__)
 
@@ -83,22 +84,72 @@ def _lookup_junction_count(
     return 0
 
 
+def _count_intronic_body_reads(
+    read_data: ReadData,
+    intron_start: int,
+    intron_end: int,
+    strand: str | None = None,
+) -> int:
+    """Count unspliced reads that support intron retention."""
+    if read_data.n_reads == 0 or intron_end <= intron_start:
+        return 0
+
+    strand_code = None
+    if strand in {"+", "-"}:
+        strand_code = 0 if strand == "+" else 1
+
+    count = 0
+    for read_idx in range(read_data.n_reads):
+        if strand_code is not None and int(read_data.strands[read_idx]) != strand_code:
+            continue
+
+        read_start = int(read_data.positions[read_idx])
+        read_end = int(read_data.end_positions[read_idx])
+        if read_end <= intron_start or read_start >= intron_end:
+            continue
+
+        cigar_start = int(read_data.cigar_offsets[read_idx])
+        cigar_end = int(read_data.cigar_offsets[read_idx + 1])
+        has_splice = False
+        for cigar_idx in range(cigar_start, cigar_end):
+            if int(read_data.cigar_ops[cigar_idx]) == CIGAR_N:
+                has_splice = True
+                break
+        if has_splice:
+            continue
+
+        if read_start <= intron_start + 10 and read_end >= intron_end - 10:
+            count += 1
+        elif (
+            read_start >= intron_start
+            and read_end <= intron_end
+            and read_end - read_start > 50
+        ):
+            count += 1
+
+    return count
+
+
 def calculate_psi(
     event: ASEvent,
     junction_evidence: JunctionEvidence,
+    read_data: ReadData | None = None,
 ) -> PSIResult:
     """Calculate PSI for a single alternative splicing event.
 
     Uses junction-based PSI formula:
         PSI = (I / lI) / (I / lI + S / lS)
 
-    For retained intron events with no inclusion junctions, PSI is based
-    on the absence of the exclusion junction reads relative to the
-    total region coverage.
+    For retained intron events with no inclusion junctions, PSI requires
+    intronic body-read evidence because the retained isoform has no splice
+    junction of its own.
 
     Args:
         event: The AS event to quantify.
         junction_evidence: Junction evidence for the event's chromosome.
+        read_data: Optional per-read evidence for the chromosome. When
+            provided, retained introns use intronic body reads as inclusion
+            evidence instead of falling back to junction-only heuristics.
 
     Returns:
         PSIResult with computed PSI and read counts.
@@ -121,10 +172,53 @@ def calculate_psi(
     exclusion_length = max(len(event.exclusion_junctions), 1)
     total_reads = inclusion_count + exclusion_count
 
-    if total_reads == 0:
+    # RI requires body-read evidence for the retained form because the
+    # inclusion isoform has no splice junction. When read-level evidence is
+    # available, use unspliced intronic coverage as inclusion support.
+    if event.event_type == EventType.RI and len(event.inclusion_junctions) == 0:
+        intron_start = int(
+            event.coordinates.get(
+                "intron_start",
+                event.exclusion_junctions[0][0] if event.exclusion_junctions else 0,
+            )
+        )
+        intron_end = int(
+            event.coordinates.get(
+                "intron_end",
+                event.exclusion_junctions[0][1] if event.exclusion_junctions else 0,
+            )
+        )
+
+        if read_data is None:
+            logger.debug(
+                "RI event %s lacks read-level body evidence; PSI is unavailable "
+                "from junction counts alone",
+                event.event_id,
+            )
+            return PSIResult(
+                event_id=event.event_id,
+                psi=float("nan"),
+                inclusion_count=inclusion_count,
+                exclusion_count=exclusion_count,
+                inclusion_length=inclusion_length,
+                exclusion_length=exclusion_length,
+                total_reads=total_reads,
+            )
+
+        inclusion_count = _count_intronic_body_reads(
+            read_data,
+            intron_start,
+            intron_end,
+            strand=event.strand,
+        )
+        total_reads = inclusion_count + exclusion_count
+        if total_reads == 0:
+            psi = float("nan")
+        else:
+            psi = inclusion_count / total_reads
         return PSIResult(
             event_id=event.event_id,
-            psi=float("nan"),
+            psi=psi,
             inclusion_count=inclusion_count,
             exclusion_count=exclusion_count,
             inclusion_length=inclusion_length,
@@ -132,16 +226,10 @@ def calculate_psi(
             total_reads=total_reads,
         )
 
-    # For RI events with no inclusion junctions, PSI = 1 - exclusion_fraction
-    if event.event_type == EventType.RI and len(event.inclusion_junctions) == 0:
-        # PSI ~ 1 when intron is retained (no exclusion reads)
-        if exclusion_count == 0:
-            psi = 1.0
-        else:
-            psi = 0.0  # Intron is spliced out
+    if total_reads == 0:
         return PSIResult(
             event_id=event.event_id,
-            psi=psi,
+            psi=float("nan"),
             inclusion_count=inclusion_count,
             exclusion_count=exclusion_count,
             inclusion_length=inclusion_length,
@@ -173,6 +261,7 @@ def calculate_psi(
 def calculate_all_psi(
     events: list[ASEvent],
     junction_evidence_by_chrom: dict[str, JunctionEvidence],
+    read_data_by_chrom: dict[str, ReadData] | None = None,
 ) -> list[PSIResult]:
     """Calculate PSI for all events using per-chromosome junction evidence.
 
@@ -180,6 +269,9 @@ def calculate_all_psi(
         events: List of detected AS events.
         junction_evidence_by_chrom: Mapping from chromosome name to
             JunctionEvidence.
+        read_data_by_chrom: Optional mapping from chromosome name to
+            per-read evidence. Retained introns use this to derive
+            intronic body support.
 
     Returns:
         List of PSIResult, one per event, in the same order.
@@ -201,7 +293,8 @@ def calculate_all_psi(
                 )
             )
         else:
-            results.append(calculate_psi(event, je))
+            read_data = None if read_data_by_chrom is None else read_data_by_chrom.get(event.chrom)
+            results.append(calculate_psi(event, je, read_data=read_data))
 
     logger.info(
         "Calculated PSI for %d events (%.1f%% with sufficient reads)",

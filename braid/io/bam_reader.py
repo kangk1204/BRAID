@@ -19,10 +19,9 @@ from braid.utils.cigar import CIGAR_N
 
 logger = logging.getLogger(__name__)
 
-# Default flag filter: unmapped (4) | mate unmapped (8) | not primary (256) |
-# fails QC (512) | duplicate (1024) = 1796 (plus mate unmapped excluded from
-# the canonical 1804 because single-end reads would all fail).
-_DEFAULT_FILTER_FLAGS: int = 1796
+# Default flag filter: unmapped (4) | secondary (256) | fails QC (512) |
+# duplicate (1024) | supplementary (2048) = 3844.
+_DEFAULT_FILTER_FLAGS: int = 3844
 
 
 @dataclass(slots=True)
@@ -134,8 +133,8 @@ class BamReader:
         min_mapq: Minimum mapping quality to retain a read (inclusive).
         required_flags: SAM flags that must all be set (bitwise AND).
         filter_flags: SAM flags that must all be unset; reads with any of these
-            bits set are discarded.  Default 1796 filters unmapped, not-primary,
-            failed-QC, and duplicate reads.
+            bits set are discarded.  Default 3844 filters unmapped, secondary,
+            failed-QC, duplicate, and supplementary reads.
 
     Raises:
         FileNotFoundError: If *bam_path* does not exist.

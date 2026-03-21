@@ -469,9 +469,10 @@ class SpliceGraph:
         the mean of the two original edges' coverages and the weight is
         summed.
 
-        The predecessor node *u*'s ``end`` coordinate is **not** extended
-        because node boundaries correspond to splice sites and must not be
-        altered.  Only the edge routing changes.
+        The predecessor node *u*'s ``end`` coordinate is extended to preserve
+        the merged exon span. ``CONTINUATION`` edges only connect abutting or
+        overlapping sub-exon segments, so this reconstructs one contiguous
+        exon interval rather than moving a splice junction.
 
         This method iterates until no further merges are possible.
         """
@@ -517,7 +518,7 @@ class SpliceGraph:
                 merged_weight = edge_in.weight + edge_out.weight
                 merged_coverage = (edge_in.coverage + edge_out.coverage) / 2.0
 
-                # Extend predecessor node to cover the removed node's span
+                # Extend predecessor node to preserve the merged exon span.
                 pred_node = self._nodes[pred_id]
                 new_end = max(pred_node.end, node.end)
                 self._nodes[pred_id] = SpliceNode(

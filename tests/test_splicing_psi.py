@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 
-from braid.io.bam_reader import JunctionEvidence
+from braid.io.bam_reader import JunctionEvidence, ReadData
 from braid.io.gtf_writer import TranscriptRecord
 from braid.splicing.events import ASEvent, EventType
 from braid.splicing.psi import PSIResult, calculate_all_psi, calculate_psi
@@ -58,6 +58,49 @@ def _make_junction_evidence(
     counts = np.array([j[2] for j in junctions], dtype=np.int32)
     strands = np.zeros(len(junctions), dtype=np.int8)
     return JunctionEvidence(chrom=chrom, starts=starts, ends=ends, counts=counts, strands=strands)
+
+
+def _make_read_data(
+    reads: list[tuple[int, int, list[tuple[int, int]]]],
+) -> ReadData:
+    """Create minimal chrom-local ReadData from (start, end, cigar) tuples."""
+    n_reads = len(reads)
+    chrom_ids = np.zeros(n_reads, dtype=np.int32)
+    positions = np.array([start for start, _, _ in reads], dtype=np.int64)
+    end_positions = np.array([end for _, end, _ in reads], dtype=np.int64)
+    strands = np.zeros(n_reads, dtype=np.int8)
+    mapping_qualities = np.full(n_reads, 60, dtype=np.uint8)
+    is_paired = np.zeros(n_reads, dtype=np.bool_)
+    is_read1 = np.zeros(n_reads, dtype=np.bool_)
+    mate_positions = np.full(n_reads, -1, dtype=np.int64)
+    mate_chrom_ids = np.full(n_reads, -1, dtype=np.int32)
+    query_names = [f"read_{idx}" for idx in range(n_reads)]
+
+    cigar_ops_list: list[int] = []
+    cigar_lens_list: list[int] = []
+    cigar_offsets = [0]
+    for _, _, cigar in reads:
+        for op, length in cigar:
+            cigar_ops_list.append(op)
+            cigar_lens_list.append(length)
+        cigar_offsets.append(len(cigar_ops_list))
+
+    return ReadData(
+        chrom_ids=chrom_ids,
+        positions=positions,
+        end_positions=end_positions,
+        strands=strands,
+        mapping_qualities=mapping_qualities,
+        is_paired=is_paired,
+        is_read1=is_read1,
+        mate_positions=mate_positions,
+        mate_chrom_ids=mate_chrom_ids,
+        cigar_ops=np.array(cigar_ops_list, dtype=np.uint8),
+        cigar_lens=np.array(cigar_lens_list, dtype=np.int32),
+        cigar_offsets=np.array(cigar_offsets, dtype=np.int64),
+        query_names=query_names,
+        n_reads=n_reads,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -140,21 +183,67 @@ class TestCalculatePSI:
         assert math.isnan(result.psi)
         assert result.total_reads == 0
 
-    def test_retained_intron(self) -> None:
-        """RI event PSI with no inclusion junctions."""
+    def test_retained_intron_without_read_data_is_nan(self) -> None:
+        """RI PSI is unavailable from junction evidence alone."""
         event = ASEvent(
             event_id="RI:chr1:+:300_400",
             event_type=EventType.RI,
             gene_id="g1",
             chrom="chr1",
             strand="+",
+            coordinates={"intron_start": 300, "intron_end": 400},
             inclusion_junctions=[],
             exclusion_junctions=[(300, 400)],
         )
-        # With exclusion reads → intron is spliced out → PSI=0
         je = _make_junction_evidence("chr1", [(300, 400, 10)])
         result = calculate_psi(event, je)
-        assert result.psi == 0.0
+        assert math.isnan(result.psi)
+
+    def test_retained_intron_uses_body_reads_when_available(self) -> None:
+        """RI PSI uses intronic body coverage as inclusion evidence."""
+        event = ASEvent(
+            event_id="RI:chr1:+:300_400",
+            event_type=EventType.RI,
+            gene_id="g1",
+            chrom="chr1",
+            strand="+",
+            coordinates={"intron_start": 300, "intron_end": 400},
+            inclusion_junctions=[],
+            exclusion_junctions=[(300, 400)],
+        )
+        je = _make_junction_evidence("chr1", [(300, 400, 2)])
+        read_data = _make_read_data([
+            (295, 405, [(0, 110)]),
+            (290, 410, [(0, 120)]),
+        ])
+        result = calculate_psi(event, je, read_data=read_data)
+        assert result.inclusion_count == 2
+        assert result.exclusion_count == 2
+        assert result.total_reads == 4
+        assert result.psi == 0.5
+
+    def test_retained_intron_with_only_body_reads_is_fully_included(self) -> None:
+        """RI PSI reaches 1.0 when only retained-body reads support the event."""
+        event = ASEvent(
+            event_id="RI:chr1:+:300_400",
+            event_type=EventType.RI,
+            gene_id="g1",
+            chrom="chr1",
+            strand="+",
+            coordinates={"intron_start": 300, "intron_end": 400},
+            inclusion_junctions=[],
+            exclusion_junctions=[(300, 400)],
+        )
+        je = _make_junction_evidence("chr1", [])
+        read_data = _make_read_data([
+            (295, 405, [(0, 110)]),
+            (290, 410, [(0, 120)]),
+        ])
+        result = calculate_psi(event, je, read_data=read_data)
+        assert result.inclusion_count == 2
+        assert result.exclusion_count == 0
+        assert result.total_reads == 2
+        assert result.psi == 1.0
 
 
 class TestCalculateAllPSI:

@@ -817,9 +817,9 @@ def _run_analyze(args: argparse.Namespace) -> None:
     Args:
         args: Parsed CLI arguments with gtf, bam, output, etc.
     """
-    from braid.io.bam_reader import extract_junctions_from_bam
+    from braid.io.bam_reader import BamReader, extract_junctions_from_bam
     from braid.splicing.classifier import EventClassifier
-    from braid.splicing.events import detect_all_events
+    from braid.splicing.events import EventType, detect_all_events
     from braid.splicing.io import write_events_tsv, write_ioe
     from braid.splicing.psi import calculate_all_psi
     from braid.splicing.statistics import (
@@ -846,6 +846,12 @@ def _run_analyze(args: argparse.Namespace) -> None:
         print(f"No events found. Empty output written to: {args.output}")
         return
 
+    ri_chroms = {
+        event.chrom
+        for event in events
+        if event.event_type == EventType.RI
+    }
+
     # Extract junction evidence from BAM for each chromosome
     chroms = sorted({e.chrom for e in events})
     junction_evidence_by_chrom = {}
@@ -854,8 +860,23 @@ def _run_analyze(args: argparse.Namespace) -> None:
             args.bam, chrom, min_mapq=getattr(args, "min_mapq", 0),
         )
 
+    read_data_by_chrom = None
+    if ri_chroms:
+        bam_reader = BamReader(
+            args.bam,
+            min_mapq=getattr(args, "min_mapq", 0),
+        )
+        read_data_by_chrom = {
+            chrom: bam_reader.fetch_region(chrom)
+            for chrom in sorted(ri_chroms)
+        }
+
     # Calculate PSI
-    psi_results = calculate_all_psi(events, junction_evidence_by_chrom)
+    psi_results = calculate_all_psi(
+        events,
+        junction_evidence_by_chrom,
+        read_data_by_chrom=read_data_by_chrom,
+    )
     add_confidence_intervals(psi_results)
 
     # Apply minimum-read significance filter.
