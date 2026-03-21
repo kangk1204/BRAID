@@ -8,7 +8,6 @@ Modes:
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import sys
 
@@ -28,7 +27,7 @@ def add_psi_subparser(subparsers: argparse._SubParsersAction) -> None:
         ),
     )
     parser.add_argument(
-        "--bam", nargs="+", required=True,
+        "--bam", nargs="+",
         help=(
             "BAM file(s). Multiple files are treated as biological replicates "
             "of the same condition. In rMATS mode, BAM paths are used for "
@@ -136,8 +135,8 @@ def run_psi(args: argparse.Namespace) -> None:
             )
 
     elif args.gtf or args.gene or args.region:
-        from braid.target.psi_bootstrap import compute_psi_from_junctions
         from braid.target.extractor import lookup_gene
+        from braid.target.psi_bootstrap import compute_psi_from_junctions
 
         for bam in bams:
             if args.gene and args.gtf:

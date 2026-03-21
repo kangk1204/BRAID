@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import sys
 
 import numpy as np
 
@@ -31,11 +30,11 @@ def add_differential_subparser(subparsers: argparse._SubParsersAction) -> None:
         ),
     )
     parser.add_argument(
-        "--ctrl", nargs="+", required=True,
+        "--ctrl", nargs="+",
         help="Control BAM file(s) (used for logging; counts are read from rMATS tables).",
     )
     parser.add_argument(
-        "--treat", nargs="+", required=True,
+        "--treat", nargs="+",
         help="Treatment BAM file(s) (used for logging; counts are read from rMATS tables).",
     )
     parser.add_argument(
@@ -80,16 +79,19 @@ def run_differential(args: argparse.Namespace) -> None:
     else:
         logging.basicConfig(level=logging.INFO)
 
+    from braid.target.psi_bootstrap import sample_psi_posterior
     from braid.target.rmats_bootstrap import (
         get_group_counts,
         parse_rmats_output,
     )
-    from braid.target.psi_bootstrap import sample_psi_posterior
 
-    logger.info(
-        "BRAID differential: %d ctrl BAMs, %d treat BAMs",
-        len(args.ctrl), len(args.treat),
-    )
+    ctrl_bams = args.ctrl or []
+    treat_bams = args.treat or []
+    if ctrl_bams or treat_bams:
+        logger.info(
+            "BRAID differential: %d ctrl BAMs, %d treat BAMs",
+            len(ctrl_bams), len(treat_bams),
+        )
     logger.info(
         "Note: PSI computed from rMATS junction count tables, not directly from BAM."
     )

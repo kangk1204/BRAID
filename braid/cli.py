@@ -713,7 +713,6 @@ def _write_summary_table(
     output_path: str,
 ) -> None:
     """Write a cross-sample summary TSV from per-sample GTF attributes."""
-    import os
     import numpy as np
 
     # Collect all transcript IDs

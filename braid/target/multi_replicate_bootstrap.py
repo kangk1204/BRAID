@@ -14,8 +14,8 @@ import logging
 from dataclasses import dataclass, field
 
 import numpy as np
-from scipy.stats import norm
 import pysam
+from scipy.stats import norm
 
 from braid.target.psi_bootstrap import (
     CONFIDENT_CI_WIDTH_THRESHOLD,
