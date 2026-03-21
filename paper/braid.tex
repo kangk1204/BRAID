@@ -58,10 +58,10 @@ BRAID's key design principle is \textit{caller-agnostic post-processing}: it rea
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{fig1_workflow}
-\caption{\textbf{BRAID as a post-processing confidence layer for StringTie and rMATS.}
-Existing RNA-seq workflows produce point estimates (TPM from StringTie, PSI and $p$-values from rMATS).
-BRAID reads these outputs, extracts junction evidence from the BAM file, fits an overdispersed Beta posterior with support-adaptive calibration, and returns per-event CI, CV, and confidence tiers.
-No pipeline changes are required.}
+\caption{\textbf{BRAID integrates into the standard GENCODE $\to$ StringTie $\to$ rMATS pipeline.}
+BAM files and a reference annotation (GENCODE) feed into StringTie for per-sample isoform assembly, which are merged and passed to rMATS for differential event detection.
+BRAID post-processes both outputs: it adds per-isoform CI and CV to StringTie results, per-event PSI CI to rMATS events, and $\Delta$PSI CI with confidence tiers for differential comparisons.
+A single command (\texttt{braid run}) auto-detects the appropriate mode from the provided inputs.}
 \label{fig:workflow}
 \end{figure*}
 

@@ -77,83 +77,116 @@ def _panel_label(ax, label, x=-0.12, y=1.08):
 # Figure 1: Workflow schematic
 # =====================================================================
 def fig1_workflow():
-    fig = plt.figure(figsize=(_cm(18), _cm(8)))
-
+    """Figure 1: Complete pipeline — GENCODE → StringTie → merge → rMATS → BRAID."""
+    fig = plt.figure(figsize=(_cm(18), _cm(10)))
     ax = fig.add_axes([0, 0, 1, 1])
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 4)
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 5.5)
     ax.axis("off")
 
-    box_style = dict(boxstyle="round,pad=0.3", linewidth=0.8)
-
-    # Input boxes (left)
-    inputs = [
-        (0.8, 3.0, "RNA-seq\nBAM", C_LIGHTGRAY),
-        (0.8, 1.8, "StringTie\nGTF", C_LIGHTGRAY),
-        (0.8, 0.6, "rMATS\nOutput", C_LIGHTGRAY),
-    ]
-    for x, y, txt, color in inputs:
-        bbox = FancyBboxPatch((x-0.55, y-0.35), 1.1, 0.7,
-                              boxstyle="round,pad=0.08", facecolor=color,
-                              edgecolor=C_DARK, linewidth=0.8)
+    # --- Helper: draw a rounded box with centered text ---
+    def _box(x: float, y: float, w: float, h: float, text: str,
+             fc: str, ec: str, lw: float = 0.8, fs: float = 5.5,
+             fw: str = "bold", tc: str = C_DARK) -> None:
+        bbox = FancyBboxPatch((x - w / 2, y - h / 2), w, h,
+                              boxstyle="round,pad=0.08", facecolor=fc,
+                              edgecolor=ec, linewidth=lw)
         ax.add_patch(bbox)
-        ax.text(x, y, txt, ha="center", va="center", fontsize=6, fontweight="bold")
+        ax.text(x, y, text, ha="center", va="center", fontsize=fs,
+                fontweight=fw, color=tc)
 
-    # BRAID box (center)
-    braid_box = FancyBboxPatch((2.8, 0.3), 2.4, 3.2,
-                               boxstyle="round,pad=0.15", facecolor="#deebf7",
-                               edgecolor=C_BLUE, linewidth=1.5)
-    ax.add_patch(braid_box)
-    ax.text(4.0, 3.2, "BRAID", ha="center", va="center",
-            fontsize=10, fontweight="bold", color=C_BLUE)
+    def _arrow(x1: float, y1: float, x2: float, y2: float,
+               color: str = C_DARK, lw: float = 0.8) -> None:
+        ax.annotate("", xy=(x2, y2), xytext=(x1, y1),
+                    arrowprops=dict(arrowstyle="->,head_width=0.12,head_length=0.08",
+                                    color=color, linewidth=lw))
 
-    # Internal steps
-    steps = [
-        (4.0, 2.5, "Junction\nExtraction", "#c6dbef"),
-        (4.0, 1.7, "Overdispersed\nBeta Posterior", "#9ecae1"),
-        (4.0, 0.9, "Support-Adaptive\nCalibration", "#6baed6"),
+    # ===== Column headers =====
+    ax.text(1.2, 5.2, "Input data", ha="center", fontsize=7,
+            fontweight="bold", color=C_DARK)
+    ax.text(4.6, 5.2, "Upstream tools", ha="center", fontsize=7,
+            fontweight="bold", color=C_DARK)
+    ax.text(8.8, 5.2, "BRAID confidence layer", ha="center", fontsize=7,
+            fontweight="bold", color=C_BLUE)
+
+    # ===== LEFT column — Input data (gray boxes) =====
+    _box(1.2, 4.3, 1.8, 0.6, "GENCODE GTF\n(reference)", C_LIGHTGRAY, C_DARK)
+    _box(1.2, 3.1, 1.8, 0.8, "BAM files\nctrl1, ctrl2, kd", C_LIGHTGRAY, C_DARK)
+
+    # ===== MIDDLE column — Upstream tools =====
+    # StringTie per-sample
+    _box(4.6, 4.3, 2.0, 0.6, "StringTie\n(per-sample assembly)",
+         "#fff7bc", C_ORANGE, fs=5.5, fw="bold")
+
+    # Individual GTFs (small boxes)
+    for i, lbl in enumerate(["ctrl1.gtf", "ctrl2.gtf", "kd.gtf"]):
+        xi = 3.6 + i * 1.0
+        _box(xi, 3.4, 0.85, 0.35, lbl, "#fee391", C_ORANGE, lw=0.5, fs=4.5, fw="normal")
+
+    # StringTie --merge
+    _box(4.6, 2.5, 2.0, 0.5, "StringTie --merge\n→ merged.gtf",
+         "#fff7bc", C_ORANGE, fs=5.5, fw="bold")
+
+    # rMATS
+    _box(4.6, 1.4, 2.0, 0.6, "rMATS\n(ctrl vs kd)\n→ events + FDR",
+         "#fee0d2", C_RED, fs=5.5, fw="bold")
+
+    # Arrows within middle column
+    _arrow(4.6, 3.98, 4.6, 3.6, color=C_ORANGE, lw=0.6)  # StringTie → indiv GTFs
+    for i in range(3):
+        xi = 3.6 + i * 1.0
+        _arrow(xi, 3.2, xi, 2.78, color=C_ORANGE, lw=0.5)  # indiv → merge
+    _arrow(4.6, 2.23, 4.6, 1.73, color=C_DARK, lw=0.6)  # merge → rMATS
+
+    # Arrows from inputs to middle column
+    _arrow(2.15, 4.3, 3.55, 4.3, color=C_DARK)  # GENCODE → StringTie
+    _arrow(2.15, 3.35, 3.55, 4.1, color=C_DARK)  # BAM → StringTie (upper)
+    _arrow(2.15, 2.95, 3.55, 1.6, color=C_DARK)  # BAM → rMATS (lower)
+
+    # ===== RIGHT column — BRAID confidence layer (blue background) =====
+    braid_bg = FancyBboxPatch((7.0, 0.4), 3.6, 4.55,
+                              boxstyle="round,pad=0.15", facecolor="#deebf7",
+                              edgecolor=C_BLUE, linewidth=1.5, alpha=0.5)
+    ax.add_patch(braid_bg)
+    ax.text(8.8, 4.7, "BRAID", ha="center", fontsize=10,
+            fontweight="bold", color=C_BLUE)
+
+    # Isoform CI (from StringTie GTF)
+    _box(8.8, 3.9, 2.6, 0.55, "Isoform CI\n(from StringTie GTF)",
+         "#c6dbef", C_BLUE, lw=0.6, fs=5.5)
+
+    # Event PSI CI (from rMATS)
+    _box(8.8, 2.9, 2.6, 0.55, "Event PSI CI\n(from rMATS junctions)",
+         "#9ecae1", C_BLUE, lw=0.6, fs=5.5)
+
+    # ΔPSI CI + tiers
+    _box(8.8, 1.9, 2.6, 0.55, "ΔPSI CI + tiers\n(differential confidence)",
+         "#6baed6", C_BLUE, lw=0.6, fs=5.5, tc="white")
+
+    # Internal BRAID arrows
+    _arrow(8.8, 3.6, 8.8, 3.2, color=C_BLUE, lw=0.6)
+    _arrow(8.8, 2.6, 8.8, 2.2, color=C_BLUE, lw=0.6)
+
+    # Arrows from middle column into BRAID
+    _arrow(5.65, 2.5, 7.45, 3.9, color=C_DARK)   # merged GTF → Isoform CI
+    _arrow(5.65, 1.5, 7.45, 2.9, color=C_DARK)   # rMATS → Event PSI CI
+    _arrow(5.65, 1.25, 7.45, 1.9, color=C_DARK)   # rMATS → ΔPSI CI
+
+    # ===== OUTPUT row at bottom =====
+    out_y = 0.55
+    out_labels = [
+        ("Per-isoform\nTPM, CI, CV", "#e5f5e0", C_GREEN),
+        ("Per-event\nPSI, CI, CV", "#c7e9c0", C_GREEN),
+        ("Differential\nΔPSI, CI, tier", "#a1d99b", C_GREEN),
     ]
-    for x, y, txt, color in steps:
-        bbox = FancyBboxPatch((x-0.85, y-0.28), 1.7, 0.56,
-                              boxstyle="round,pad=0.06", facecolor=color,
-                              edgecolor=C_BLUE, linewidth=0.5)
-        ax.add_patch(bbox)
-        ax.text(x, y, txt, ha="center", va="center", fontsize=5.5)
+    for i, (txt, fc, ec) in enumerate(out_labels):
+        ox = 7.4 + i * 1.4
+        _box(ox, out_y, 1.2, 0.5, txt, fc, ec, fs=4.8, fw="bold")
 
-    # Output boxes (right)
-    outputs = [
-        (7.0, 2.8, "Per-event\nPSI + CI", "#e5f5e0"),
-        (7.0, 1.8, "Confidence\nTiers", "#c7e9c0"),
-        (7.0, 0.8, "Variance\nDecomposition", "#a1d99b"),
-    ]
-    for x, y, txt, color in outputs:
-        bbox = FancyBboxPatch((x-0.65, y-0.3), 1.3, 0.6,
-                              boxstyle="round,pad=0.08", facecolor=color,
-                              edgecolor=C_GREEN, linewidth=0.8)
-        ax.add_patch(bbox)
-        ax.text(x, y, txt, ha="center", va="center", fontsize=5.5, fontweight="bold")
-
-    # Arrows
-    arrow_kw = dict(arrowstyle="->,head_width=0.15,head_length=0.1",
-                    color=C_DARK, linewidth=0.8)
-    for y in [3.0, 1.8, 0.6]:
-        ax.annotate("", xy=(2.8, min(y, 2.5)), xytext=(1.35, y),
-                    arrowprops=arrow_kw)
-    for y in [2.8, 1.8, 0.8]:
-        ax.annotate("", xy=(6.35, y), xytext=(5.2, min(y, 2.5)),
-                    arrowprops=arrow_kw)
-    # Internal arrows
-    for y1, y2 in [(2.22, 1.98), (1.42, 1.18)]:
-        ax.annotate("", xy=(4.0, y2), xytext=(4.0, y1),
-                    arrowprops=dict(arrowstyle="->", color=C_BLUE, linewidth=0.6))
-
-    # Mode labels
-    ax.text(8.5, 2.8, "Single-sample\nor Multi-rep", fontsize=5,
-            ha="center", va="center", style="italic", color=C_GRAY)
-    ax.text(8.5, 1.8, "Supported\nHigh-confidence\nNear-strict", fontsize=5,
-            ha="center", va="center", color=C_GREEN)
-    ax.text(8.5, 0.8, "σ²_bio + σ²_samp", fontsize=5,
-            ha="center", va="center", style="italic", color=C_GRAY)
+    # Arrows from BRAID internals to outputs
+    _arrow(8.1, 1.6, 7.5, 0.85, color=C_GREEN, lw=0.6)   # → per-isoform
+    _arrow(8.8, 1.6, 8.8, 0.85, color=C_GREEN, lw=0.6)   # → per-event
+    _arrow(9.5, 1.6, 10.1, 0.85, color=C_GREEN, lw=0.6)   # → differential
 
     for _ext in [".pdf", ".png", ".jpg"]:
         fig.savefig(os.path.join(OUTDIR, "fig1_workflow" + _ext), dpi=300)
