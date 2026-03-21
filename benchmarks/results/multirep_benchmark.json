@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "qki_dir": "real_benchmark/rtpcr_benchmark/qki",
+    "gtf": "real_benchmark/annotation/gencode.v38.nochr.gtf",
+    "seed": 42
+  },
+  "qki_multi_replicate": {
+    "EZH2": {
+      "single_event_count": 27,
+      "multi_event_count": 36,
+      "single_confident_count": 0,
+      "multi_confident_count": 1,
+      "single_median_ci_width": null,
+      "multi_median_ci_width": 0.19514467270139524
+    },
+    "AKT1": {
+      "single_event_count": 24,
+      "multi_event_count": 19,
+      "single_confident_count": 1,
+      "multi_confident_count": 7,
+      "single_median_ci_width": 0.12399742174610984,
+      "multi_median_ci_width": 0.08050698009616575
+    },
+    "STAT3": {
+      "single_event_count": 22,
+      "multi_event_count": 8,
+      "single_confident_count": 0,
+      "multi_confident_count": 0,
+      "single_median_ci_width": null,
+      "multi_median_ci_width": null
+    },
+    "RUNX1": {
+      "single_event_count": 13,
+      "multi_event_count": 10,
+      "single_confident_count": 0,
+      "multi_confident_count": 0,
+      "single_median_ci_width": null,
+      "multi_median_ci_width": null
+    },
+    "BCL2L1": {
+      "single_event_count": 7,
+      "multi_event_count": 11,
+      "single_confident_count": 0,
+      "multi_confident_count": 0,
+      "single_median_ci_width": null,
+      "multi_median_ci_width": null
+    }
+  },
+  "gm12878_multi_replicate": {
+    "n_isoforms": 32771,
+    "elapsed_seconds": 1376.759216785431,
+    "median_total_cv": 0.35878280725513956,
+    "median_bio_std": 7.729408608142602,
+    "median_sampling_std": 4.079663031721882
+  }
+}

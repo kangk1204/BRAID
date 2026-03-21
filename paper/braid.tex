@@ -29,8 +29,9 @@ RNA-seq alternative splicing (AS) tools such as rMATS and StringTie are widely u
 Researchers cannot distinguish well-measured events from uncertain ones, making it difficult to prioritize candidates for experimental validation.
 We present BRAID, a lightweight post-processing tool that adds calibrated confidence intervals, coefficients of variation (CV), and confidence tiers directly to existing rMATS or StringTie output---without requiring users to change pipelines.
 BRAID uses an overdispersed Beta posterior with a support-adaptive scaling schedule learned via leave-one-gene-out cross-validation against PacBio long-read ground truth.
-On 204 AS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), compared to 72.5\% without support-adaptive calibration.
-On the QKI knockdown RT-PCR benchmark, rMATS alone calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$), whereas BRAID's high-confidence tier retains 10 validated events with zero false positives across both 25 experimental negatives and 80 matched null controls.
+On 204 A3SS/A5SS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), compared to 72.5\% without support-adaptive calibration.
+On the QKI knockdown RT-PCR benchmark, rMATS calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$); BRAID's confidence tiers classify zero of these as supported or high-confidence.
+Consistent results are observed on two additional datasets: TRA2 knockdown (0 false positives among 40,877 rMATS non-significant SE events) and TARDBP knockdown (0 among 82,456 non-significant events across five event types).
 In multi-replicate mode on 32,771 GM12878 isoforms, biological variance is 1.9$\times$ larger than sampling variance, demonstrating that single-sample intervals underestimate total uncertainty.
 BRAID post-processes 16,292 rMATS events in 18.6 seconds and is freely available at \url{https://github.com/kangk1204/BRAID}.
 \end{abstract}
@@ -108,7 +109,8 @@ Confident accuracy & \textbf{100\%} & 90.9\% \\
 \subsection*{rMATS + BRAID hybrid workflow on QKI RT-PCR benchmark}
 
 To test whether BRAID's confidence tiers improve the practical utility of rMATS output, we used the QKI knockdown dataset\citep{hall2013}.
-This dataset provides three independent cohorts: 80 RT-PCR-validated exon-skipping events (\textit{validated}), 25 events that were tested by RT-PCR but showed no splicing change (\textit{RT-PCR failed}), and 80 computationally selected non-differential events with matched read support (\textit{matched null}).
+This dataset provides 80 RT-PCR-validated exon-skipping events (\textit{validated}) and 25 events that were tested by RT-PCR but showed no splicing change (\textit{RT-PCR failed}).
+We additionally constructed 80 computationally matched null controls---non-differential SE events with similar read support, selected from the rMATS output (FDR $\geq 0.5$)---as a supplementary negative set.
 We ran rMATS on control replicates versus QKI knockdown, then post-processed with BRAID.
 
 Among the 44 validated events called significant by rMATS, BRAID classified 14 as \textit{supported} and 10 as \textit{high-confidence} (Table~\ref{tab:qki}, Figure~\ref{fig:qki}).
@@ -148,6 +150,15 @@ This result demonstrates BRAID's intended use case.
 rMATS alone identifies 44 validated events as significant---but also 17 experimental negatives (68\% FPR on the failed cohort).
 A researcher relying solely on rMATS significance would waste validation effort on false positives.
 BRAID's confidence tiers eliminate all 17 false positives while retaining 10 high-confidence true positives, providing a principled prioritization that $p$-values alone cannot achieve.
+
+\subsection*{Consistency on additional knockdown datasets}
+
+To test whether BRAID's zero false-positive property holds beyond the QKI dataset, we applied the same rMATS + BRAID workflow to two additional knockdown experiments with pre-computed rMATS output.
+In TRA2A/B double-knockdown in MDA-MB-231 cells\citep{trincado2018} (42,443 SE events; hg19 coordinates), BRAID classified 517 of 1,566 rMATS-significant events as supported and 27 as high-confidence, with zero supported or high-confidence calls among the 40,877 rMATS non-significant events.
+In TARDBP knockdown in K562 cells (ENCODE; 84,838 events across five AS types; hg38 coordinates), BRAID classified 1,120 of 2,382 significant events as supported and 23 as high-confidence, again with zero false positives among 82,456 non-significant events.
+
+We note that these non-significant pools are \textit{computationally defined} (rMATS FDR $\geq 0.05$), not experimentally confirmed negatives like the QKI RT-PCR failed cohort.
+They demonstrate consistency of BRAID's conservative tiering across cell lines (HeLa, MDA-MB-231, K562), knockdown targets (QKI, TRA2, TARDBP), event types (SE, A3SS, A5SS, MXE, RI), and genome builds (hg19, hg38), but do not constitute independent experimental validation.
 
 \subsection*{Multi-replicate variance decomposition}
 

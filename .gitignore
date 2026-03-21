@@ -14,7 +14,6 @@ benchmark_results/
 benchmark_results_large/
 benchmark_results_postpatch/
 real_benchmark/
-benchmarks/results/
 benchmarks/denovo_results/
 paper/
 figures/

@@ -1,0 +1,10 @@
+{
+  "dataset": "ENCODE_TARDBP_KD_K562",
+  "total_events": 84838,
+  "rmats_significant": 2382,
+  "rmats_nonsignificant": 82456,
+  "braid_supported_sig": 1120,
+  "braid_hc_sig": 23,
+  "braid_supported_nonsig": 0,
+  "braid_hc_nonsig": 0
+}

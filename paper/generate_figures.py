@@ -59,7 +59,7 @@ C_ORANGE = "#fd8d3c"
 C_TEAL = "#17becf"
 C_DARK = "#252525"
 
-DATA_ROOT = "/home/keunsoo/projects/23_rna-seq_assembler"
+DATA_ROOT = os.environ.get("BRAID_DATA_ROOT", os.path.join(os.path.dirname(os.path.dirname(__file__))))
 
 
 def _cm(inches: float) -> float:
