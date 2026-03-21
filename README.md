@@ -19,7 +19,7 @@ much you should trust* their output.
 BRAID auto-detects what you want based on the inputs you provide:
 
 ```bash
-# Mode 1 — Assemble: BAM only -> de novo assembly + CI
+# Mode 1 — Assemble: BAM only -> transcript assembly + CI
 braid run sample1.bam sample2.bam -o results/
 
 # Mode 2 — Score: BAM + StringTie GTF -> isoform-level CI
@@ -38,6 +38,9 @@ braid run --ctrl c1.bam c2.bam --treat kd.bam --rmats rMATS_output/ -o results/
 | **score** | BAM + StringTie GTF | Confidence intervals on StringTie isoform abundances |
 | **psi** | BAM + rMATS dir | Calibrated PSI posterior intervals per splicing event |
 | **differential** | ctrl BAMs + treat BAMs + rMATS | Tiered differential splicing calls with CI |
+
+Modes can be combined: e.g. `--stringtie` + `--rmats` + `--ctrl`/`--treat` runs
+all applicable modes (score, psi, and differential) in one invocation.
 
 ---
 
@@ -76,7 +79,7 @@ uncertainty tiers, and reproducibility flags.
   bootstrap-derived FDR calibration.
 - **Multi-replicate variance decomposition** separating biological from
   sampling uncertainty.
-- **De novo assembly path** when no upstream tool output is available.
+- **Transcript assembly path** when no upstream tool output is available.
 - **Optional GPU acceleration** for heavier workloads; CPU fallback by default.
 
 ---
@@ -285,14 +288,14 @@ browser to explore:
 python -m pytest tests/ -v
 ```
 
-443 tests, all in-memory (no external data needed).
+449 tests, all in-memory (no external data needed).
 
 ---
 
 ## CLI Reference
 
 ```
-usage: braid [-h] {run,psi,differential,assemble,analyze,denovo,dashboard,doctor,target,fq} ...
+usage: braid [-h] {run,psi,differential,assemble,analyze,denovo,dashboard,doctor,target,fastq-target} ...
 ```
 
 ### `braid run` (recommended entry point)

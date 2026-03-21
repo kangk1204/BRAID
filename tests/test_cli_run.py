@@ -92,3 +92,53 @@ def test_version() -> None:
     assert "0.1.0" in combined, (
         f"Expected '0.1.0' in version output, got:\n{combined}"
     )
+
+
+def test_run_stringtie_and_rmats_flags() -> None:
+    """``braid run -h`` output contains both --stringtie and --rmats flags."""
+    result = _run_braid("run", "-h")
+    assert result.returncode == 0, f"stderr: {result.stderr}"
+    combined = result.stdout + result.stderr
+    assert "--stringtie" in combined, (
+        f"Expected '--stringtie' in run help output, got:\n{combined}"
+    )
+    assert "--rmats" in combined, (
+        f"Expected '--rmats' in run help output, got:\n{combined}"
+    )
+
+
+def test_differential_empty_output() -> None:
+    """``braid differential`` with empty rMATS input produces exit 0 and output file."""
+    import os
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Create a minimal empty SE.MATS.JC.txt with just the header
+        rmats_file = os.path.join(tmpdir, "SE.MATS.JC.txt")
+        header = (
+            "ID\tGeneID\tgeneSymbol\tchr\tstrand\t"
+            "exonStart_0base\texonEnd\tupstreamES\tupstreamEE\t"
+            "downstreamES\tdownstreamEE\t"
+            "ID.1\tIJC_SAMPLE_1\tSJC_SAMPLE_1\t"
+            "IJC_SAMPLE_2\tSJC_SAMPLE_2\t"
+            "IncFormLen\tSkipFormLen\t"
+            "PValue\tFDR\tIncLevel1\tIncLevel2\tIncLevelDifference\n"
+        )
+        with open(rmats_file, "w") as f:
+            f.write(header)
+
+        out_file = os.path.join(tmpdir, "out.tsv")
+        result = _run_braid(
+            "differential",
+            "--ctrl", "fake.bam",
+            "--treat", "fake.bam",
+            "--rmats-dir", tmpdir,
+            "-o", out_file,
+        )
+        assert result.returncode == 0, (
+            f"Expected exit 0, got {result.returncode}; "
+            f"stdout: {result.stdout}\nstderr: {result.stderr}"
+        )
+        assert os.path.exists(out_file), (
+            f"Output file {out_file} was not created"
+        )

@@ -1,7 +1,7 @@
 """BRAID unified ``run`` subcommand with auto-detected mode.
 
 Usage examples:
-    # Case 1: BAM only -> de novo assembly + CI
+    # Case 1: BAM only -> transcript assembly + CI
     braid run sample1.bam sample2.bam -o results/
 
     # Case 2: BAM + StringTie GTF -> isoform CI
@@ -19,53 +19,12 @@ from __future__ import annotations
 import argparse
 import logging
 import os
-import sys
 from typing import Literal
 
 logger = logging.getLogger(__name__)
 
 Mode = Literal["differential", "psi", "score", "assemble"]
 
-
-def _detect_mode(args: argparse.Namespace) -> Mode:
-    """Auto-detect the run mode from CLI arguments.
-
-    Priority order:
-      1. --ctrl/--treat present -> differential
-      2. --rmats present (no groups) -> psi
-      3. --stringtie present (no rmats) -> score
-      4. BAM only -> assemble
-
-    Args:
-        args: Parsed CLI arguments.
-
-    Returns:
-        One of "differential", "psi", "score", or "assemble".
-    """
-    has_ctrl = bool(getattr(args, "ctrl", None))
-    has_treat = bool(getattr(args, "treat", None))
-    has_rmats = bool(getattr(args, "rmats", None))
-    has_stringtie = bool(getattr(args, "stringtie", None))
-
-    if has_ctrl or has_treat:
-        if not (has_ctrl and has_treat):
-            raise SystemExit(
-                "Error: --ctrl and --treat must both be provided for "
-                "differential mode."
-            )
-        if not has_rmats:
-            raise SystemExit(
-                "Error: --rmats is required for differential mode."
-            )
-        return "differential"
-
-    if has_rmats:
-        return "psi"
-
-    if has_stringtie:
-        return "score"
-
-    return "assemble"
 
 
 def _collect_bams(args: argparse.Namespace, mode: Mode) -> list[str]:
@@ -277,11 +236,63 @@ def _run_assemble_mode(
     _run_assemble(assemble_args)
 
 
+def _detect_applicable_modes(args: argparse.Namespace) -> list[Mode]:
+    """Detect ALL applicable run modes from CLI arguments.
+
+    Multiple modes can be applicable when multiple inputs are given.
+    For example, ``--ctrl --treat --rmats --stringtie`` triggers
+    score, psi (skipped when groups present), and differential.
+
+    Args:
+        args: Parsed CLI arguments.
+
+    Returns:
+        Ordered list of modes to execute sequentially.
+    """
+    has_ctrl = bool(getattr(args, "ctrl", None))
+    has_treat = bool(getattr(args, "treat", None))
+    has_rmats = bool(getattr(args, "rmats", None))
+    has_stringtie = bool(getattr(args, "stringtie", None))
+
+    # Validate group arguments
+    if (has_ctrl or has_treat) and not (has_ctrl and has_treat):
+        raise SystemExit(
+            "Error: --ctrl and --treat must both be provided for "
+            "differential mode."
+        )
+    if (has_ctrl and has_treat) and not has_rmats:
+        raise SystemExit(
+            "Error: --rmats is required for differential mode."
+        )
+
+    modes: list[Mode] = []
+
+    # 1. StringTie given → score mode (isoform CI)
+    if has_stringtie:
+        modes.append("score")
+
+    # 2. rMATS given without groups → psi mode (event CI)
+    if has_rmats and not (has_ctrl and has_treat):
+        modes.append("psi")
+
+    # 3. ctrl/treat + rMATS → differential mode (ΔPSI + tiers)
+    if has_ctrl and has_treat and has_rmats:
+        modes.append("differential")
+
+    # 4. Nothing else → assemble
+    if not modes:
+        modes.append("assemble")
+
+    return modes
+
+
 def run_main(args: argparse.Namespace) -> None:
     """Entry point for the unified ``run`` subcommand.
 
-    Auto-detects the mode from arguments and delegates to the
-    appropriate pipeline.
+    Detects ALL applicable modes from arguments and runs them
+    sequentially.  For example, providing ``--stringtie``,
+    ``--rmats``, ``--ctrl``, and ``--treat`` will run score,
+    then differential.
 
     Args:
         args: Parsed CLI arguments from ``add_run_subparser``.
@@ -292,16 +303,15 @@ def run_main(args: argparse.Namespace) -> None:
     else:
         logging.basicConfig(level=logging.INFO)
 
-    mode = _detect_mode(args)
+    modes = _detect_applicable_modes(args)
     output_dir = args.output
     os.makedirs(output_dir, exist_ok=True)
 
-    bams = _collect_bams(args, mode)
-
-    print(f"BRAID run: {mode} mode detected")
-    print(f"  BAM files:  {len(bams)}")
+    print(f"BRAID run: {len(modes)} mode(s) detected: {', '.join(modes)}")
     print(f"  Output dir: {output_dir}")
-    if mode == "differential":
+    has_ctrl = bool(getattr(args, "ctrl", None))
+    has_treat = bool(getattr(args, "treat", None))
+    if has_ctrl and has_treat:
         print(f"  Control:    {len(args.ctrl)} BAMs")
         print(f"  Treatment:  {len(args.treat)} BAMs")
     if getattr(args, "rmats", None):
@@ -310,16 +320,30 @@ def run_main(args: argparse.Namespace) -> None:
         print(f"  StringTie:  {args.stringtie}")
     print()
 
-    if mode == "differential":
-        _run_differential_mode(args, output_dir)
-    elif mode == "psi":
-        _run_psi_mode(args, bams, output_dir)
-    elif mode == "score":
-        _run_score_mode(args, bams, output_dir)
-    elif mode == "assemble":
-        _run_assemble_mode(args, bams, output_dir)
+    executed: list[str] = []
 
-    print(f"\nBRAID run complete. Results in: {output_dir}/")
+    for mode in modes:
+        print(f"--- Running {mode} mode ---")
+        bams = _collect_bams(args, mode)
+        print(f"  BAM files: {len(bams)}")
+
+        if mode == "differential":
+            _run_differential_mode(args, output_dir)
+        elif mode == "psi":
+            _run_psi_mode(args, bams, output_dir)
+        elif mode == "score":
+            _run_score_mode(args, bams, output_dir)
+        elif mode == "assemble":
+            _run_assemble_mode(args, bams, output_dir)
+
+        executed.append(mode)
+        print()
+
+    # Final summary
+    print("=" * 50)
+    print(f"BRAID run complete. Results in: {output_dir}/")
+    print(f"Modes executed ({len(executed)}): {', '.join(executed)}")
+    print("=" * 50)
 
 
 def add_run_subparser(subparsers: argparse._SubParsersAction) -> None:

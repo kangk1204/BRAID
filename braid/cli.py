@@ -272,11 +272,10 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
+            "  braid run sample.bam -o results/\n"
+            "  braid run *.bam --stringtie merged.gtf -o results/\n"
+            "  braid run --ctrl c1.bam --treat kd.bam --rmats rMATS_output/ -o results/\n"
             "  braid assemble aligned.bam -o transcripts.gtf\n"
-            "  braid aligned.bam -o transcripts.gtf  (defaults to assemble)\n"
-            "  braid analyze transcripts.gtf aligned.bam -o events.tsv\n"
-            "  braid denovo reads.fq -o transcripts.fa -k 25\n"
-            "  braid dashboard events.tsv transcripts.gtf --port 8501\n"
         ),
     )
     parser.add_argument(

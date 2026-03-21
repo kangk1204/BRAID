@@ -29,7 +29,11 @@ def add_psi_subparser(subparsers: argparse._SubParsersAction) -> None:
     )
     parser.add_argument(
         "--bam", nargs="+", required=True,
-        help="BAM file(s). Multiple files are treated as biological replicates.",
+        help=(
+            "BAM file(s). Multiple files are treated as biological replicates "
+            "of the same condition. In rMATS mode, BAM paths are used for "
+            "logging only; PSI counts are read from rMATS junction count tables."
+        ),
     )
     parser.add_argument(
         "--rmats-dir",
@@ -107,15 +111,19 @@ def run_psi(args: argparse.Namespace) -> None:
                 sample="sample_1",
             )
         else:
-            # Multi-replicate: run per BAM, combine
-            from braid.target.multi_replicate_bootstrap import (
-                multi_replicate_psi,
+            # Multi-replicate: all BAMs are replicates of the SAME condition.
+            # rMATS only has 2 groups (sample_1, sample_2).  All replicates
+            # here correspond to sample_1.  We run bootstrap independently
+            # per replicate (with different seeds) to capture between-
+            # replicate variability, then combine CIs.
+            logger.info(
+                "%d BAMs provided — treating as replicates of one condition "
+                "(bootstrap on sample_1 counts).",
+                n_bams,
             )
-            # For rMATS events, use counts from table (not BAM re-extraction)
-            # Run bootstrap per replicate count from rMATS
             all_rep_results = []
             for i, bam in enumerate(bams):
-                sample_key = f"sample_{i+1}" if i < 2 else "sample_1"
+                sample_key = "sample_1"
                 rep_results = add_bootstrap_ci(
                     events,
                     n_replicates=args.replicates,

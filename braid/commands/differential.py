@@ -32,11 +32,11 @@ def add_differential_subparser(subparsers: argparse._SubParsersAction) -> None:
     )
     parser.add_argument(
         "--ctrl", nargs="+", required=True,
-        help="Control BAM file(s) (biological replicates).",
+        help="Control BAM file(s) (used for logging; counts are read from rMATS tables).",
     )
     parser.add_argument(
         "--treat", nargs="+", required=True,
-        help="Treatment BAM file(s) (biological replicates).",
+        help="Treatment BAM file(s) (used for logging; counts are read from rMATS tables).",
     )
     parser.add_argument(
         "--rmats-dir", required=True,
@@ -89,6 +89,9 @@ def run_differential(args: argparse.Namespace) -> None:
     logger.info(
         "BRAID differential: %d ctrl BAMs, %d treat BAMs",
         len(args.ctrl), len(args.treat),
+    )
+    logger.info(
+        "Note: PSI computed from rMATS junction count tables, not directly from BAM."
     )
 
     events = parse_rmats_output(
@@ -173,11 +176,19 @@ def run_differential(args: argparse.Namespace) -> None:
             "tier": tier,
         })
 
-    # Write output
+    # Write output (always creates the file, even if empty)
     _write_differential_tsv(results, args.output)
 
+    if not results:
+        logger.warning(
+            "No events passed filters (min_support=%d). "
+            "Output file %s contains only the header.",
+            args.min_support,
+            args.output,
+        )
+
     # Summary
-    tiers = {}
+    tiers: dict[str, int] = {}
     for r in results:
         tiers[r["tier"]] = tiers.get(r["tier"], 0) + 1
 
@@ -188,11 +199,22 @@ def run_differential(args: argparse.Namespace) -> None:
 
 
 def _write_differential_tsv(results: list[dict], output: str) -> None:
-    """Write differential results to TSV."""
-    if not results:
-        return
+    """Write differential results to TSV.
 
-    cols = list(results[0].keys())
+    Always writes the header so that the output file exists even when
+    *results* is empty.
+
+    Args:
+        results: List of result dictionaries.
+        output: Path for the output TSV file.
+    """
+    cols = [
+        "event_id", "event_type", "gene", "chrom",
+        "ctrl_psi", "treat_psi", "dpsi_mean",
+        "dpsi_ci_low", "dpsi_ci_high", "dpsi_ci_excludes_zero",
+        "prob_large_effect", "rmats_fdr", "rmats_dpsi",
+        "ctrl_support", "treat_support", "tier",
+    ]
     with open(output, "w") as f:
         f.write("\t".join(cols) + "\n")
         for r in results:
