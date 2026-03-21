@@ -185,7 +185,7 @@ MAP4K4 (RT-PCR failed, significant-only) was called significant by rMATS but sho
 
 To test whether BRAID's zero false-positive property holds beyond the QKI dataset, we applied the same rMATS + BRAID workflow to two additional knockdown experiments with pre-computed rMATS output.
 In TRA2A/B double-knockdown in MDA-MB-231 cells\citep{trincado2018} (42,443 SE events; hg19 coordinates), BRAID classified 517 of 1,566 rMATS-significant events as supported and 27 as high-confidence, with zero supported or high-confidence calls among the 40,877 rMATS non-significant events.
-In TARDBP knockdown in K562 cells (ENCODE; 84,838 events across five AS types; hg38 coordinates), BRAID classified 1,120 of 2,382 significant events as supported and 23 as high-confidence, again with zero false positives among 82,456 non-significant events.
+In TARDBP knockdown in K562 cells (ENCODE; 84,838 events across five AS types; hg19 coordinates), BRAID classified 1,120 of 2,382 significant events as supported and 23 as high-confidence, again with zero false positives among 82,456 non-significant events.
 
 We note two important caveats.
 First, these non-significant pools are \textit{computationally defined} (rMATS FDR $\geq 0.05$), not experimentally confirmed negatives.
@@ -321,7 +321,7 @@ where $\sigma^2_{\text{bio}} = \text{Var}(\hat\Psi_1, \ldots, \hat\Psi_K)$ and $
 PacBio long-read: ENCODE ENCSR589FUJ (K562).
 QKI knockdown: SRA SRR1173996--SRR1173999\citep{hall2013}.
 TRA2A/B knockdown: GEO GSE59335 (MDA-MB-231; hg19)\citep{trincado2018}; pre-computed rMATS output from the SUPPA2 supplementary repository.
-TARDBP knockdown: ENCODE ENCSR905HLE (K562; hg38).
+TARDBP knockdown: ENCODE ENCSR905HLE (K562; hg19 rMATS coordinates).
 GM12878: ENCODE ENCFF729OOW and ENCFF550SET.
 Annotation: GENCODE v38.
 
