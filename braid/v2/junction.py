@@ -34,6 +34,17 @@ _SHORT_ANCHOR_THRESHOLD = 8
 _MISMATCH_WINDOW = 5  # bases on each side of the splice site
 
 
+def _resolve_chrom(bam: pysam.AlignmentFile, chrom: str) -> str | None:
+    """Find a matching chromosome name in the BAM (handles chr prefix mismatch)."""
+    refs = set(bam.references)
+    if chrom in refs:
+        return chrom
+    alt = chrom.replace("chr", "") if chrom.startswith("chr") else f"chr{chrom}"
+    if alt in refs:
+        return alt
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
@@ -260,13 +271,17 @@ def extract_junction_features(
 
     bam = pysam.AlignmentFile(bam_path, "rb")
     try:
+        resolved_chrom = _resolve_chrom(bam, event.chrom)
+        if resolved_chrom is None:
+            bam.close()
+            return empty
         # Collect inclusion reads
         inc_data = _collect_junction_reads(
-            bam, event.chrom, inc_junctions, region_start, region_end
+            bam, resolved_chrom, inc_junctions, region_start, region_end
         )
         # Collect exclusion reads
         exc_data = _collect_junction_reads(
-            bam, event.chrom, exc_junctions, region_start, region_end
+            bam, resolved_chrom, exc_junctions, region_start, region_end
         )
     finally:
         bam.close()

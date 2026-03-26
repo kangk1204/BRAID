@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     pass
 
 from braid.target.rmats_bootstrap import RmatsEvent
+from braid.v2.junction import _resolve_chrom
 
 logger = logging.getLogger(__name__)
 

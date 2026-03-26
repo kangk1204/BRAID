@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from pysam import AlignedSegment
 
 from braid.target.rmats_bootstrap import RmatsEvent
+from braid.v2.junction import _resolve_chrom
 from braid.v2.junction import _collect_junction_reads
 
 # ---------------------------------------------------------------------------
@@ -142,11 +143,16 @@ def extract_coverage_features(
 
     bam = pysam.AlignmentFile(bam_path, "rb")
     try:
+        resolved = _resolve_chrom(bam, event.chrom)
+        if resolved is None:
+            bam.close()
+            return empty
+        chrom = resolved
         inc_data = _collect_junction_reads(
-            bam, event.chrom, inc_junctions, region_start, region_end,
+            bam, chrom, inc_junctions, region_start, region_end,
         )
         exc_data = _collect_junction_reads(
-            bam, event.chrom, exc_junctions, region_start, region_end,
+            bam, chrom, exc_junctions, region_start, region_end,
         )
 
         # B1-B2: Duplicate fraction
@@ -159,7 +165,7 @@ def extract_coverage_features(
         features["unique_start_fraction_exc"] = _unique_start_fraction(exc_data)
 
         # C1-C2: Exon body coverage
-        cv, mean_cov = _exon_body_coverage(bam, event.chrom, exon_start, exon_end)
+        cv, mean_cov = _exon_body_coverage(bam, chrom, exon_start, exon_end)
         features["exon_body_coverage_uniformity"] = cv
         features["exon_body_mean_coverage"] = mean_cov
     finally:
