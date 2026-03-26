@@ -31,7 +31,7 @@ We present BRAID, a lightweight post-processing tool that adds calibrated confid
 BRAID uses an overdispersed Beta posterior with a support-adaptive scaling schedule learned via leave-one-gene-out cross-validation against PacBio long-read ground truth.
 On 204 A3SS/A5SS events across 15 genes, BRAID achieves 94.6\% CI coverage at a nominal 95\% level ($r = 0.831$ versus long-read PSI), though intervals for low-support events are wide (median width 1.0 for $<$100 reads, 0.51 for 250+ reads).
 On the QKI knockdown RT-PCR benchmark, rMATS at FDR~$< 0.05$ produces a 68\% false positive rate on 25 experimentally confirmed negatives (17/25).
-BRAID reduces this to 16\% (4/25 at the high-confidence tier) while retaining 10/80 validated events---outperforming simple FDR threshold tightening (FDR~$< 0.0001$: 32\% FPR, 24/80 recall).
+BRAID's high-confidence tier calls 14 events, of which 10 match validated targets and 4 match targets whose rMATS event coordinates overlap with validated events; the conservative FPR estimate is 16\% (4/25), though post-hoc analysis indicates these 4 apparent false positives may reflect RT-PCR target coordinate ambiguity rather than BRAID error.
 In multi-replicate mode on 32,771 GM12878 isoforms, biological variance is 1.9$\times$ larger than sampling variance.
 BRAID post-processes 16,292 rMATS events in 18.6 seconds and is freely available at \url{https://github.com/kangk1204/BRAID}.
 \end{abstract}
@@ -132,11 +132,15 @@ Among the 44 validated events called significant by rMATS, BRAID classified 14 a
 The RT-PCR Failed cohort reveals the value of posterior-based filtering: rMATS calls 17 of 25 experimentally confirmed negatives as significant (FDR $< 0.05$; median FDR $= 0.002$, median $|\Delta\Psi| = 0.42$)---a 68\% false positive rate.
 BRAID's high-confidence tier reduces this to 4/25 (16\%), and the supported tier to 6/25 (24\%).
 For comparison, simply tightening the rMATS FDR threshold to $< 0.0001$ still yields 8/25 (32\%) false positives with only 24/80 validated events retained, whereas BRAID's high-confidence tier achieves lower FPR (16\%) at comparable recall (10/80).
-The four false positives (CLSTN1, ESYT2, FN1, SMARCA1) have very low rMATS FDR ($< 0.05$), large $|\Delta\Psi|$, and sufficient read support; whether these represent true RT-PCR assay failures or genuine BRAID errors remains an open question.
+
+Critically, post-hoc inspection revealed that the four apparent false positives (CLSTN1, ESYT2, FN1, SMARCA1) share \textit{identical} rMATS SE event coordinates with four of the ten validated high-confidence events.
+That is, the same genomic exon-skipping event was targeted by two different RT-PCR primer pairs---one that confirmed the splicing change (classified as validated) and one that failed to detect it (classified as RT-PCR failed).
+This coordinate overlap admits two interpretations: (1)~the conservative interpretation treats all four as genuine false positives (FPR $= 16\%$, precision $= 71\%$), on the grounds that BRAID should not call events whose RT-PCR evidence is ambiguous; (2)~the corrected interpretation holds that these four events are not BRAID errors but rather reflect RT-PCR target mapping ambiguity, since the underlying splicing event was independently validated by a different primer pair, yielding an adjusted FPR of 0\% on the remaining 21 unambiguous negatives.
+We report both estimates; resolving this ambiguity would require re-examination of the original RT-PCR primer designs or an independent validation dataset with unambiguous one-to-one event-to-assay mapping.
 
 \begin{table}[htbp]
 \centering
-\caption{QKI RT-PCR benchmark. The RT-PCR Failed cohort contains events experimentally tested by RT-PCR with no observed splicing change. The matched null set consists of computationally selected non-differential events (rMATS FDR $\geq 0.5$, support-matched). BRAID reduces the false positive rate from 68\% (rMATS alone) to 16\% (high-confidence tier), outperforming simple FDR threshold tightening.}
+\caption{QKI RT-PCR benchmark. The RT-PCR Failed cohort contains events experimentally tested by RT-PCR with no observed splicing change. The matched null set consists of computationally selected non-differential events (rMATS FDR $\geq 0.5$, support-matched). BRAID reduces the false positive rate from 68\% (rMATS alone) to 16\% (high-confidence tier), outperforming simple FDR threshold tightening. \textsuperscript{$\dagger$}The 4 high-confidence calls in the RT-PCR Failed column share identical rMATS event coordinates with 4 of the 10 validated high-confidence events; see text for discussion of coordinate overlap and alternative FPR estimates.}
 \label{tab:qki}
 \begin{tabular}{lcccc}
 \toprule
@@ -164,7 +168,8 @@ BRAID tiers reduce FPR to 16\% (high-confidence) while retaining 10 validated ev
 This result demonstrates BRAID's intended use case.
 rMATS alone identifies 44 validated events as significant---but also 17 experimental negatives (68\% FPR on the failed cohort).
 A researcher relying solely on rMATS significance would waste validation effort on false positives.
-BRAID's confidence tiers reduce the false positive rate from 68\% to 16\% while retaining 10 high-confidence true positives---a better FPR-recall tradeoff than simple FDR threshold tightening (FDR $< 0.0001$: 32\% FPR, 24 true positives).
+BRAID's confidence tiers reduce the conservative false positive rate from 68\% to 16\% while retaining 10 high-confidence true positives---a better FPR-recall tradeoff than simple FDR threshold tightening (FDR $< 0.0001$: 32\% FPR, 24 true positives).
+Moreover, the 4 apparent false positives may not be genuine BRAID errors (see coordinate overlap analysis above), in which case all high-confidence calls correspond to validated splicing events.
 
 Figure~\ref{fig:cases} illustrates BRAID's tiering on three representative genes.
 CLSTN1 (validated, high-confidence) shows a clear PSI shift with tight CIs excluding zero.
@@ -274,8 +279,10 @@ Used together, rMATS $p$-values identify which events are differential, and BRAI
 
 \subsection*{Limitations}
 
-BRAID's confidence tiering is conservative: only 10/80 validated events pass the high-confidence tier (12.5\% recall), with 4/25 false positives on RT-PCR negatives (16\% FPR).
+BRAID's confidence tiering is conservative: only 10/80 validated events pass the high-confidence tier (12.5\% recall), with a conservative estimate of 4/25 false positives on RT-PCR negatives (16\% FPR).
 This tradeoff favours precision over recall, suitable for prioritizing expensive experimental validation but potentially too stringent for exploratory screening.
+The 4 apparent false positives on the QKI RT-PCR failed cohort (CLSTN1, ESYT2, FN1, SMARCA1) share identical rMATS event coordinates with 4 validated events, raising the possibility that these represent RT-PCR target mapping ambiguity rather than genuine BRAID errors.
+Whether the conservative (16\% FPR) or corrected (0\% FPR on unambiguous negatives) interpretation is appropriate remains unresolved; future benchmarks with unambiguous event-level RT-PCR validation---ideally with one-to-one mapping between genomic events and primer pairs---would clarify this.
 
 The count-scaling parameter $\lambda$ is ad hoc rather than derived from a formal overdispersion model (e.g., estimated Beta-Binomial dispersion).
 For low-support events ($<$100 reads), the resulting intervals span most or all of the [0,1] range, providing little constraint.
