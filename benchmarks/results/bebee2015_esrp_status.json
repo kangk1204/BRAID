@@ -1,0 +1,12 @@
+{
+  "dataset": "Bebee2015_Esrp_DKO",
+  "organism": "mouse_mm10",
+  "conditions": "WT_vs_Esrp1Esrp2_DKO",
+  "total_events": 0,
+  "processed": 0,
+  "rmats_sig": 0,
+  "braid_supported": 0,
+  "braid_hc": 0,
+  "rtpcr_tested_genes": 58,
+  "rtpcr_gene_events": 0
+}
