@@ -1,0 +1,10 @@
+{
+  "dataset": "MAJIQ_mouse_Cer_vs_Liv",
+  "organism": "mouse_mm10",
+  "conditions": "cerebellum_vs_liver",
+  "total_events": 27309,
+  "processed_events": 22893,
+  "rmats_sig": 5355,
+  "braid_supported": 3265,
+  "braid_hc": 167
+}
