@@ -1,0 +1,962 @@
+{
+  "config": {
+    "fractions": [
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "n_seeds": 5,
+    "tracked_methods": [
+      "BRAID-conformal",
+      "BRAID-conformal-abs",
+      "rMATS-perRep",
+      "betAS",
+      "BRAID-Jeffreys"
+    ],
+    "method": "binomial thinning of rMATS IJC/SJC count tables (exact read-subsampling model); RT-PCR truth fixed.",
+    "out_of_scope": "real MAJIQ + real-betAS(R) cannot be re-depthed without re-running them; see headtohead_coverage.json."
+  },
+  "per_dataset": {
+    "TRA2 (GSE59335, human)": {
+      "0.05": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9407558248465391,
+            "coverage95_sd": 0.004313923188270644,
+            "width95_mean": 0.9562122229260318,
+            "iscore95_mean": 1.2435166834223512
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9740731213937078,
+            "coverage95_sd": 0.006931159308269172,
+            "width95_mean": 1.0377828617302574,
+            "iscore95_mean": 1.1688516931665178
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7464072835589597,
+            "coverage95_sd": 0.03029282296877569,
+            "width95_mean": 1.1170463977425247,
+            "iscore95_mean": 3.238349907598407
+          },
+          "betAS": {
+            "coverage95_mean": 0.5184683440192315,
+            "coverage95_sd": 0.018598484125645336,
+            "width95_mean": 0.2620965941444694,
+            "iscore95_mean": 3.1199243362909708
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.7425849711496629,
+            "coverage95_sd": 0.03230606085636554,
+            "width95_mean": 0.4341368044659847,
+            "iscore95_mean": 1.5598024121830494
+          }
+        },
+        "n_matched_mean": 108.0,
+        "diagnostics": {
+          "mean_support": 145.57614250192918,
+          "mean_post_std": 0.10942236627840685,
+          "point_rmse": 0.20041594755074116,
+          "sampling_var_fraction": 0.3008440250639713
+        }
+      },
+      "0.10": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9533462033462033,
+            "coverage95_sd": 0.014299349557336666,
+            "width95_mean": 1.1642928382274977,
+            "iscore95_mean": 1.3570187043937716
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9444015444015446,
+            "coverage95_sd": 0.015212309617380907,
+            "width95_mean": 0.7769273616907566,
+            "iscore95_mean": 0.9888916273066328
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.8079472329472329,
+            "coverage95_sd": 0.023359693805999313,
+            "width95_mean": 0.8649601903453459,
+            "iscore95_mean": 2.0460833967921555
+          },
+          "betAS": {
+            "coverage95_mean": 0.5457528957528959,
+            "coverage95_sd": 0.02546275208832677,
+            "width95_mean": 0.24538218740438128,
+            "iscore95_mean": 2.3833951170162284
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.671509009009009,
+            "coverage95_sd": 0.02074306632223275,
+            "width95_mean": 0.32945785504655545,
+            "iscore95_mean": 1.6533534783130304
+          }
+        },
+        "n_matched_mean": 111.4,
+        "diagnostics": {
+          "mean_support": 283.39824646074646,
+          "mean_post_std": 0.08312376125753086,
+          "point_rmse": 0.1776299676005233,
+          "sampling_var_fraction": 0.2230523693070597
+        }
+      },
+      "0.25": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9696428571428571,
+            "coverage95_sd": 0.0071428571428571175,
+            "width95_mean": 1.4091000109294467,
+            "iscore95_mean": 1.6103080297314658
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9446428571428571,
+            "coverage95_sd": 0.006681531047810622,
+            "width95_mean": 0.7770187527292365,
+            "iscore95_mean": 1.0342934340360155
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7732142857142856,
+            "coverage95_sd": 0.012111303541295105,
+            "width95_mean": 0.5933146496419603,
+            "iscore95_mean": 1.8004971823919036
+          },
+          "betAS": {
+            "coverage95_mean": 0.475,
+            "coverage95_sd": 0.010412414097938024,
+            "width95_mean": 0.18256259606501463,
+            "iscore95_mean": 2.215323063730707
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.55,
+            "coverage95_sd": 0.009105391988558559,
+            "width95_mean": 0.20991615895728688,
+            "iscore95_mean": 1.9960681949060803
+          }
+        },
+        "n_matched_mean": 112.0,
+        "diagnostics": {
+          "mean_support": 704.3571428571429,
+          "mean_post_std": 0.05343312254740581,
+          "point_rmse": 0.1612499849319608,
+          "sampling_var_fraction": 0.11110009684934745
+        }
+      },
+      "0.50": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9660714285714287,
+            "coverage95_sd": 0.003571428571428559,
+            "width95_mean": 1.396830964976295,
+            "iscore95_mean": 1.617535159394841
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.95,
+            "coverage95_sd": 0.004374088826398571,
+            "width95_mean": 0.7807403002733396,
+            "iscore95_mean": 0.9794588613095341
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7625,
+            "coverage95_sd": 0.01656003302767089,
+            "width95_mean": 0.4569804560363545,
+            "iscore95_mean": 1.6448481614163548
+          },
+          "betAS": {
+            "coverage95_mean": 0.4392857142857142,
+            "coverage95_sd": 0.018210783977117107,
+            "width95_mean": 0.1387461261515401,
+            "iscore95_mean": 2.197603424792858
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.4999999999999999,
+            "coverage95_sd": 0.025877458475338264,
+            "width95_mean": 0.14733404712706197,
+            "iscore95_mean": 2.121183061350538
+          }
+        },
+        "n_matched_mean": 112.0,
+        "diagnostics": {
+          "mean_support": 1403.610714285714,
+          "mean_post_std": 0.03755236158279416,
+          "point_rmse": 0.14614518226566697,
+          "sampling_var_fraction": 0.06621644694444177
+        }
+      },
+      "0.75": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9571428571428571,
+            "coverage95_sd": 0.0035714285714285583,
+            "width95_mean": 1.3337847962379787,
+            "iscore95_mean": 1.5269912022529304
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9535714285714286,
+            "coverage95_sd": 0.003571428571428603,
+            "width95_mean": 0.765703586001871,
+            "iscore95_mean": 0.9550936890334809
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7660714285714285,
+            "coverage95_sd": 0.011845088536983572,
+            "width95_mean": 0.37796083504110217,
+            "iscore95_mean": 1.631552019853261
+          },
+          "betAS": {
+            "coverage95_mean": 0.40714285714285714,
+            "coverage95_sd": 0.018385053823191066,
+            "width95_mean": 0.11591460609838886,
+            "iscore95_mean": 2.248804304642632
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.4482142857142857,
+            "coverage95_sd": 0.024872121923543072,
+            "width95_mean": 0.11991384175932909,
+            "iscore95_mean": 2.2315736974943396
+          }
+        },
+        "n_matched_mean": 112.0,
+        "diagnostics": {
+          "mean_support": 2107.753571428572,
+          "mean_post_std": 0.03059362469014913,
+          "point_rmse": 0.143526069619989,
+          "sampling_var_fraction": 0.04546246679971208
+        }
+      },
+      "1.00": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9553571428571429,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.340624653377654,
+            "iscore95_mean": 1.561139421743844
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9553571428571429,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.7390162400848906,
+            "iscore95_mean": 0.9340981313294519
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7589285714285714,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.35582317101960076,
+            "iscore95_mean": 1.6517196018403892
+          },
+          "betAS": {
+            "coverage95_mean": 0.35714285714285715,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.10122976322834765,
+            "iscore95_mean": 2.3125584664103944
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.39285714285714285,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.1033867557343839,
+            "iscore95_mean": 2.309679604467934
+          }
+        },
+        "n_matched_mean": 112.0,
+        "diagnostics": {
+          "mean_support": 2811.348214285714,
+          "mean_post_std": 0.026408953625108793,
+          "point_rmse": 0.1402309800699513,
+          "sampling_var_fraction": 0.03546618288752625
+        }
+      }
+    },
+    "Circadian (GSE54651, mouse)": {
+      "0.05": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9477551020408164,
+            "coverage95_sd": 0.010007910240833893,
+            "width95_mean": 0.989144922204192,
+            "iscore95_mean": 1.094743557539773
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9518367346938774,
+            "coverage95_sd": 0.009669249057852113,
+            "width95_mean": 0.6346309987618408,
+            "iscore95_mean": 0.788131976346917
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.734530612244898,
+            "coverage95_sd": 0.06837220817319684,
+            "width95_mean": 1.0494459029108558,
+            "iscore95_mean": 2.8771839633242653
+          },
+          "betAS": {
+            "coverage95_mean": 0.6143673469387756,
+            "coverage95_sd": 0.03531157206968399,
+            "width95_mean": 0.328274755293916,
+            "iscore95_mean": 2.699486224388109
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.7709387755102041,
+            "coverage95_sd": 0.03359201031522091,
+            "width95_mean": 0.43319157927311613,
+            "iscore95_mean": 1.215580626888787
+          }
+        },
+        "n_matched_mean": 49.8,
+        "diagnostics": {
+          "mean_support": 80.61322448979591,
+          "mean_post_std": 0.11245135756562619,
+          "point_rmse": 0.16538216230762814,
+          "sampling_var_fraction": 0.47064979411756075
+        }
+      },
+      "0.10": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.952,
+            "coverage95_sd": 0.00979795897113272,
+            "width95_mean": 0.8335563113714395,
+            "iscore95_mean": 0.9480398201362983
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.952,
+            "coverage95_sd": 0.020396078054371124,
+            "width95_mean": 0.565556898077772,
+            "iscore95_mean": 0.6418244197496428
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.784,
+            "coverage95_sd": 0.023323807579381187,
+            "width95_mean": 0.6951667570270638,
+            "iscore95_mean": 1.3636234913605012
+          },
+          "betAS": {
+            "coverage95_mean": 0.5720000000000001,
+            "coverage95_sd": 0.029933259094191512,
+            "width95_mean": 0.2631556342597271,
+            "iscore95_mean": 1.874761468150669
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.672,
+            "coverage95_sd": 0.0370944739819828,
+            "width95_mean": 0.2980329662411936,
+            "iscore95_mean": 1.398995230319887
+          }
+        },
+        "n_matched_mean": 50.0,
+        "diagnostics": {
+          "mean_support": 162.00799999999998,
+          "mean_post_std": 0.07672618430401462,
+          "point_rmse": 0.1470748589270665,
+          "sampling_var_fraction": 0.27783720295587033
+        }
+      },
+      "0.25": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.96,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.9159070637703095,
+            "iscore95_mean": 0.9695740599296224
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.944,
+            "coverage95_sd": 0.008000000000000007,
+            "width95_mean": 0.48741640911278117,
+            "iscore95_mean": 0.6065164089969299
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.74,
+            "coverage95_sd": 0.035777087639996624,
+            "width95_mean": 0.46483068485876367,
+            "iscore95_mean": 1.2275909655886637
+          },
+          "betAS": {
+            "coverage95_mean": 0.508,
+            "coverage95_sd": 0.044899888641287314,
+            "width95_mean": 0.17766663333520474,
+            "iscore95_mean": 1.9732643446591887
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.544,
+            "coverage95_sd": 0.052763623833091675,
+            "width95_mean": 0.1852489119683649,
+            "iscore95_mean": 1.7564978600350216
+          }
+        },
+        "n_matched_mean": 50.0,
+        "diagnostics": {
+          "mean_support": 402.116,
+          "mean_post_std": 0.0473518164044408,
+          "point_rmse": 0.1291822649479518,
+          "sampling_var_fraction": 0.13635011998374585
+        }
+      },
+      "0.50": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.968,
+            "coverage95_sd": 0.00979795897113272,
+            "width95_mean": 0.877163342283555,
+            "iscore95_mean": 0.9331339343941666
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9559999999999998,
+            "coverage95_sd": 0.008000000000000007,
+            "width95_mean": 0.5101645774466668,
+            "iscore95_mean": 0.589213666780992
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.6759999999999999,
+            "coverage95_sd": 0.03440930106817049,
+            "width95_mean": 0.3869924737297784,
+            "iscore95_mean": 1.255336161220469
+          },
+          "betAS": {
+            "coverage95_mean": 0.368,
+            "coverage95_sd": 0.0530659966456864,
+            "width95_mean": 0.12725469959569552,
+            "iscore95_mean": 2.282362458903481
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.384,
+            "coverage95_sd": 0.04270831300812524,
+            "width95_mean": 0.13015081678245324,
+            "iscore95_mean": 2.159452369933474
+          }
+        },
+        "n_matched_mean": 50.0,
+        "diagnostics": {
+          "mean_support": 804.104,
+          "mean_post_std": 0.033266712601318235,
+          "point_rmse": 0.12812081347743395,
+          "sampling_var_fraction": 0.06773570532807836
+        }
+      },
+      "0.75": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9800000000000001,
+            "coverage95_sd": 1.1102230246251565e-16,
+            "width95_mean": 0.9576042557142866,
+            "iscore95_mean": 0.9641855137760519
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.976,
+            "coverage95_sd": 0.008000000000000007,
+            "width95_mean": 0.5674644453965202,
+            "iscore95_mean": 0.6072151965851313
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.6799999999999999,
+            "coverage95_sd": 0.03794733192202054,
+            "width95_mean": 0.3498529651711578,
+            "iscore95_mean": 1.320348368220761
+          },
+          "betAS": {
+            "coverage95_mean": 0.312,
+            "coverage95_sd": 0.048332183894378294,
+            "width95_mean": 0.10437829538764429,
+            "iscore95_mean": 2.406345803968194
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.312,
+            "coverage95_sd": 0.041182520563948,
+            "width95_mean": 0.10593607618842844,
+            "iscore95_mean": 2.3203983583815813
+          }
+        },
+        "n_matched_mean": 50.0,
+        "diagnostics": {
+          "mean_support": 1205.904,
+          "mean_post_std": 0.027096577049135217,
+          "point_rmse": 0.12504871797372513,
+          "sampling_var_fraction": 0.04698815687814548
+        }
+      },
+      "1.00": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.98,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.9805583225544635,
+            "iscore95_mean": 0.9880821221925474
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.98,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.5752810503868844,
+            "iscore95_mean": 0.6314564877945327
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.66,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.32797986821282443,
+            "iscore95_mean": 1.3367036048762637
+          },
+          "betAS": {
+            "coverage95_mean": 0.24,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.09074119381982909,
+            "iscore95_mean": 2.5052585457298244
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.24,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.0916479517994676,
+            "iscore95_mean": 2.446767624704168
+          }
+        },
+        "n_matched_mean": 50.0,
+        "diagnostics": {
+          "mean_support": 1607.14,
+          "mean_post_std": 0.023453390609128877,
+          "point_rmse": 0.1237567622634663,
+          "sampling_var_fraction": 0.035914795323464775
+        }
+      }
+    },
+    "PC3E/GS689 (SRA, human)": {
+      "0.05": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.018601633295108118,
+            "width95_mean": 1.3711350813297132,
+            "iscore95_mean": 1.638827237530743
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9705882352941175,
+            "coverage95_sd": 1.1102230246251565e-16,
+            "width95_mean": 0.6766089882580285,
+            "iscore95_mean": 0.7096909174415547
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.7941176470588235,
+            "coverage95_sd": 0.06443794794178422,
+            "width95_mean": 0.546733151563412,
+            "iscore95_mean": 1.3376289143249347
+          },
+          "betAS": {
+            "coverage95_mean": 0.5117647058823529,
+            "coverage95_sd": 0.05455069703232768,
+            "width95_mean": 0.22713237595364472,
+            "iscore95_mean": 1.9148986640763241
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.5411764705882354,
+            "coverage95_sd": 0.05455069703232768,
+            "width95_mean": 0.23170692837156234,
+            "iscore95_mean": 1.6913767152719177
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 398.4764705882353,
+          "mean_post_std": 0.05954372805531496,
+          "point_rmse": 0.14644098921603765,
+          "sampling_var_fraction": 0.16816671151227294
+        }
+      },
+      "0.10": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.3241285979991673,
+            "iscore95_mean": 1.5854838169921819
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9705882352941175,
+            "coverage95_sd": 1.1102230246251565e-16,
+            "width95_mean": 0.7122324720456534,
+            "iscore95_mean": 0.8376922277002352
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.6352941176470589,
+            "coverage95_sd": 0.04401949866792873,
+            "width95_mean": 0.3550739096169607,
+            "iscore95_mean": 1.4360414918849822
+          },
+          "betAS": {
+            "coverage95_mean": 0.40588235294117647,
+            "coverage95_sd": 0.050601913335544854,
+            "width95_mean": 0.1634111665871963,
+            "iscore95_mean": 2.1743563486928688
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.4117647058823529,
+            "coverage95_sd": 0.052613364176465637,
+            "width95_mean": 0.16399103787309413,
+            "iscore95_mean": 2.09259557515436
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 796.0,
+          "mean_post_std": 0.04196785342140697,
+          "point_rmse": 0.14060301508046513,
+          "sampling_var_fraction": 0.0902519950085006
+        }
+      },
+      "0.25": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.3423907152347265,
+            "iscore95_mean": 1.6357038505972787
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.018601633295108118,
+            "width95_mean": 0.5387620503443514,
+            "iscore95_mean": 0.6281774122616717
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.5411764705882354,
+            "coverage95_sd": 0.02352941176470589,
+            "width95_mean": 0.23470902303874727,
+            "iscore95_mean": 1.6435252618250125
+          },
+          "betAS": {
+            "coverage95_mean": 0.33529411764705885,
+            "coverage95_sd": 0.02352941176470589,
+            "width95_mean": 0.10599506747116468,
+            "iscore95_mean": 2.4626440244973535
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.32941176470588235,
+            "coverage95_sd": 0.03429971702850177,
+            "width95_mean": 0.1056295419516787,
+            "iscore95_mean": 2.436926390774957
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 1990.2941176470588,
+          "mean_post_std": 0.02699717044663935,
+          "point_rmse": 0.12866346749089916,
+          "sampling_var_fraction": 0.044561265616886225
+        }
+      },
+      "0.50": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.354478027796629,
+            "iscore95_mean": 1.6611017877205914
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9294117647058823,
+            "coverage95_sd": 0.02352941176470589,
+            "width95_mean": 0.5832137731754766,
+            "iscore95_mean": 0.6929117466771543
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.46470588235294114,
+            "coverage95_sd": 0.03901911518065177,
+            "width95_mean": 0.1858362418798643,
+            "iscore95_mean": 1.9426230911492985
+          },
+          "betAS": {
+            "coverage95_mean": 0.21176470588235294,
+            "coverage95_sd": 0.04322628957852667,
+            "width95_mean": 0.07439854686406946,
+            "iscore95_mean": 2.870069438575139
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.21764705882352944,
+            "coverage95_sd": 0.035294117647058816,
+            "width95_mean": 0.0741086654660275,
+            "iscore95_mean": 2.8617020992096305
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 3986.4,
+          "mean_post_std": 0.019029527811122226,
+          "point_rmse": 0.13212959055162196,
+          "sampling_var_fraction": 0.02082777200675833
+        }
+      },
+      "0.75": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.3522792888634818,
+            "iscore95_mean": 1.6487118241469907
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9705882352941175,
+            "coverage95_sd": 1.1102230246251565e-16,
+            "width95_mean": 0.6537671362971234,
+            "iscore95_mean": 0.7213379419560138
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.4294117647058823,
+            "coverage95_sd": 0.023529411764705885,
+            "width95_mean": 0.1652918566671786,
+            "iscore95_mean": 2.156226706352446
+          },
+          "betAS": {
+            "coverage95_mean": 0.17647058823529413,
+            "coverage95_sd": 0.03221897397089212,
+            "width95_mean": 0.06069360335474168,
+            "iscore95_mean": 3.101948310885823
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.1823529411764706,
+            "coverage95_sd": 0.028817526385684442,
+            "width95_mean": 0.06063266841747399,
+            "iscore95_mean": 3.089593522022553
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 5975.517647058823,
+          "mean_post_std": 0.01553201276805342,
+          "point_rmse": 0.13281164449703506,
+          "sampling_var_fraction": 0.013683672373205242
+        }
+      },
+      "1.00": {
+        "methods": {
+          "BRAID-conformal": {
+            "coverage95_mean": 0.9411764705882353,
+            "coverage95_sd": 0.0,
+            "width95_mean": 1.354195105192537,
+            "iscore95_mean": 1.6510717574555343
+          },
+          "BRAID-conformal-abs": {
+            "coverage95_mean": 0.9705882352941176,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.6366101639818644,
+            "iscore95_mean": 0.7053899493584058
+          },
+          "rMATS-perRep": {
+            "coverage95_mean": 0.4117647058823529,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.15251573826530415,
+            "iscore95_mean": 2.23487873592235
+          },
+          "betAS": {
+            "coverage95_mean": 0.17647058823529413,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.05282554955482144,
+            "iscore95_mean": 3.18341088417266
+          },
+          "BRAID-Jeffreys": {
+            "coverage95_mean": 0.17647058823529413,
+            "coverage95_sd": 0.0,
+            "width95_mean": 0.05263367640082742,
+            "iscore95_mean": 3.1710861827113317
+          }
+        },
+        "n_matched_mean": 34.0,
+        "diagnostics": {
+          "mean_support": 7967.64705882353,
+          "mean_post_std": 0.013496799716826931,
+          "point_rmse": 0.13117779813237374,
+          "sampling_var_fraction": 0.010586220433803757
+        }
+      }
+    }
+  },
+  "pooled": {
+    "0.05": {
+      "BRAID-conformal": {
+        "coverage95": 0.9426485922836287,
+        "width95": 1.0383775682418943,
+        "iscore95": 1.2752217407247852,
+        "n_total": 959.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9676746611053181,
+        "width95": 0.8692425434506287,
+        "iscore95": 0.988902072883532,
+        "n_total": 959.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.7518248175182481,
+        "width95": 0.9981874109955938,
+        "iscore95": 2.807159193950118,
+        "n_total": 959.0
+      },
+      "betAS": {
+        "coverage95": 0.5422314911366006,
+        "width95": 0.27307806752984964,
+        "iscore95": 2.7968201655249403,
+        "n_total": 959.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.7142857142857143,
+        "width95": 0.39801488664960666,
+        "iscore95": 1.4936913332141277,
+        "n_total": 959.0
+      }
+    },
+    "0.10": {
+      "BRAID-conformal": {
+        "coverage95": 0.9508700102354145,
+        "width95": 1.107583356090573,
+        "iscore95": 1.2922808651408355,
+        "n_total": 977.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9508700102354145,
+        "width95": 0.7116858026741297,
+        "iscore95": 0.8741196323489584,
+        "n_total": 977.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.7717502558853634,
+        "width95": 0.7326272565710664,
+        "iscore95": 1.7657069567104913,
+        "n_total": 977.0
+      },
+      "betAS": {
+        "coverage95": 0.5281473899692938,
+        "width95": 0.23564834190855413,
+        "iscore95": 2.2174315559851245,
+        "n_total": 977.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.6264073694984647,
+        "width95": 0.29262753805032937,
+        "iscore95": 1.664948886860976,
+        "n_total": 977.0
+      }
+    },
+    "0.25": {
+      "BRAID-conformal": {
+        "coverage95": 0.9622448979591837,
+        "width95": 1.271713462911195,
+        "iscore95": 1.4512608839118,
+        "n_total": 980.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9438775510204082,
+        "width95": 0.6618103595562322,
+        "iscore95": 0.8547179442794748,
+        "n_total": 980.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.7244897959183674,
+        "width95": 0.4983310295211999,
+        "iscore95": 1.6271178143335552,
+        "n_total": 980.0
+      },
+      "betAS": {
+        "coverage95": 0.45918367346938777,
+        "width95": 0.16803150367378294,
+        "iscore95": 2.19647600614137,
+        "n_total": 980.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.5102040816326531,
+        "width95": 0.18553295830607883,
+        "iscore95": 2.011428714885615,
+        "n_total": 980.0
+      }
+    },
+    "0.50": {
+      "BRAID-conformal": {
+        "coverage95": 0.9622448979591837,
+        "width95": 1.256915755799021,
+        "iscore95": 1.450500486502197,
+        "n_total": 980.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9479591836734694,
+        "width95": 0.6774510754638448,
+        "iscore95": 0.8301993632282687,
+        "n_total": 980.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.6887755102040817,
+        "width95": 0.3920911580942654,
+        "iscore95": 1.597137689993527,
+        "n_total": 980.0
+      },
+      "betAS": {
+        "coverage95": 0.3816326530612245,
+        "width95": 0.1246523046027328,
+        "iscore95": 2.335877895069025,
+        "n_total": 980.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.42142857142857143,
+        "width95": 0.13024820787346195,
+        "iscore95": 2.259403024189089,
+        "n_total": 980.0
+      }
+    },
+    "0.75": {
+      "BRAID-conformal": {
+        "coverage95": 0.960204081632653,
+        "width95": 1.2410286009475835,
+        "iscore95": 1.4045331242965735,
+        "n_total": 980.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9622448979591837,
+        "width95": 0.6957148292660088,
+        "iscore95": 0.825799709324035,
+        "n_total": 980.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.6857142857142857,
+        "width95": 0.3338989026012521,
+        "iscore95": 1.6431783298499312,
+        "n_total": 980.0
+      },
+      "betAS": {
+        "coverage95": 0.34285714285714286,
+        "width95": 0.10339251615542337,
+        "iscore95": 2.4369878310637882,
+        "n_total": 980.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.3673469387755102,
+        "width95": 0.10606461639112447,
+        "iscore95": 2.4030732234041423,
+        "n_total": 980.0
+      }
+    },
+    "1.00": {
+      "BRAID-conformal": {
+        "coverage95": 0.9591836734693877,
+        "width95": 1.2511250555232993,
+        "iscore95": 1.4305518423389085,
+        "n_total": 196.0
+      },
+      "BRAID-conformal-abs": {
+        "coverage95": 0.9642857142857143,
+        "width95": 0.6794827397154866,
+        "iscore95": 0.8172197621265868,
+        "n_total": 196.0
+      },
+      "rMATS-perRep": {
+        "coverage95": 0.673469387755102,
+        "width95": 0.3134526717645758,
+        "iscore95": 1.6725186360780442,
+        "n_total": 196.0
+      },
+      "betAS": {
+        "coverage95": 0.29591836734693877,
+        "width95": 0.09015745845627715,
+        "iscore95": 2.5127828856445196,
+        "n_total": 196.0
+      },
+      "BRAID-Jeffreys": {
+        "coverage95": 0.3163265306122449,
+        "width95": 0.09158805729516585,
+        "iscore95": 2.494078709937767,
+        "n_total": 196.0
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+ "n_event_groups": 347,
+ "median_overdispersion_ratio": 1.5579385326031954,
+ "median_betabinom_rho": 0.0014089795684961808,
+ "lambda_BB_formal": 0.6418738474418993,
+ "lambda_heuristic": 0.01,
+ "heuristic_more_aggressive_x": 64.18738474418993
+}

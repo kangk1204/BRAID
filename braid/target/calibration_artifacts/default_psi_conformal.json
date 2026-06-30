@@ -1,0 +1,21 @@
+{
+  "kind": "conformal_psi_calibrator",
+  "version": 1,
+  "alpha": 0.05,
+  "q_global": 0.8342175283914359,
+  "q_by_bin": {
+    "100-249": 0.6040594446180603,
+    "20-49": 0.6683088702888771,
+    "250+": 0.9069276312199057,
+    "50-99": 0.5093940037159687,
+    "<20": 0.897045817905903
+  },
+  "bin_edges": [
+    20,
+    50,
+    100,
+    250
+  ],
+  "scale_kind": "posterior_std",
+  "training_scope": "synthetic_betabinom"
+}

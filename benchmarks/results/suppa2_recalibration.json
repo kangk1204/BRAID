@@ -1,0 +1,40 @@
+{
+  "source": "Trincado 2018 Genome Biology, Table S5 (TRA2)",
+  "alpha": 0.05,
+  "note": "SUPPA2 emits no native interval; only the recalibrated point is shown.",
+  "by_method": {
+    "SUPPA2": {
+      "n": 66,
+      "orient_corr": 0.6747756389270647,
+      "recalibrated_coverage": 0.9696969696969697,
+      "wilson": [
+        0.8960747808829028,
+        0.9916500898013463
+      ],
+      "interval_score": 0.7641731651242424,
+      "mean_width": 0.6907292159121211
+    },
+    "rMATS": {
+      "n": 78,
+      "orient_corr": 0.5762323720271155,
+      "recalibrated_coverage": 0.9615384615384616,
+      "wilson": [
+        0.8929155395249817,
+        0.986834174586839
+      ],
+      "interval_score": 1.0688589743589745,
+      "mean_width": 0.9227051282051283
+    },
+    "MAJIQ": {
+      "n": 72,
+      "orient_corr": 0.7838443270643259,
+      "recalibrated_coverage": 0.9583333333333334,
+      "wilson": [
+        0.8845072325868389,
+        0.9857291925330748
+      ],
+      "interval_score": 0.7305859861111114,
+      "mean_width": 0.6538332083333335
+    }
+  }
+}

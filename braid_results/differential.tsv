@@ -1,0 +1,1 @@
+event_id	event_type	gene	chrom	ctrl_psi	treat_psi	dpsi_mean	dpsi_ci_low	dpsi_ci_high	dpsi_ci_excludes_zero	prob_large_effect	rmats_fdr	rmats_dpsi	ctrl_support	treat_support	tier

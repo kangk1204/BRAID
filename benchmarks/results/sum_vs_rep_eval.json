@@ -1,0 +1,148 @@
+{
+  "draws": 4000,
+  "alpha": 0.05,
+  "seed": 7,
+  "n_fell_back_to_sum": 0,
+  "pooled": {
+    "n": 196,
+    "sum": {
+      "point_rmse_vs_rtpcr": 0.12946332644088254,
+      "conformal_abs": {
+        "coverage95": 0.9591836734693877,
+        "mean_width": 0.578098348463204,
+        "interval_score": 0.743166823678414
+      },
+      "conformal_std": {
+        "coverage95": 0.9693877551020408,
+        "mean_width": 0.9532693936135063,
+        "interval_score": 1.0410328005587812
+      }
+    },
+    "rep": {
+      "point_rmse_vs_rtpcr": 0.13272491327274855,
+      "conformal_abs": {
+        "coverage95": 0.9489795918367347,
+        "mean_width": 0.5829042498986253,
+        "interval_score": 0.7798061108802394
+      },
+      "conformal_std": {
+        "coverage95": 0.9642857142857143,
+        "mean_width": 0.9319814870639815,
+        "interval_score": 1.0935380129019145
+      }
+    },
+    "mcnemar_sum_vs_rep_conformal_abs": {
+      "b_sum_covers_rep_misses": 2,
+      "c_rep_covers_sum_misses": 0,
+      "stat": 0.5,
+      "p": 0.47950012218695337
+    }
+  },
+  "per_dataset": {
+    "TRA2 (GSE59335)": {
+      "n": 112,
+      "sum": {
+        "point_rmse_vs_rtpcr": 0.13139081735356353,
+        "conformal_abs": {
+          "coverage95": 0.9642857142857143,
+          "mean_width": 0.7319689020270269,
+          "interval_score": 0.8764569487724969
+        },
+        "conformal_std": {
+          "coverage95": 0.9642857142857143,
+          "mean_width": 1.139913005329608,
+          "interval_score": 1.2108018820303939
+        }
+      },
+      "rep": {
+        "point_rmse_vs_rtpcr": 0.13716144923198953,
+        "conformal_abs": {
+          "coverage95": 0.9642857142857143,
+          "mean_width": 0.7496318264547608,
+          "interval_score": 0.9378000970131575
+        },
+        "conformal_std": {
+          "coverage95": 0.9553571428571429,
+          "mean_width": 1.270159333021214,
+          "interval_score": 1.4703579973953838
+        }
+      },
+      "mcnemar_sum_vs_rep_conformal_abs": {
+        "b_sum_covers_rep_misses": 1,
+        "c_rep_covers_sum_misses": 1,
+        "stat": 0.5,
+        "p": 0.47950012218695337
+      }
+    },
+    "Circadian (GSE54651)": {
+      "n": 50,
+      "sum": {
+        "point_rmse_vs_rtpcr": 0.12379218360996344,
+        "conformal_abs": {
+          "coverage95": 0.98,
+          "mean_width": 0.5755579891273632,
+          "interval_score": 0.6308804145735182
+        },
+        "conformal_std": {
+          "coverage95": 0.98,
+          "mean_width": 0.9744366532224562,
+          "interval_score": 0.9799535242363778
+        }
+      },
+      "rep": {
+        "point_rmse_vs_rtpcr": 0.12327440638774718,
+        "conformal_abs": {
+          "coverage95": 0.98,
+          "mean_width": 0.5797320019456657,
+          "interval_score": 0.6131124861238825
+        },
+        "conformal_std": {
+          "coverage95": 0.96,
+          "mean_width": 0.8084044519532323,
+          "interval_score": 0.8748302683692951
+        }
+      },
+      "mcnemar_sum_vs_rep_conformal_abs": {
+        "b_sum_covers_rep_misses": 0,
+        "c_rep_covers_sum_misses": 0,
+        "stat": 0.0,
+        "p": 1.0
+      }
+    },
+    "SRS354082 (PC3E/GS689)": {
+      "n": 34,
+      "sum": {
+        "point_rmse_vs_rtpcr": 0.13121211832117322,
+        "conformal_abs": {
+          "coverage95": 0.9705882352941176,
+          "mean_width": 0.6360200011124267,
+          "interval_score": 0.7045214563200369
+        },
+        "conformal_std": {
+          "coverage95": 0.9411764705882353,
+          "mean_width": 1.36650584805427,
+          "interval_score": 1.6614833334169
+        }
+      },
+      "rep": {
+        "point_rmse_vs_rtpcr": 0.13126113099233086,
+        "conformal_abs": {
+          "coverage95": 0.9705882352941176,
+          "mean_width": 0.6326540975070322,
+          "interval_score": 0.6998742175034389
+        },
+        "conformal_std": {
+          "coverage95": 0.9411764705882353,
+          "mean_width": 1.2495322789660426,
+          "interval_score": 1.5282444047377692
+        }
+      },
+      "mcnemar_sum_vs_rep_conformal_abs": {
+        "b_sum_covers_rep_misses": 0,
+        "c_rep_covers_sum_misses": 0,
+        "stat": 0.0,
+        "p": 1.0
+      }
+    }
+  }
+}

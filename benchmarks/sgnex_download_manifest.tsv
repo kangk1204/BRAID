@@ -1,0 +1,13 @@
+kind	sample	url
+illumina	SGNex_HepG2_Illumina_replicate2_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_HepG2_Illumina_replicate2_run1/SGNex_HepG2_Illumina_replicate2_run1.bam
+illumina	SGNex_HepG2_Illumina_replicate4_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_HepG2_Illumina_replicate4_run1/SGNex_HepG2_Illumina_replicate4_run1.bam
+illumina	SGNex_HepG2_Illumina_replicate5_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_HepG2_Illumina_replicate5_run1/SGNex_HepG2_Illumina_replicate5_run1.bam
+illumina	SGNex_K562_Illumina_replicate3_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_K562_Illumina_replicate3_run1/SGNex_K562_Illumina_replicate3_run1.bam
+illumina	SGNex_K562_Illumina_replicate4_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_K562_Illumina_replicate4_run1/SGNex_K562_Illumina_replicate4_run1.bam
+illumina	SGNex_K562_Illumina_replicate5_run1	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_illumina/bam/genome/SGNex_K562_Illumina_replicate5_run1/SGNex_K562_Illumina_replicate5_run1.bam
+ont	SGNex_HepG2_cDNA_replicate1_run4	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_HepG2_cDNA_replicate1_run4/SGNex_HepG2_cDNA_replicate1_run4.bam
+ont	SGNex_HepG2_cDNAStranded_replicate4_run3	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_HepG2_cDNAStranded_replicate4_run3/SGNex_HepG2_cDNAStranded_replicate4_run3.bam
+ont	SGNex_HepG2_cDNAStranded_replicate5_run4	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_HepG2_cDNAStranded_replicate5_run4/SGNex_HepG2_cDNAStranded_replicate5_run4.bam
+ont	SGNex_K562_cDNA_replicate1_run3	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_K562_cDNA_replicate1_run3/SGNex_K562_cDNA_replicate1_run3.bam
+ont	SGNex_K562_cDNA_replicate3_run4	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_K562_cDNA_replicate3_run4/SGNex_K562_cDNA_replicate3_run4.bam
+ont	SGNex_K562_cDNAStranded_replicate2_run3	https://sg-nex-data.s3.ap-southeast-1.amazonaws.com/data/sequencing_data_ont/bam/genome/SGNex_K562_cDNAStranded_replicate2_run3/SGNex_K562_cDNAStranded_replicate2_run3.bam

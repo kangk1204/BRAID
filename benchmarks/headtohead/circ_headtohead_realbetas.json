@@ -1,0 +1,199 @@
+{
+  "dataset": "Circadian (GSE54651) cerebellum-vs-liver \u2014 REAL betAS",
+  "n_targets": 50,
+  "n_matched": 50,
+  "n_unmatched": 0,
+  "n_positive": 50,
+  "n_negative": 0,
+  "methods": {
+    "rMATS-perRep": {
+      "per_level": {
+        "0.50": {
+          "coverage": 0.1,
+          "width": 0.060120153230305694,
+          "interval_score": 0.37121909769266553
+        },
+        "0.80": {
+          "coverage": 0.28,
+          "width": 0.11423016653801049,
+          "interval_score": 0.6994824071568698
+        },
+        "0.90": {
+          "coverage": 0.38,
+          "width": 0.14661283149966095,
+          "interval_score": 1.1532086357760047
+        },
+        "0.95": {
+          "coverage": 0.42,
+          "width": 0.17469996399822685,
+          "interval_score": 1.9442330697397252
+        },
+        "0.99": {
+          "coverage": 0.54,
+          "width": 0.22959467120064037,
+          "interval_score": 7.08954459650216
+        }
+      },
+      "coverage95": 0.42,
+      "width95": 0.17469996399822685,
+      "interval_score95": 1.9442330697397252,
+      "rmse_point": 0.1279977516631358,
+      "direction_acc": 1.0,
+      "sensitivity95": 1.0,
+      "fpr95": null,
+      "detection_auc": null
+    },
+    "betAS(real)": {
+      "per_level": {
+        "0.50": {
+          "coverage": 0.28,
+          "width": 0.11758954347911338,
+          "interval_score": 0.34519330586022584
+        },
+        "0.80": {
+          "coverage": 0.52,
+          "width": 0.20026024163854594,
+          "interval_score": 0.5649548257057448
+        },
+        "0.90": {
+          "coverage": 0.62,
+          "width": 0.24194973962399974,
+          "interval_score": 0.8032091627385637
+        },
+        "0.95": {
+          "coverage": 0.7,
+          "width": 0.2754955528482783,
+          "interval_score": 1.1993108143594007
+        },
+        "0.99": {
+          "coverage": 0.78,
+          "width": 0.33679651483261125,
+          "interval_score": 3.4221847065412887
+        }
+      },
+      "coverage95": 0.7,
+      "width95": 0.2754955528482783,
+      "interval_score95": 1.1993108143594007,
+      "rmse_point": 0.12604570667104928,
+      "direction_acc": 1.0,
+      "sensitivity95": 1.0,
+      "fpr95": null,
+      "detection_auc": null
+    },
+    "BRAID-Jeffreys": {
+      "per_level": {
+        "0.50": {
+          "coverage": 0.08,
+          "width": 0.031594471828133665,
+          "interval_score": 0.3735260721459626
+        },
+        "0.80": {
+          "coverage": 0.1,
+          "width": 0.06001627049214027,
+          "interval_score": 0.781687037841952
+        },
+        "0.90": {
+          "coverage": 0.18,
+          "width": 0.07673702017221361,
+          "interval_score": 1.3721192133256894
+        },
+        "0.95": {
+          "coverage": 0.26,
+          "width": 0.09184085705468435,
+          "interval_score": 2.4309508059521674
+        },
+        "0.99": {
+          "coverage": 0.38,
+          "width": 0.1204653613852109,
+          "interval_score": 10.000231128393942
+        }
+      },
+      "coverage95": 0.26,
+      "width95": 0.09184085705468435,
+      "interval_score95": 2.4309508059521674,
+      "rmse_point": 0.12374105619160583,
+      "direction_acc": 1.0,
+      "sensitivity95": 1.0,
+      "fpr95": null,
+      "detection_auc": null
+    },
+    "BRAID-conformal": {
+      "per_level": {
+        "0.50": {
+          "coverage": 0.5,
+          "width": 0.1743197470916484,
+          "interval_score": 0.3219527743904152
+        },
+        "0.80": {
+          "coverage": 0.84,
+          "width": 0.512238308429722,
+          "interval_score": 0.6028361554158946
+        },
+        "0.90": {
+          "coverage": 0.92,
+          "width": 0.7354985521038647,
+          "interval_score": 0.8386758558903407
+        },
+        "0.95": {
+          "coverage": 0.98,
+          "width": 0.9805583225544635,
+          "interval_score": 0.9880821221925474
+        },
+        "0.99": {
+          "coverage": 1.0,
+          "width": 2.0,
+          "interval_score": 2.0
+        }
+      },
+      "coverage95": 0.98,
+      "width95": 0.9805583225544635,
+      "interval_score95": 0.9880821221925474,
+      "rmse_point": 0.1237048355403866,
+      "direction_acc": 1.0,
+      "sensitivity95": 0.48,
+      "fpr95": null,
+      "detection_auc": null
+    },
+    "BRAID-conformal-abs": {
+      "per_level": {
+        "0.50": {
+          "coverage": 0.5,
+          "width": 0.17420605292792962,
+          "interval_score": 0.30418000617667285
+        },
+        "0.80": {
+          "coverage": 0.86,
+          "width": 0.3079125222280822,
+          "interval_score": 0.4468026546285071
+        },
+        "0.90": {
+          "coverage": 0.92,
+          "width": 0.44806469312692415,
+          "interval_score": 0.5409640121507733
+        },
+        "0.95": {
+          "coverage": 0.98,
+          "width": 0.5752810503868844,
+          "interval_score": 0.6314564877945327
+        },
+        "0.99": {
+          "coverage": 1.0,
+          "width": 2.0,
+          "interval_score": 2.0
+        }
+      },
+      "coverage95": 0.98,
+      "width95": 0.5752810503868844,
+      "interval_score95": 0.6314564877945327,
+      "rmse_point": 0.1237048355403866,
+      "direction_acc": 1.0,
+      "sensitivity95": 0.88,
+      "fpr95": null,
+      "detection_auc": null
+    }
+  },
+  "length_norm_diagnostic": {
+    "braid_jeffreys_normalized_rmse_vs_rtpcr": 0.1237048355403866,
+    "braid_jeffreys_raw_rmse_vs_rtpcr": 0.1707300975689488
+  }
+}

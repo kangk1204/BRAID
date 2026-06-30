@@ -1,0 +1,4 @@
+gene_name	lsv_id	E(dPSI) per LSV junction	P(|dPSI|>=0.20) per LSV junction	num_reads
+BIGSWITCH	ENSG_BIG:source	0.10;0.55	0.30;0.98	320
+MODEST	ENSG_MOD:target	0.18	0.97	240
+NULLEVENT	ENSG_NULL:source	-0.03	0.20	210

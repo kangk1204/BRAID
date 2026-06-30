@@ -1,0 +1,26 @@
+{
+  "kind": "conformal_psi_calibrator",
+  "version": 1,
+  "alpha": 0.05,
+  "q_global": 0.3406603587376566,
+  "q_by_bin": {
+    "100-249": 0.2818155432887207,
+    "20-49": 0.3406603587376566,
+    "250+": 0.34412221552071665,
+    "50-99": 0.3406603587376566
+  },
+  "bin_edges": [
+    20,
+    50,
+    100,
+    250
+  ],
+  "scale_kind": "absolute_dpsi",
+  "training_scope": "real_rtpcr_tra2_circadian_n162",
+  "calibration_profile": {
+    "n": 162.0,
+    "support_median": 627.5,
+    "support_q25": 320.75,
+    "support_q75": 2136.25
+  }
+}

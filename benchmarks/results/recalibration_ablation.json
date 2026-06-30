@@ -1,0 +1,46 @@
+{
+ "n": 139,
+ "alpha": 0.05,
+ "methods": {
+  "MAJIQ (real binary)": {
+   "raw_coverage": 0.5179856115107914,
+   "raw_width": 0.17320723448412312,
+   "recal_coverage": 0.9496402877697842,
+   "recal_wilson": [
+    0.899701627531115,
+    0.9753944477400697
+   ],
+   "recal_width": 0.5906640287769784
+  },
+  "betAS (real tool)": {
+   "raw_coverage": 0.7338129496402878,
+   "raw_width": 0.40462076850443174,
+   "recal_coverage": 0.9568345323741008,
+   "recal_wilson": [
+    0.9090285840124278,
+    0.9800690284630961
+   ],
+   "recal_width": 0.6494094000028791
+  },
+  "rMATS IncLevel t-CI": {
+   "raw_coverage": 0.6330935251798561,
+   "raw_width": 0.25881782226599004,
+   "recal_coverage": 0.9712230215827338,
+   "recal_wilson": [
+    0.9283471952470506,
+    0.988753491637151
+   ],
+   "recal_width": 0.6255827338129496
+  },
+  "BRAID-conformal": {
+   "raw_coverage": null,
+   "raw_width": null,
+   "recal_coverage": 0.9712230215827338,
+   "recal_wilson": [
+    0.9283471952470506,
+    0.988753491637151
+   ],
+   "recal_width": 0.612183690156928
+  }
+ }
+}

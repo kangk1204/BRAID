@@ -1,0 +1,94 @@
+{
+  "analysis": "PacBio CI Sharpness Analysis",
+  "source": "benchmarks/results/rtpcr_benchmark.json",
+  "n_events_total": 252,
+  "conditional_coverage_by_width": {
+    "width_lt_0.3": {
+      "n_events": 0,
+      "coverage": 0.0
+    },
+    "width_lt_0.5": {
+      "n_events": 107,
+      "coverage": 0.9065
+    },
+    "width_lt_0.8": {
+      "n_events": 107,
+      "coverage": 0.9065
+    }
+  },
+  "sharpness_table": [
+    {
+      "bin": "<20",
+      "n_events": 8,
+      "braid_coverage": 1.0,
+      "random_coverage": 0.7494,
+      "coverage_lift": 0.2507,
+      "braid_median_ci_width": 1.0,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "20-49",
+      "n_events": 27,
+      "braid_coverage": 0.9259,
+      "random_coverage": 0.7518,
+      "coverage_lift": 0.1741,
+      "braid_median_ci_width": 1.0,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "50-99",
+      "n_events": 45,
+      "braid_coverage": 0.9556,
+      "random_coverage": 0.7393,
+      "coverage_lift": 0.2163,
+      "braid_median_ci_width": 0.9792,
+      "confident_count": 0,
+      "confident_accuracy": null
+    },
+    {
+      "bin": "100-249",
+      "n_events": 65,
+      "braid_coverage": 0.9385,
+      "random_coverage": 0.6986,
+      "coverage_lift": 0.2399,
+      "braid_median_ci_width": 0.9038,
+      "confident_count": 4,
+      "confident_accuracy": 0.25
+    },
+    {
+      "bin": "250+",
+      "n_events": 107,
+      "braid_coverage": 0.9065,
+      "random_coverage": 0.426,
+      "coverage_lift": 0.4805,
+      "braid_median_ci_width": 0.4851,
+      "confident_count": 16,
+      "confident_accuracy": 1.0
+    }
+  ],
+  "overall": {
+    "braid_coverage": 0.9286,
+    "random_coverage": 0.5974,
+    "coverage_lift": 0.3311,
+    "weighted_mean_width": 0.7528
+  },
+  "comparator": {
+    "random_baseline": "uniform-random-center intervals of matched median width vs U(0,1) truth; WEAK \u2014 ignores the point estimate, so an estimate-centered CI beats it even when trivially wide. Reported as a sanity floor only.",
+    "informativeness_criterion": "median CI width < 0.8 (meaningfully sharper than the trivial [0,1] interval); consistent with the estimate-centered deconfounded analysis in deconfounded_sharpness_analysis.py."
+  },
+  "interpretation": {
+    "informativeness_width_threshold": 0.8,
+    "bins_with_informative_CIs": [
+      "250+"
+    ],
+    "bins_with_trivial_CIs": [
+      "<20",
+      "20-49",
+      "50-99",
+      "100-249"
+    ],
+    "explanation": "Only the 250+ support bin (107/252 events, 42%) has CIs narrow enough to be informative (median width 0.485 < 0.8). Lower-support bins have CIs spanning ~95-100% of [0,1], matching random interval coverage."
+  }
+}

@@ -1,0 +1,121 @@
+{
+ "dataset": "GSE59335 TRA2 (RT-PCR positives + negatives)",
+ "n_events": 112,
+ "n_positive": 76,
+ "n_negative": 36,
+ "nominal": 0.95,
+ "fdr_levels": [
+  0.1,
+  0.05,
+  0.01
+ ],
+ "dpsi_cuts": [
+  0.1,
+  0.2,
+  0.3
+ ],
+ "cells": [
+  {
+   "fdr": 0.1,
+   "dpsi_cut": 0.1,
+   "n_call": 53,
+   "tp": 50,
+   "fp": 3,
+   "recall": 0.6578947368421053,
+   "mcc": 0.5374407029758306,
+   "rmats_coverage": 0.660377358490566,
+   "braid_coverage": 0.9245283018867925
+  },
+  {
+   "fdr": 0.1,
+   "dpsi_cut": 0.2,
+   "n_call": 40,
+   "tp": 39,
+   "fp": 1,
+   "recall": 0.5131578947368421,
+   "mcc": 0.47309001790593214,
+   "rmats_coverage": 0.675,
+   "braid_coverage": 0.925
+  },
+  {
+   "fdr": 0.1,
+   "dpsi_cut": 0.3,
+   "n_call": 26,
+   "tp": 25,
+   "fp": 1,
+   "recall": 0.32894736842105265,
+   "mcc": 0.3331449739285771,
+   "rmats_coverage": 0.7307692307692307,
+   "braid_coverage": 0.9615384615384616
+  },
+  {
+   "fdr": 0.05,
+   "dpsi_cut": 0.1,
+   "n_call": 53,
+   "tp": 50,
+   "fp": 3,
+   "recall": 0.6578947368421053,
+   "mcc": 0.5374407029758306,
+   "rmats_coverage": 0.660377358490566,
+   "braid_coverage": 0.9245283018867925
+  },
+  {
+   "fdr": 0.05,
+   "dpsi_cut": 0.2,
+   "n_call": 40,
+   "tp": 39,
+   "fp": 1,
+   "recall": 0.5131578947368421,
+   "mcc": 0.47309001790593214,
+   "rmats_coverage": 0.675,
+   "braid_coverage": 0.925
+  },
+  {
+   "fdr": 0.05,
+   "dpsi_cut": 0.3,
+   "n_call": 26,
+   "tp": 25,
+   "fp": 1,
+   "recall": 0.32894736842105265,
+   "mcc": 0.3331449739285771,
+   "rmats_coverage": 0.7307692307692307,
+   "braid_coverage": 0.9615384615384616
+  },
+  {
+   "fdr": 0.01,
+   "dpsi_cut": 0.1,
+   "n_call": 49,
+   "tp": 48,
+   "fp": 1,
+   "recall": 0.631578947368421,
+   "mcc": 0.5684387577991453,
+   "rmats_coverage": 0.6530612244897959,
+   "braid_coverage": 0.9183673469387755
+  },
+  {
+   "fdr": 0.01,
+   "dpsi_cut": 0.2,
+   "n_call": 40,
+   "tp": 39,
+   "fp": 1,
+   "recall": 0.5131578947368421,
+   "mcc": 0.47309001790593214,
+   "rmats_coverage": 0.675,
+   "braid_coverage": 0.925
+  },
+  {
+   "fdr": 0.01,
+   "dpsi_cut": 0.3,
+   "n_call": 26,
+   "tp": 25,
+   "fp": 1,
+   "recall": 0.32894736842105265,
+   "mcc": 0.3331449739285771,
+   "rmats_coverage": 0.7307692307692307,
+   "braid_coverage": 0.9615384615384616
+  }
+ ],
+ "braid_effect_supported_mcc": 0.564,
+ "braid_full_panel_coverage": 0.9464285714285714,
+ "source": "benchmarks/headtohead/make_strictness_grid_figure.py"
+}

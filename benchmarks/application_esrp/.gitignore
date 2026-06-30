@@ -1,0 +1,6 @@
+__pycache__/
+raw/
+rmats/
+results/
+_dryrun/
+*.tmp

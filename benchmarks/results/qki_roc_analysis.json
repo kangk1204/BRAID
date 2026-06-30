@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "total_events": 105,
+    "positives_validated": 80,
+    "negatives_failed": 25,
+    "validated_matched": 71,
+    "validated_unmatched": 9,
+    "failed_matched": 22,
+    "failed_unmatched": 3
+  },
+  "roc_auc": {
+    "rMATS FDR": 0.4625,
+    "rMATS FDR\u00d7|dPSI|": 0.4808,
+    "BRAID P(|d\u03a8|\u22650.1)": 0.4708
+  },
+  "pr_auc": {
+    "rMATS FDR": 0.7433,
+    "rMATS FDR\u00d7|dPSI|": 0.7629,
+    "BRAID P(|d\u03a8|\u22650.1)": 0.7466
+  },
+  "threshold_table": [
+    {
+      "filter": "FDR<0.05",
+      "tp": 44,
+      "fp": 17,
+      "fn": 36,
+      "tn": 8,
+      "precision": 0.7213,
+      "recall": 0.55,
+      "f1": 0.6241,
+      "fpr": 0.68
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.1",
+      "tp": 44,
+      "fp": 17,
+      "fn": 36,
+      "tn": 8,
+      "precision": 0.7213,
+      "recall": 0.55,
+      "f1": 0.6241,
+      "fpr": 0.68
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.2",
+      "tp": 42,
+      "fp": 16,
+      "fn": 38,
+      "tn": 9,
+      "precision": 0.7241,
+      "recall": 0.525,
+      "f1": 0.6087,
+      "fpr": 0.64
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.3",
+      "tp": 36,
+      "fp": 14,
+      "fn": 44,
+      "tn": 11,
+      "precision": 0.72,
+      "recall": 0.45,
+      "f1": 0.5538,
+      "fpr": 0.56
+    },
+    {
+      "filter": "BRAID supported",
+      "tp": 14,
+      "fp": 6,
+      "fn": 66,
+      "tn": 19,
+      "precision": 0.7,
+      "recall": 0.175,
+      "f1": 0.28,
+      "fpr": 0.24
+    },
+    {
+      "filter": "BRAID high-confidence",
+      "tp": 10,
+      "fp": 4,
+      "fn": 70,
+      "tn": 21,
+      "precision": 0.7143,
+      "recall": 0.125,
+      "f1": 0.2128,
+      "fpr": 0.16
+    },
+    {
+      "filter": "BRAID near-strict",
+      "tp": 4,
+      "fp": 2,
+      "fn": 76,
+      "tn": 23,
+      "precision": 0.6667,
+      "recall": 0.05,
+      "f1": 0.093,
+      "fpr": 0.08
+    }
+  ],
+  "nnv": [
+    {
+      "filter": "FDR<0.05",
+      "nnv": 1.3864,
+      "calls": 61,
+      "true_positives": 44
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.1",
+      "nnv": 1.3864,
+      "calls": 61,
+      "true_positives": 44
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.2",
+      "nnv": 1.381,
+      "calls": 58,
+      "true_positives": 42
+    },
+    {
+      "filter": "FDR<0.05 + |dPSI|>0.3",
+      "nnv": 1.3889,
+      "calls": 50,
+      "true_positives": 36
+    },
+    {
+      "filter": "BRAID supported",
+      "nnv": 1.4286,
+      "calls": 20,
+      "true_positives": 14
+    },
+    {
+      "filter": "BRAID high-confidence",
+      "nnv": 1.4,
+      "calls": 14,
+      "true_positives": 10
+    },
+    {
+      "filter": "BRAID near-strict",
+      "nnv": 1.5,
+      "calls": 6,
+      "true_positives": 4
+    }
+  ]
+}

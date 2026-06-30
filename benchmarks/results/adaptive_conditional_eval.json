@@ -1,0 +1,159 @@
+{
+  "alpha": 0.05,
+  "k": 5,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "clip": [
+    0.0,
+    1.0
+  ],
+  "surface": "pacbio_psi_longread",
+  "n": 252,
+  "constant_band": {
+    "grouping": "support_mondrian",
+    "by_event_type": {
+      "A3SS": {
+        "n": 134,
+        "coverage": 0.9925373134328358,
+        "wilson": [
+          0.9589404665691039,
+          0.9986814356461595
+        ],
+        "mean_width": 0.7234566323539828,
+        "excludes_0.95": true,
+        "descriptive_only": false
+      },
+      "A5SS": {
+        "n": 118,
+        "coverage": 0.9067796610169492,
+        "wilson": [
+          0.8407607486861424,
+          0.9471483992277607
+        ],
+        "mean_width": 0.6890041983359106,
+        "excludes_0.95": true,
+        "descriptive_only": false
+      }
+    },
+    "max_abs_gap": 0.04322033898305078,
+    "pooled_interval_score": 1.2727454375468605
+  },
+  "adaptive_band": {
+    "grouping": "event_type_mondrian",
+    "by_event_type": {
+      "A3SS": {
+        "n": 134,
+        "coverage": 0.9402985074626866,
+        "wilson": [
+          0.8866149769181356,
+          0.9694409659712667
+        ],
+        "mean_width": 0.4616881922870111,
+        "excludes_0.95": false,
+        "descriptive_only": false
+      },
+      "A5SS": {
+        "n": 118,
+        "coverage": 0.9491525423728814,
+        "wilson": [
+          0.8934926488552369,
+          0.976490368633031
+        ],
+        "mean_width": 0.9340804971979741,
+        "excludes_0.95": false,
+        "descriptive_only": false
+      }
+    },
+    "max_abs_gap": 0.009701492537313339,
+    "pooled_interval_score": 0.9042233224487942
+  },
+  "endpoints": {
+    "ep1_max_abs_gap_improvement": {
+      "value": 0.03351884644573744,
+      "threshold": 0.05,
+      "passes_literal": false,
+      "note": "Stage-0 gap (0.043) < 0.05 threshold; unreachable by construction; non-binding. Gap reduced from 0.0432 to 0.0097."
+    },
+    "ep2_eliminates_miscovered_bins": {
+      "constant_excl": [
+        "A3SS",
+        "A5SS"
+      ],
+      "adaptive_excl": [],
+      "passes": true
+    },
+    "ep3_interval_score_neutral": {
+      "constant": 1.2727454375468605,
+      "adaptive": 0.9042233224487942,
+      "delta": -0.3685221150980663,
+      "threshold": 0.02,
+      "passes": true
+    },
+    "sharpness_classes": {
+      "classes": {
+        "A3SS": {
+          "class": "win",
+          "const_width": 0.7234566323539828,
+          "adapt_width": 0.4616881922870111,
+          "const_cov": 0.9925373134328358,
+          "adapt_cov": 0.9402985074626866
+        },
+        "A5SS": {
+          "class": "safe",
+          "const_width": 0.6890041983359106,
+          "adapt_width": 0.9340804971979741,
+          "const_cov": 0.9067796610169492,
+          "adapt_cov": 0.9491525423728814
+        }
+      },
+      "n_harm": 0,
+      "passes": true
+    }
+  },
+  "seed_sweep": {
+    "const_gap": {
+      "mean": 0.043116620288388516,
+      "min": 0.03507462686567164,
+      "max": 0.051694915254237195
+    },
+    "adapt_gap": {
+      "mean": 0.009329623071085247,
+      "min": 0.002238805970149249,
+      "max": 0.01716417910447754
+    },
+    "const_is": {
+      "mean": 1.279504591966638,
+      "min": 1.2228636158053474,
+      "max": 1.3417365223843918
+    },
+    "adapt_is": {
+      "mean": 0.8836311778854589,
+      "min": 0.8152334808494033,
+      "max": 0.9302682529231998
+    },
+    "const_excl": {
+      "mean": 1.5,
+      "min": 0.0,
+      "max": 2.0
+    },
+    "adapt_excl": {
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  },
+  "verdict": {
+    "substantive_go": true,
+    "binding": "ep2 (eliminate miscovered bins) AND ep3 (interval-score-neutral) AND zero harm; ep1's 0.05 threshold exceeds the measured gap and is reported non-binding."
+  }
+}

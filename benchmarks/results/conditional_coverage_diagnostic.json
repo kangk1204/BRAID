@@ -1,0 +1,564 @@
+{
+  "alpha": 0.05,
+  "k": 5,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "min_bin_n": 10,
+  "nominal": 0.95,
+  "dpsi_datasets": [
+    "tra2",
+    "circ",
+    "srs",
+    "jurkat"
+  ],
+  "n_dpsi": 212,
+  "n_pacbio": 252,
+  "orientation": {
+    "tra2": {
+      "corr": 0.7794136892655366,
+      "flipped": false
+    },
+    "circ": {
+      "corr": 0.9864808717642197,
+      "flipped": false
+    },
+    "srs": {
+      "corr": 0.9439132526832932,
+      "flipped": false
+    },
+    "jurkat": {
+      "corr": 0.7574181216834718,
+      "flipped": false
+    }
+  },
+  "dpsi": {
+    "n": 212,
+    "partitions": {
+      "dataset": {
+        "bins": [
+          {
+            "bin": "dataset:circ",
+            "k": 49,
+            "n": 50,
+            "coverage": 0.98,
+            "wilson": [
+              0.8950455641036219,
+              0.9964607407283539
+            ],
+            "mean_width": 0.5706574229054712,
+            "mean_iscore": 0.6253981526173975,
+            "binom_p": 0.5190237913705956,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "dataset:jurkat",
+            "k": 15,
+            "n": 16,
+            "coverage": 0.9375,
+            "wilson": [
+              0.7167126242970107,
+              0.9888806552353576
+            ],
+            "mean_width": 0.6055349001037174,
+            "mean_iscore": 0.8408288467828335,
+            "binom_p": 0.5598733313482346,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "dataset:srs",
+            "k": 32,
+            "n": 34,
+            "coverage": 0.9411764705882353,
+            "wilson": [
+              0.80906393095719,
+              0.9837173447898772
+            ],
+            "mean_width": 0.6427061546762224,
+            "mean_iscore": 0.759046618043195,
+            "binom_p": 0.6871559525995212,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "dataset:tra2",
+            "k": 104,
+            "n": 112,
+            "coverage": 0.9285714285714286,
+            "wilson": [
+              0.8653547472690817,
+              0.9633640981021094
+            ],
+            "mean_width": 0.6390522756159098,
+            "mean_iscore": 0.9328071681953636,
+            "binom_p": 0.27554198128391927,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 4,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.030000000000000027,
+          "worst_bin_coverage": 0.9285714285714286,
+          "best_bin_coverage": 0.98,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.03400000000000003,
+          "max_abs_gap_min": 0.030000000000000027,
+          "max_abs_gap_max": 0.050000000000000044,
+          "frac_seeds_partition_go": 0.0
+        }
+      },
+      "boundary_proximity": {
+        "bins": [
+          {
+            "bin": "bd:[0,0.05)",
+            "k": 105,
+            "n": 112,
+            "coverage": 0.9375,
+            "wilson": [
+              0.8765857436536744,
+              0.9693980776627498
+            ],
+            "mean_width": 0.6097572892970381,
+            "mean_iscore": 0.817870184829074,
+            "binom_p": 0.5115115298805035,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "bd:[0.05,0.15)",
+            "k": 50,
+            "n": 52,
+            "coverage": 0.9615384615384616,
+            "wilson": [
+              0.8701881084254424,
+              0.9893882889986847
+            ],
+            "mean_width": 0.6249534026428645,
+            "mean_iscore": 0.8620397603867824,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "bd:[0.15,0.5001)",
+            "k": 45,
+            "n": 48,
+            "coverage": 0.9375,
+            "wilson": [
+              0.8316456194505365,
+              0.9785167670916107
+            ],
+            "mean_width": 0.6428520903376927,
+            "mean_iscore": 0.8037005997869908,
+            "binom_p": 0.5182119548975369,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 3,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.012499999999999956,
+          "worst_bin_coverage": 0.9375,
+          "best_bin_coverage": 0.9615384615384616,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.01762820512820512,
+          "max_abs_gap_min": 0.011538461538461608,
+          "max_abs_gap_max": 0.03076923076923077,
+          "frac_seeds_partition_go": 0.0
+        }
+      },
+      "abs_dpsi": {
+        "bins": [
+          {
+            "bin": "adp:[0,0.1)",
+            "k": 57,
+            "n": 60,
+            "coverage": 0.95,
+            "wilson": [
+              0.8629948352365147,
+              0.9828504978356043
+            ],
+            "mean_width": 0.6429209911549975,
+            "mean_iscore": 0.814162905103991,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "adp:[0.1,0.3)",
+            "k": 60,
+            "n": 64,
+            "coverage": 0.9375,
+            "wilson": [
+              0.8500251490779133,
+              0.9754287986033819
+            ],
+            "mean_width": 0.6355089293968444,
+            "mean_iscore": 0.8907918397170643,
+            "binom_p": 0.5625119748601057,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "adp:[0.3,1.0001)",
+            "k": 83,
+            "n": 88,
+            "coverage": 0.9431818181818182,
+            "wilson": [
+              0.8738006734299275,
+              0.9754889720261908
+            ],
+            "mean_width": 0.5954484400478249,
+            "mean_iscore": 0.7857352838933293,
+            "binom_p": 0.6286547509771552,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 3,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.012499999999999956,
+          "worst_bin_coverage": 0.9375,
+          "best_bin_coverage": 0.95,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.016874999999999984,
+          "max_abs_gap_min": 0.012499999999999956,
+          "max_abs_gap_max": 0.028124999999999956,
+          "frac_seeds_partition_go": 0.0
+        }
+      },
+      "support": {
+        "bins": [
+          {
+            "bin": "support:100-249",
+            "k": 26,
+            "n": 27,
+            "coverage": 0.9629629629629629,
+            "wilson": [
+              0.8171653406642414,
+              0.9934318540192149
+            ],
+            "mean_width": 0.5180005712328503,
+            "mean_iscore": 0.6536521497553404,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:20-49",
+            "k": 2,
+            "n": 2,
+            "coverage": 1.0,
+            "wilson": [
+              0.34238022750665303,
+              1.0
+            ],
+            "mean_width": 0.6882212342542604,
+            "mean_iscore": 0.6882212342542604,
+            "binom_p": 1.0,
+            "descriptive_only": true,
+            "holm_p": null
+          },
+          {
+            "bin": "support:250+",
+            "k": 166,
+            "n": 176,
+            "coverage": 0.9431818181818182,
+            "wilson": [
+              0.8985826318848438,
+              0.9688480541369786
+            ],
+            "mean_width": 0.6341322940773462,
+            "mean_iscore": 0.8051767066832748,
+            "binom_p": 0.6041916090458579,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:50-99",
+            "k": 6,
+            "n": 7,
+            "coverage": 0.8571428571428571,
+            "wilson": [
+              0.4868721707256811,
+              0.9743203756552565
+            ],
+            "mean_width": 0.6682217179282962,
+            "mean_iscore": 2.0384294489407866,
+            "binom_p": 0.30166270390625016,
+            "descriptive_only": true,
+            "holm_p": null
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 2,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.012962962962962954,
+          "worst_bin_coverage": 0.9431818181818182,
+          "best_bin_coverage": 0.9629629629629629,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.01888888888888888,
+          "max_abs_gap_min": 0.012962962962962954,
+          "max_abs_gap_max": 0.050000000000000044,
+          "frac_seeds_partition_go": 0.0
+        }
+      }
+    }
+  },
+  "pacbio": {
+    "n": 252,
+    "partitions": {
+      "event_type": {
+        "bins": [
+          {
+            "bin": "etype:A3SS",
+            "k": 133,
+            "n": 134,
+            "coverage": 0.9925373134328358,
+            "wilson": [
+              0.9589404665691039,
+              0.9986814356461595
+            ],
+            "mean_width": 0.981259515492406,
+            "mean_iscore": 1.0218114726875622,
+            "binom_p": 0.015754871588277947,
+            "descriptive_only": false,
+            "holm_p": 0.031509743176555895
+          },
+          {
+            "bin": "etype:A5SS",
+            "k": 107,
+            "n": 118,
+            "coverage": 0.9067796610169492,
+            "wilson": [
+              0.8407607486861424,
+              0.9471483992277607
+            ],
+            "mean_width": 0.8635106807600896,
+            "mean_iscore": 1.9783569417179225,
+            "binom_p": 0.05159952150037419,
+            "descriptive_only": false,
+            "holm_p": 0.05159952150037419
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 2,
+          "has_disjoint_pair": true,
+          "n_bins_excluding_0.95": 2,
+          "bins_excluding_0.95": [
+            "etype:A3SS",
+            "etype:A5SS"
+          ],
+          "max_abs_gap": 0.04322033898305078,
+          "worst_bin_coverage": 0.9067796610169492,
+          "best_bin_coverage": 0.9925373134328358,
+          "partition_go": true
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.042200860106248385,
+          "max_abs_gap_min": 0.03507462686567164,
+          "max_abs_gap_max": 0.04322033898305078,
+          "frac_seeds_partition_go": 0.9
+        }
+      },
+      "psi_level": {
+        "bins": [
+          {
+            "bin": "psi:[0,0.1)",
+            "k": 55,
+            "n": 58,
+            "coverage": 0.9482758620689655,
+            "wilson": [
+              0.8586059880915734,
+              0.9822538653405896
+            ],
+            "mean_width": 1.2608761136423388,
+            "mean_iscore": 2.1868842474213666,
+            "binom_p": 0.7662590749750793,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "psi:[0.1,0.9)",
+            "k": 67,
+            "n": 69,
+            "coverage": 0.9710144927536232,
+            "wilson": [
+              0.9003341623693445,
+              0.9920147973076358
+            ],
+            "mean_width": 1.1528058777157082,
+            "mean_iscore": 1.3060589048817788,
+            "binom_p": 0.5855956839817318,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "psi:[0.9,1.0001)",
+            "k": 118,
+            "n": 125,
+            "coverage": 0.944,
+            "wilson": [
+              0.8889121558924442,
+              0.9726117744945619
+            ],
+            "mean_width": 0.645668922016268,
+            "mean_iscore": 1.2272920454045295,
+            "binom_p": 0.6807033022549527,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 3,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.021014492753623215,
+          "worst_bin_coverage": 0.944,
+          "best_bin_coverage": 0.9710144927536232,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.0297101449275363,
+          "max_abs_gap_min": 0.021014492753623215,
+          "max_abs_gap_max": 0.035507246376811685,
+          "frac_seeds_partition_go": 0.0
+        }
+      },
+      "support": {
+        "bins": [
+          {
+            "bin": "support:100-249",
+            "k": 62,
+            "n": 65,
+            "coverage": 0.9538461538461539,
+            "wilson": [
+              0.8728615273666118,
+              0.9841801595864874
+            ],
+            "mean_width": 0.9984309581134483,
+            "mean_iscore": 1.6379442417646628,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:20-49",
+            "k": 26,
+            "n": 27,
+            "coverage": 0.9629629629629629,
+            "wilson": [
+              0.8171653406642414,
+              0.9934318540192149
+            ],
+            "mean_width": 1.2616286587000618,
+            "mean_iscore": 1.5796234211392688,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:250+",
+            "k": 102,
+            "n": 107,
+            "coverage": 0.9532710280373832,
+            "wilson": [
+              0.8952464694687352,
+              0.9798773427946421
+            ],
+            "mean_width": 0.6439287372943924,
+            "mean_iscore": 1.2886573359488895,
+            "binom_p": 1.0,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:50-99",
+            "k": 44,
+            "n": 45,
+            "coverage": 0.9777777777777777,
+            "wilson": [
+              0.8843331823158513,
+              0.9960664011171667
+            ],
+            "mean_width": 1.2738525775493155,
+            "mean_iscore": 1.476912632438648,
+            "binom_p": 0.7272968021683612,
+            "descriptive_only": false,
+            "holm_p": 1.0
+          },
+          {
+            "bin": "support:<20",
+            "k": 6,
+            "n": 8,
+            "coverage": 0.75,
+            "wilson": [
+              0.40927543031016883,
+              0.9285207872478909
+            ],
+            "mean_width": 1.0246635578972536,
+            "mean_iscore": 2.113155621389317,
+            "binom_p": 0.057244650273437586,
+            "descriptive_only": true,
+            "holm_p": null
+          }
+        ],
+        "gate": {
+          "n_eligible_bins": 4,
+          "has_disjoint_pair": false,
+          "n_bins_excluding_0.95": 0,
+          "bins_excluding_0.95": [],
+          "max_abs_gap": 0.02777777777777779,
+          "worst_bin_coverage": 0.9532710280373832,
+          "best_bin_coverage": 0.9777777777777777,
+          "partition_go": false
+        },
+        "seed_sweep": {
+          "max_abs_gap_mean": 0.02777777777777779,
+          "max_abs_gap_min": 0.02777777777777779,
+          "max_abs_gap_max": 0.02777777777777779,
+          "frac_seeds_partition_go": 0.0
+        }
+      }
+    }
+  },
+  "go_decision": {
+    "GO": true,
+    "passing_partitions_seed0": [
+      "pacbio.event_type"
+    ],
+    "rule": "GO if >=1 partition has disjoint (n>=10) Wilson CIs AND >=1 bin whose Wilson CI excludes 0.95"
+  }
+}

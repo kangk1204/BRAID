@@ -1,0 +1,10 @@
+{
+  "dataset": "TRA2_KD_SUPPA2",
+  "total_events": 42443,
+  "rmats_significant": 1566,
+  "rmats_nonsignificant": 40877,
+  "braid_supported_on_sig": 517,
+  "braid_hc_on_sig": 27,
+  "braid_supported_on_nonsig": 0,
+  "braid_hc_on_nonsig": 0
+}

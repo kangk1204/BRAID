@@ -1,0 +1,4 @@
+gene	event_id	deltapsi	lower	upper	fdr
+BIGSWITCH	ENSG_BIG:SE	0.55	0.40	0.70	0.01
+MODEST	ENSG_MOD:SE	0.18	0.05	0.31	0.02
+NULLEVENT	ENSG_NULL:SE	0.02	-0.18	0.22	0.85

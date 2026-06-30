@@ -1,0 +1,58 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.ruff_cache/
+.pytest_cache/
+.claude/
+*.bam
+*.bam.bai
+*.gtf
+!tests/*.gtf
+benchmark_results/
+benchmark_results_large/
+benchmark_results_postpatch/
+real_benchmark/
+benchmarks/denovo_results/
+outputs/tables/
+outputs/submission/
+paper/
+figures/
+braid_paper.pdf
+benchmark_report.pdf
+
+# local-only: never commit (internal analysis + onboarding notes)
+BRAID_PROJECT_GUIDE.md
+
+# AI tooling / assistant context — never push (project policy: no AI-related content on GitHub)
+CLAUDE.md
+Claude_Review_*.txt
+.omc/
+.coverage
+fasterq.tmp.*
+
+# benchmarks/headtohead/ is selectively tracked (analysis code + reproduce guide +
+# small derived betAS inputs). Manuscript/reviewer docs and logs are kept off GitHub by
+# benchmarks/headtohead/.gitignore.
+
+# Depth-titration real-rerun rMATS outputs (per-run SE tables + logs; multi-MB
+# derived rMATS output, regenerable via run_rmats_depth.sh). Keep validation_summary.txt.
+benchmarks/results/depth_rerun/*/
+
+# Benchmark data tree — BAMs, rMATS/MAJIQ outputs, references, MAJIQ .lic: far too large
+# for git and must never be committed (CLAUDE.md policy).
+data/
+*.lic
+
+# SG-NEx long-read ΔPSI surface (10MB intermediate; regenerate via sgnex_dpsi_validation.py)
+benchmarks/results/sgnex_dpsi_surface.json
+
+# Generated benchmark/figure/table/submission artifacts (regenerable via benchmarks/ scripts).
+outputs/
+
+# Local Claude Code skill-authoring artifacts dropped into the repo root — NOT BRAID
+# source (the skills install under ~/.claude/skills/). Root-anchored so same-named
+# files elsewhere in the tree are unaffected.
+/SKILL.md
+/debug-master-lord.skill

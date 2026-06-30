@@ -1,0 +1,262 @@
+{
+  "datasets": {
+    "tra2": {
+      "dataset": "tra2",
+      "n": 112,
+      "alpha": 0.05,
+      "n_trials": 300,
+      "orient_corr": 0.8055720701072722,
+      "n_grid": [
+        20,
+        30,
+        40,
+        50,
+        70,
+        90
+      ],
+      "by_N": [
+        {
+          "N": 20,
+          "random": {
+            "coverage": 0.9484782608695654,
+            "coverage_lo": 0.8043478260869565,
+            "coverage_hi": 1.0,
+            "mean_width": 0.7167008159728084,
+            "frac_reliable": 0.18170289855072463,
+            "reliable_precision": 0.9104698290753516,
+            "n_reliable_mean": 16.716666666666665
+          },
+          "tophit": {
+            "coverage": 1.0,
+            "coverage_lo": 1.0,
+            "coverage_hi": 1.0,
+            "mean_width": 1.0277973258268822,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        },
+        {
+          "N": 30,
+          "random": {
+            "coverage": 0.9682520325203253,
+            "coverage_lo": 0.8838414634146342,
+            "coverage_hi": 1.0,
+            "mean_width": 0.814591833462052,
+            "frac_reliable": 0.1228861788617886,
+            "reliable_precision": 0.9053055369349765,
+            "n_reliable_mean": 10.076666666666666
+          },
+          "tophit": {
+            "coverage": 1.0,
+            "coverage_lo": 1.0,
+            "coverage_hi": 1.0,
+            "mean_width": 1.0277973258268822,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        },
+        {
+          "N": 40,
+          "random": {
+            "coverage": 0.9506481481481482,
+            "coverage_lo": 0.8611111111111112,
+            "coverage_hi": 1.0,
+            "mean_width": 0.6871112725741246,
+            "frac_reliable": 0.17777777777777776,
+            "reliable_precision": 0.9282861891782369,
+            "n_reliable_mean": 12.8
+          },
+          "tophit": {
+            "coverage": 0.9583333333333334,
+            "coverage_lo": 0.9583333333333334,
+            "coverage_hi": 0.9583333333333334,
+            "mean_width": 0.7511538461538461,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        },
+        {
+          "N": 50,
+          "random": {
+            "coverage": 0.9613978494623656,
+            "coverage_lo": 0.8709677419354839,
+            "coverage_hi": 1.0,
+            "mean_width": 0.7478246435055624,
+            "frac_reliable": 0.1400537634408602,
+            "reliable_precision": 0.9214132432807363,
+            "n_reliable_mean": 8.683333333333334
+          },
+          "tophit": {
+            "coverage": 1.0,
+            "coverage_lo": 1.0,
+            "coverage_hi": 1.0,
+            "mean_width": 0.9205717819315733,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        },
+        {
+          "N": 70,
+          "random": {
+            "coverage": 0.9542857142857143,
+            "coverage_lo": 0.8571428571428571,
+            "coverage_hi": 1.0,
+            "mean_width": 0.7122709184109591,
+            "frac_reliable": 0.1503174603174603,
+            "reliable_precision": 0.916694265469595,
+            "n_reliable_mean": 6.3133333333333335
+          },
+          "tophit": {
+            "coverage": 0.9761904761904762,
+            "coverage_lo": 0.9761904761904762,
+            "coverage_hi": 0.9761904761904762,
+            "mean_width": 0.76455938697318,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        },
+        {
+          "N": 90,
+          "random": {
+            "coverage": 0.9512121212121213,
+            "coverage_lo": 0.8181818181818182,
+            "coverage_hi": 1.0,
+            "mean_width": 0.7142796883044675,
+            "frac_reliable": 0.1506060606060606,
+            "reliable_precision": 0.9474665771704099,
+            "n_reliable_mean": 3.3133333333333335
+          },
+          "tophit": {
+            "coverage": 0.9545454545454548,
+            "coverage_lo": 0.9545454545454546,
+            "coverage_hi": 0.9545454545454546,
+            "mean_width": 0.7511538461538461,
+            "frac_reliable": 0.0,
+            "reliable_precision": null,
+            "n_reliable_mean": 0.0
+          }
+        }
+      ]
+    },
+    "circ": {
+      "dataset": "circ",
+      "n": 50,
+      "alpha": 0.05,
+      "n_trials": 300,
+      "orient_corr": 0.9864808717642197,
+      "n_grid": [
+        20,
+        30,
+        40
+      ],
+      "by_N": [
+        {
+          "N": 20,
+          "random": {
+            "coverage": 0.9545555555555556,
+            "coverage_lo": 0.8158333333333334,
+            "coverage_hi": 1.0,
+            "mean_width": 0.5208272895634735,
+            "frac_reliable": 0.9133333333333336,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 27.4
+          },
+          "tophit": {
+            "coverage": 0.9666666666666667,
+            "coverage_lo": 0.9666666666666667,
+            "coverage_hi": 0.9666666666666667,
+            "mean_width": 0.5471716709782005,
+            "frac_reliable": 0.9000000000000002,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 27.0
+          }
+        },
+        {
+          "N": 30,
+          "random": {
+            "coverage": 0.9718333333333332,
+            "coverage_lo": 0.85,
+            "coverage_hi": 1.0,
+            "mean_width": 0.5597858472758943,
+            "frac_reliable": 0.8913333333333333,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 17.826666666666668
+          },
+          "tophit": {
+            "coverage": 0.95,
+            "coverage_lo": 0.95,
+            "coverage_hi": 0.95,
+            "mean_width": 0.5482246199725106,
+            "frac_reliable": 0.8499999999999998,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 17.0
+          }
+        },
+        {
+          "N": 40,
+          "random": {
+            "coverage": 0.9540000000000002,
+            "coverage_lo": 0.8,
+            "coverage_hi": 1.0,
+            "mean_width": 0.4876646799541606,
+            "frac_reliable": 0.9403333333333334,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 9.403333333333334
+          },
+          "tophit": {
+            "coverage": 1.0,
+            "coverage_lo": 1.0,
+            "coverage_hi": 1.0,
+            "mean_width": 0.5482246199725108,
+            "frac_reliable": 0.7000000000000001,
+            "reliable_precision": 1.0,
+            "n_reliable_mean": 7.0
+          }
+        }
+      ]
+    }
+  },
+  "strategy_comparison": {
+    "dataset": "tra2",
+    "N": 30,
+    "n_pos": 76,
+    "n_neg": 36,
+    "by_strategy": {
+      "top_hit": {
+        "coverage": 1.0,
+        "q": 0.513898662913445,
+        "frac_reliable": 0.0,
+        "reliable_precision": null
+      },
+      "random": {
+        "coverage": 0.968252032520326,
+        "q": 0.4085107540724875,
+        "frac_reliable": 0.12288617886178843,
+        "reliable_precision": 0.9053055369349771
+      },
+      "with_negatives_measured": {
+        "coverage": 0.9659349593495942,
+        "q": 0.40717810470554044,
+        "frac_reliable": 0.13036585365853637,
+        "reliable_precision": 0.9149344710459767
+      },
+      "with_negatives_assumed0": {
+        "coverage": 0.9659349593495942,
+        "q": 0.40717810470554044,
+        "frac_reliable": 0.13036585365853637,
+        "reliable_precision": 0.9149344710459767
+      },
+      "lowsignal_assumed0": {
+        "coverage": 0.9532520325203251,
+        "q": 0.3535370392913599,
+        "frac_reliable": 0.17934959349593485,
+        "reliable_precision": 0.8817446098048354
+      }
+    }
+  }
+}

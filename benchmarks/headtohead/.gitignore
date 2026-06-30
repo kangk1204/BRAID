@@ -1,0 +1,13 @@
+# Tracked: analysis code (*.py, *.R, *.sh), README.md, and small derived betAS inputs
+# (*_betas_*.tsv, *_headtohead*.json) so reviewers can re-run the coverage scripts.
+# Excluded below: transient artifacts and any manuscript / paper-reviewer material
+# (kept OFF GitHub per project policy).
+logs/
+__pycache__/
+*.pyc
+
+# Manuscript / reviewer-response material — never push.
+PAPER_NOTES.md
+RESULTS.md
+ALGORITHM_HEADROOM.md
+COMPLEX_LOCUS.md
